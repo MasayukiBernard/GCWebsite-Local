@@ -38,8 +38,10 @@
                             </tbody>
                         </table>
                         <a class="btn btn-primary text-light" role="button" href={{route('staff.partner-edit-page', ['partner' => $referred_partner])}}>Edit</a>
-                        <a class="btn btn-danger text-light" role="button" onclick="document.getElementById('delete-form').submit();">Delete</a>
-
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+                            Delete
+                        </button>
                         <form id="delete-form" method="POST" action={{route('staff.partner-delete')}}>
                             @csrf
                             <input type="hidden" name="partner-id" value="{{$referred_partner->id}}">
@@ -47,6 +49,27 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap's Popup Window -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Confirm the deletion of '{{$referred_partner->name}}' data!!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="document.getElementById('delete-form').submit();">Confirm</button>
+            </div>
+        </div>
         </div>
     </div>
 @endsection
