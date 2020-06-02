@@ -24,7 +24,7 @@ class HomeController extends Controller
      */
 
     public function staff_index(){
-        return view('staff_side\home', ['academic_years' => Academic_Year::all()->sortByDesc('id')]);
+        return view('staff_side\home', ['academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get()]);
     }
     
     public function student_index(){
