@@ -5,7 +5,7 @@
 @endsection
 
 @section('form-action')
-    /staff/partner/create/master-partner
+    {{route('staff.partner-create-confirm')}}
 @endsection
 
 @section('form-inputs')

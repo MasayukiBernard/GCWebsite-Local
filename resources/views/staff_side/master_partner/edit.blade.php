@@ -38,17 +38,17 @@
 @endsection
 
 @section('form-action')
-    {{route('staff.partner-update')}}
+    {{route('staff.partner-update-confirm')}}
 @endsection
 
 @section('form-inputs')
-    <input type="hidden" name="partner-id" value="{{$referred_partner->id}}">
+    <input type="hidden" name="partner-id" value="{{old('partner-id') == null ? $referred_partner->id : old('partner-id')}}">
     <table class="table table-bordered">
         <tbody>
             <tr>
                 <th scope="row">University Name</th>
                 <td>
-                    <input type="text" name="uni-name" class="@error('uni-name') is-invalid @enderror" value="{{$referred_partner->name}}"><br>
+                    <input type="text" name="uni-name" class="@error('uni-name') is-invalid @enderror" value="{{old('uni-name') == null ? $referred_partner->name : old('uni-name')}}"><br>
                     @error('uni-name')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
@@ -61,7 +61,7 @@
                         <select class="custom-select @error('major') is-invalid @enderror" id="major-selection" name="major">
                             <option value=" ">Choose...</option>
                             @foreach ($all_majors as $major)
-                                <option {{$referred_partner->major->id == $major-> id ? "selected" : ""}} value={{$major->id}}>{{$major->name}}</option>
+                                <option {{old('major') == null ? ($referred_partner->major->id == $major->id ? "selected" : "") : (old('major') == $major->id ? "selected" : "")}} value={{$major->id}}>{{$major->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -73,7 +73,7 @@
             <tr>
                 <th scope="row">Location</th>
                 <td>
-                    <input type="text" name="location" class="@error('location') is-invalid @enderror" value="{{$referred_partner->location}}"><br>
+                    <input type="text" name="location" class="@error('location') is-invalid @enderror" value="{{old('location') == null ? $referred_partner->location : old('location')}}"><br>
                     @error('location')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
@@ -82,7 +82,7 @@
             <tr>
                 <th scope="row">Minimum GPA</th>
                 <td>
-                    <input type="number" step=0.01 min=0 max=4 name="min-gpa" class="@error('min-gpa') is-invalid @enderror" value="{{$referred_partner->min_gpa}}"><br>
+                    <input type="number" step=0.01 min=0 max=4 name="min-gpa" class="@error('min-gpa') is-invalid @enderror" value="{{old('min-gpa') == null ? $referred_partner->min_gpa : old('min-gpa')}}"><br>
                     @error('min-gpa')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
@@ -91,7 +91,7 @@
             <tr>
                 <th scope="row">English Proficiency Requirement</th>
                 <td>
-                    <input type="text" name="eng-proficiency" class="@error('eng-proficiency') is-invalid @enderror" value="{{$referred_partner->eng_requirement}}"><br>
+                    <input type="text" name="eng-proficiency" class="@error('eng-proficiency') is-invalid @enderror" value="{{old('eng-proficiency') == null ? $referred_partner->eng_requirement : old('eng-proficiency')}}"><br>
                     @error('eng-proficiency')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
@@ -102,7 +102,7 @@
             </tr>
             <tr class="text-center">
                 <td colspan="2">
-                    <textarea name="details" class="@error('details') is-invalid @enderror">{{$referred_partner->short_detail}}</textarea><br>
+                    <textarea name="details" class="@error('details') is-invalid @enderror">{{old('details') == null ? $referred_partner->short_detail : old('details')}}</textarea><br>
                     @error('details')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
@@ -110,7 +110,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <input class="btn btn-primary btn-block" type="submit" value="Update Partner">
+                    <input class="btn btn-primary btn-block" type="submit" value="Confirm Update Partner">
                 </td>
             </tr>
         </tbody>
