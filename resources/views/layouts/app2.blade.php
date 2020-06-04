@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title> @yield('title') - {{ config('app.name', 'Laravel') }}</title>
+    <title> @yield('title') &mdash; {{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -41,6 +41,11 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('staff.partner-page') }}">
                                     Partner
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('staff.yearly-partner.page') }}">
+                                    Yearly Partner
                                 </a>
                             </li>
                             @else
