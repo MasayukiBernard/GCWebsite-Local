@@ -28,8 +28,10 @@
                 <td>{{$inputted_partner['eng-proficiency']}}</td>
             </tr>
             <tr>
-                <th scope="row">Short Details</th>
-                <td>{{$inputted_partner['details']}}</td>
+                <th scope="row" colspan="2">Short Details</th>
+            </tr>
+            <tr>
+                <td colspan="2">{{$inputted_partner['details']}}</td>
             </tr>
         </tbody>
     </table>
