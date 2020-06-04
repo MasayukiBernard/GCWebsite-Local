@@ -14,8 +14,8 @@
                     @yield('entity-distinct-content')
                     <form method="POST" action=@yield('form-action')>
                         @csrf
-                        <input type="submit" class="btn btn-primary" value="Confirm">
                         <a class="btn btn-secondary" href=@yield('return-route') role="button">Cancel</a>
+                        <input type="submit" class="btn btn-primary" value="Confirm">
                     </form>
                 </div>
             </div>
