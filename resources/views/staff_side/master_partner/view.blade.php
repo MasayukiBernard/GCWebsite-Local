@@ -71,7 +71,7 @@
                 success: function(response_data){
                     var data = response_data['major_partners'];
                     $(".partner_tData").remove();
-                    $.each(response_data['major_partners'], function(index, value){
+                    $.each(data, function(index, value){
                         var truncatedString = data[index].short_detail;
                         if(truncatedString.length > 25){
                             truncatedString = truncatedString.substr(0,20);
