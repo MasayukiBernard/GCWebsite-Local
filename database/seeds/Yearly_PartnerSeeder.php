@@ -13,13 +13,13 @@ class Yearly_PartnerSeeder extends Seeder
     public function run()
     {
         $j = 0;
-        for($i = 1; $i <= 3;){
+        for($i = 7; $i <= 8;){
             DB::table('yearly_partners')->insert([
                 'academic_year_id' => $i,
                 'partner_id' => ++$j,
             ]);
             if($j == 6){
-                $i+=2;
+                $i++;
                 $j = 0;
             }
         }

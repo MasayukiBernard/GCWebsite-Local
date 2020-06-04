@@ -44,6 +44,8 @@ Route::middleware('auth')->group(function(){
                 Route::prefix('application')->group(function(){
                     Route::get('/', 'User\ManageApplicationController@show_applicationPage')->name('application');
                 });
+                 
+                // group route names
                 Route::prefix('partner')->group(function(){
                     Route::get('/', 'User\ManagePartnerController@show_partnerPage')->name('partner-page');
                     Route::post('/major/{id}', 'User\ManagePartnerController@show_major_partners');
@@ -58,6 +60,22 @@ Route::middleware('auth')->group(function(){
                     Route::post('/update/master-partner', 'User\ManagePartnerController@update')->name('partner-update');
                     Route::post('/delete/master-partner/', 'User\ManagePartnerController@delete')->name('partner-delete');
                 });
+
+                Route::name('yearly-partner.')->group(function(){
+                    Route::prefix('yearly-partner')->group(function(){
+                        Route::get('/', 'User\ManageYearlyPartnerController@show_yearlyPartnerPage')->name('page');
+
+                        Route::get('/create', 'User\ManageYearlyPartnerController@show_createPage')->name('create-page');
+                        Route::post('/academic-year/{id}/partners', 'User\ManageYearlyPartnerController@show_unpicked_partners');
+                        Route::post('/create/confirm', 'User\ManageYearlyPartnerController@confirm_create')->name('create-confirm');
+                        Route::post('/create/yearly-partner', 'User\ManageYearlyPartnerController@create')->name('create');
+
+                        Route::get('/list/{academic_year_id}', 'User\ManageYearlyPartnerController@show_yearlyPartnerDetails')->name('details');
+                        Route::post('/delete/confirm/{yearly_partner_id}', 'User\ManageYearlyPartnerController@confirm_delete');
+                        Route::post('/delete/yearly-partner/', 'User\ManageYearlyPartnerController@delete')->name('delete');
+                    });
+                });
+
                 Route::prefix('profile')->group(function(){
                     Route::get('/', 'User\ManageProfileController@show_staffProfile')->name('profile');
                     Route::get('change-pass', 'User\ManageProfileController@show_changePass')
