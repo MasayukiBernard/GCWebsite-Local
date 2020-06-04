@@ -31,7 +31,13 @@
             <label class="input-group-text bg-info text-light" for="partner_selection">Partner Name</label>
         </div>
         <select class="custom-select @error('partner') is-invalid @enderror" id="partner_selection" name="partner">
-            <option value=" ">Choose...</option>
+            <option value=" ">
+                @if($unpicked_partners->count() > 0)
+                    Choose...
+                @else
+                    All partners have been added!!
+                @endif
+            </option>
             @foreach ($unpicked_partners as $partner)
                 <option value="{{$partner->id}}">{{$partner->name}} | {{$partner->location}}</option>
             @endforeach
