@@ -38,9 +38,9 @@
 @endsection
 
 @section('form-action')
-    {{route('staff.partner-create')}}
+    {{route('staff.partner.create')}}
 @endsection
 
 @section('return-route')
-    {{route('staff.partner-create-page')}}
+    {{route('staff.partner.create-page')}}
 @endsection

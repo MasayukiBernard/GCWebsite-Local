@@ -38,7 +38,7 @@
 @endsection
 
 @section('form-action')
-    {{route('staff.partner-update-confirm')}}
+    {{route('staff.partner.update-confirm')}}
 @endsection
 
 @section('form-inputs')

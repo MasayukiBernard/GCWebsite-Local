@@ -37,12 +37,12 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <a class="btn btn-primary text-light" role="button" href={{route('staff.partner-edit-page', ['partner' => $referred_partner])}}>Edit</a>
+                        <a class="btn btn-primary text-light" role="button" href={{route('staff.partner.edit-page', ['partner' => $referred_partner])}}>Edit</a>
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
                             Delete
                         </button>
-                        <form id="delete-form" method="POST" action={{route('staff.partner-delete')}}>
+                        <form id="delete-form" method="POST" action={{route('staff.partner.delete')}}>
                             @csrf
                             <input type="hidden" name="partner-id" value="{{$referred_partner->id}}">
                         </form>

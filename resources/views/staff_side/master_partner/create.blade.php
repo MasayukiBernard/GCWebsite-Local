@@ -5,7 +5,7 @@
 @endsection
 
 @section('form-action')
-    {{route('staff.partner-create-confirm')}}
+    {{route('staff.partner.create-confirm')}}
 @endsection
 
 @section('form-inputs')

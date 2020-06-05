@@ -26,7 +26,7 @@
                                 @endforeach
                             </div>
                         </div>
-                        <a class="btn btn-success text-light" role="button" href={{route('staff.partner-create-page')}}>Add New Partner</a>
+                        <a class="btn btn-success text-light" role="button" href={{route('staff.partner.create-page')}}>Add New Partner</a>
 
                         <table class="table table-striped table-bordered table-hover">
                             <thead>
@@ -50,7 +50,7 @@
 @endsection
 
 {{-- 
-    get_percentage() description:
+    get_partners() description:
     The function uses jquery library and utilizes AJAX feature provided by jquery.
     Perform async HTTP request to web server, in this case a POST request to a designated route,
     with 'X-CSRF-TOKEN' as the data in the POST body, it also expects JSON response from the server

@@ -46,19 +46,21 @@ Route::middleware('auth')->group(function(){
                 });
                  
                 // group route names
-                Route::prefix('partner')->group(function(){
-                    Route::get('/', 'User\ManagePartnerController@show_partnerPage')->name('partner-page');
-                    Route::post('/major/{id}', 'User\ManagePartnerController@show_major_partners');
-
-                    Route::get('/create', 'User\ManagePartnerController@show_createPage')->name('partner-create-page');
-                    Route::post('/create/confirm', 'User\ManagePartnerController@confirm_create')->name('partner-create-confirm');
-                    Route::post('/create/master-partner', 'User\ManagePartnerController@create')->name('partner-create');
-
-                    Route::get('/details/{partner}', 'User\ManagePartnerController@show_partner_details');
-                    Route::get('/edit/{partner}', 'User\ManagePartnerController@show_editPage')->name('partner-edit-page');
-                    Route::post('/update/confirm', 'User\ManagePartnerController@confirm_update')->name('partner-update-confirm');
-                    Route::post('/update/master-partner', 'User\ManagePartnerController@update')->name('partner-update');
-                    Route::post('/delete/master-partner/', 'User\ManagePartnerController@delete')->name('partner-delete');
+                Route::name('partner.')->group(function(){
+                    Route::prefix('partner')->group(function(){
+                        Route::get('/', 'User\ManagePartnerController@show_partnerPage')->name('page');
+                        Route::post('/major/{id}', 'User\ManagePartnerController@show_major_partners');
+    
+                        Route::get('/create', 'User\ManagePartnerController@show_createPage')->name('create-page');
+                        Route::post('/create/confirm', 'User\ManagePartnerController@confirm_create')->name('create-confirm');
+                        Route::post('/create/master-partner', 'User\ManagePartnerController@create')->name('create');
+    
+                        Route::get('/details/{partner}', 'User\ManagePartnerController@show_partner_details');
+                        Route::get('/edit/{partner}', 'User\ManagePartnerController@show_editPage')->name('edit-page');
+                        Route::post('/update/confirm', 'User\ManagePartnerController@confirm_update')->name('update-confirm');
+                        Route::post('/update/master-partner', 'User\ManagePartnerController@update')->name('update');
+                        Route::post('/delete/master-partner/', 'User\ManagePartnerController@delete')->name('delete');
+                    });
                 });
 
                 Route::name('yearly-partner.')->group(function(){
