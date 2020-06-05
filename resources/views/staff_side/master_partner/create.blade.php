@@ -9,7 +9,6 @@
 @endsection
 
 @section('form-inputs')
-    <input type="hidden" name="partner-id" value="{{$first_partner_id}}">
     <div class="input-group mb-3">
         <div class="input-group-prepend">
             <label class="input-group-text bg-info text-light" for="major-selection">Major Name</label>
@@ -17,7 +16,9 @@
         <select class="custom-select @error('major') is-invalid @enderror" id="major-selection" name="major">
             <option value=" ">Choose...</option>
             @foreach ($all_majors as $major)
-                <option {{old('major') == $major-> id ? "selected" : ""}} value={{$major->id}}>{{$major->name}}</option>
+                <option {{session('last_picked_major_id') != null ? (session('last_picked_major_id') == $major->id ? "selected" : "") : (old('major') == $major-> id ? "selected" : "")}} value={{$major->id}}>
+                    {{$major->name}}
+                </option>
             @endforeach
         </select>
     </div>

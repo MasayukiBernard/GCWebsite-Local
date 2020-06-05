@@ -42,7 +42,6 @@
 @endsection
 
 @section('form-inputs')
-    <input type="hidden" name="partner-id" value="{{old('partner-id') == null ? $referred_partner->id : old('partner-id')}}">
     <table class="table table-bordered">
         <tbody>
             <tr>

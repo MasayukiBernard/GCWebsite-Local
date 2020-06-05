@@ -33,7 +33,6 @@ class PartnerCRUD extends FormRequest
     public function rules()
     {
         return [
-            'partner-id' => ['required', 'integer', 'exists:partners,id'],
             'major' => ['required', 'integer', 'exists:majors,id'],
             'uni-name' => ['required', 'string', 'max:50'],
             'location' => ['required', 'string', 'max:30'],

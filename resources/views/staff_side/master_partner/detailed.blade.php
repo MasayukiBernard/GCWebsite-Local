@@ -42,10 +42,6 @@
                         <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
                             Delete
                         </button>
-                        <form id="delete-form" method="POST" action={{route('staff.partner.delete')}}>
-                            @csrf
-                            <input type="hidden" name="partner-id" value="{{$referred_partner->id}}">
-                        </form>
                     </div>
                 </div>
             </div>
@@ -72,4 +68,7 @@
         </div>
         </div>
     </div>
+    <form id="delete-form" method="POST" action={{route('staff.partner.delete')}}>
+        @csrf
+    </form>
 @endsection

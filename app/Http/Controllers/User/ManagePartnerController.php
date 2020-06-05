@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PartnerCRUD;
 use App\Major;
 use App\Partner;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ManagePartnerController extends Controller
 {
@@ -26,12 +26,13 @@ class ManagePartnerController extends Controller
     }
     
     public function show_major_partners($id){
+        session()->put('last_picked_major_id', $id);
         $partners = Partner::where('major_id', $id)->get();
         return response()->json(['major_partners' => $partners->toArray()]);
     }
 
     public function show_partner_details(Partner $partner){
-        // the referred partner id was implicitly bound to the model
+        session()->put('referred_partner_id', $partner->id);
         return view('staff_side\master_partner\detailed', ['referred_partner' => $partner]);
     }
 
@@ -51,12 +52,11 @@ class ManagePartnerController extends Controller
         $inputted_partner = session('inputted_partner');
         $partner = new Partner;
         $this->model_assignment($partner, $inputted_partner);
-        session()->forget('inputted_partner');
+        session()->forget(['last_picked_major_id', 'inputted_partner']);
         return redirect(route('staff.home'));
     }
 
     public function show_editPage(Partner $partner){
-        session()->put('referred_partner_id', $partner->id);
         return view('staff_side/master_partner/edit', ['referred_partner' => $partner, 'all_majors' => Major::all()]);
     }
 
@@ -69,19 +69,21 @@ class ManagePartnerController extends Controller
     }
 
     public function update(){
-        $inputted_partner= session('inputted_partner');
-        $partner = Partner::find($inputted_partner['partner-id']);
-        $this->model_assignment($partner, $inputted_partner);
-        session()->forget(['inputted_partner', 'referred_partner_id']);
-        return redirect(route('staff.home'));
+        $inputted_partner = session('inputted_partner');
+        $partner = Partner::where('id', session('referred_partner_id'))->first();
+        if($partner != null){
+            $this->model_assignment($partner, $inputted_partner);
+            session()->forget(['inputted_partner', 'referred_partner_id']);
+        }
+        return redirect(route('staff.partner.page'));
     }
 
-    public function delete(Request $request){
-        $validatedData = $request->validate([
-            'partner-id' => ['required', 'integer', 'exists:partners,id']
-        ]);
-        $partner = Partner::find($validatedData['partner-id']);
-        $partner->delete();
-        return redirect(route('staff.home'));
+    public function delete(){
+        $partner = Partner::where('id', session('referred_partner_id'))->first();
+        if($partner != null){
+            $partner->delete();
+            session()->forget('referred_partner_id');
+        }
+        return redirect(route('staff.partner.page'));
     }
 }
