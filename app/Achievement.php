@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Achievement extends Model
 {
-    protected $guarded = ['csa_form_id'];
+    protected $guarded = ['csa_form_id', 'proof_path'];
 
     // Relationships
     // Inverse has many relationship

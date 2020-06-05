@@ -25,6 +25,7 @@ class CreateAchievementsTable extends Migration
             $table->integer('year');
             $table->string('institution', 50);
             $table->string('other_details', 100);
+            $table->string('proof_path', 100);
             $table->timestamps();
         });
     }

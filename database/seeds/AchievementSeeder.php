@@ -23,7 +23,8 @@ class AchievementSeeder extends Seeder
                 'achievement' => 'Dummy achievement #'. $i,
                 'year' => 2017 + $j,
                 'institution' => 'Dummy Institution',
-                'other_details' => 'other detailed infos'
+                'other_details' => 'other detailed infos',
+                'proof_path' => '/non-public/students/achievements/dummy_certificate.jpg'
             ]);
             if($i == 2){
                 $timeToChange = true;
