@@ -86,9 +86,9 @@
 @endsection
 
 @section('form-action')
-    {{route('staff.partner-update')}}
+    {{route('staff.partner.update')}}
 @endsection
 
 @section('return-route')
-    {{route('staff.partner-edit-page', ['partner' => $referred_partner])}}
+    {{route('staff.partner.edit-page', ['partner' => $referred_partner])}}
 @endsection

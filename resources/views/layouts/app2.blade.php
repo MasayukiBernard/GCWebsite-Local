@@ -39,7 +39,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('staff.partner-page') }}">
+                                <a class="nav-link" href="{{ route('staff.partner.page') }}">
                                     Partner
                                 </a>
                             </li>

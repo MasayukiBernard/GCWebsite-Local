@@ -38,11 +38,10 @@
 @endsection
 
 @section('form-action')
-    {{route('staff.partner-update-confirm')}}
+    {{route('staff.partner.update-confirm')}}
 @endsection
 
 @section('form-inputs')
-    <input type="hidden" name="partner-id" value="{{old('partner-id') == null ? $referred_partner->id : old('partner-id')}}">
     <table class="table table-bordered">
         <tbody>
             <tr>
