@@ -30,7 +30,7 @@
                                         <td><a href="/staff/partner/details/{{$yearly_partner->partner_id}}" class="stretched-link text-decoration-none text-dark">{{$yearly_partner->partner->name}}</a></td>
                                         <td>{{$yearly_partner->partner->location}}</td>
                                         <td>{{$yearly_partner->partner->major->name}}</td>
-                                        <td><button type="button" class="btn btn-danger position-relative" onclick="deleteYearlyPartner({{$yearly_partner->id}})" style="z-index: 1;" data-toggle="modal" data-target="#confirmDeleteModal">Delete</button></td>
+                                        <td><button type="button" class="btn btn-danger position-relative" onclick="deleteYearlyPartner({{$yearly_partner->id}})" style="z-index: 1;">Delete</button></td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -87,6 +87,7 @@
                         $('#popup_body').text('Please pick the yearly partner to delete from the provided list!!');
                         $('#popup_footer').empty();
                     }
+                    $('#confirmDeleteModal').modal();
                 }
             });
         }
