@@ -38,8 +38,9 @@ Route::middleware('auth')->group(function(){
         Route::name('staff.')->group(function(){
             Route::prefix('staff')->group(function(){
                 Route::prefix('home')->group(function(){
-                    Route::get('/', 'HomeController@staff_index')->name('home');
-                    Route::post('academic_year/{id}', 'HomeController@get_percentages');
+                    $home_controller = 'HomeController@';
+                    Route::get('/', $home_controller . 'staff_index')->name('home');
+                    Route::post('academic-year/{id}', $home_controller . 'HomeController@get_percentages');
                 });
                 Route::prefix('application')->group(function(){
                     Route::get('/', 'User\ManageApplicationController@show_applicationPage')->name('application');
@@ -48,6 +49,7 @@ Route::middleware('auth')->group(function(){
                 Route::name('academic-year.')->group(function(){
                     Route::prefix('academic-year')->group(function(){
                         $year_controller = "User\ManageAcademicYearController@";
+
                         Route::get('/', $year_controller . 'show_academicYearPage')->name('page');
                         Route::get('/create', $year_controller . 'show_createPage')->name('create-page');
                         Route::post('/create/confirm', $year_controller . 'confirm_create')->name('create-confirm');
@@ -60,40 +62,43 @@ Route::middleware('auth')->group(function(){
 
                 Route::name('partner.')->group(function(){
                     Route::prefix('partner')->group(function(){
-                        Route::get('/', 'User\ManagePartnerController@show_partnerPage')->name('page');
-                        Route::post('/major/{id}', 'User\ManagePartnerController@show_major_partners');
+                        $partner_controller = 'User\ManagePartnerController@';
+
+                        Route::get('/', $partner_controller . 'show_partnerPage')->name('page');
+                        Route::post('/major/{id}', $partner_controller . 'show_major_partners');
     
-                        Route::get('/create', 'User\ManagePartnerController@show_createPage')->name('create-page');
-                        Route::post('/create/confirm', 'User\ManagePartnerController@confirm_create')->name('create-confirm');
-                        Route::post('/create/master-partner', 'User\ManagePartnerController@create')->name('create');
+                        Route::get('/create', $partner_controller . 'show_createPage')->name('create-page');
+                        Route::post('/create/confirm', $partner_controller . 'confirm_create')->name('create-confirm');
+                        Route::post('/create/master-partner', $partner_controller . 'create')->name('create');
     
-                        Route::get('/details/{partner}', 'User\ManagePartnerController@show_partner_details');
-                        Route::get('/edit/{partner}', 'User\ManagePartnerController@show_editPage')->name('edit-page');
-                        Route::post('/update/confirm', 'User\ManagePartnerController@confirm_update')->name('update-confirm');
-                        Route::post('/update/master-partner', 'User\ManagePartnerController@update')->name('update');
-                        Route::post('/delete/master-partner/', 'User\ManagePartnerController@delete')->name('delete');
+                        Route::get('/details/{partner}', $partner_controller . 'show_partner_details');
+                        Route::get('/edit/{partner}', $partner_controller . 'show_editPage')->name('edit-page');
+                        Route::post('/update/confirm', $partner_controller . 'confirm_update')->name('update-confirm');
+                        Route::post('/update/master-partner', $partner_controller . 'update')->name('update');
+                        Route::post('/delete/master-partner/', $partner_controller . 'delete')->name('delete');
                     });
                 });
 
                 Route::name('yearly-partner.')->group(function(){
                     Route::prefix('yearly-partner')->group(function(){
-                        Route::get('/', 'User\ManageYearlyPartnerController@show_yearlyPartnerPage')->name('page');
+                        $yPartner_controller = 'User\ManageYearlyPartnerController';
+                        Route::get('/', $yPartner_controller . 'show_yearlyPartnerPage')->name('page');
 
-                        Route::get('/create', 'User\ManageYearlyPartnerController@show_createPage')->name('create-page');
-                        Route::post('/academic-year/{id}/partners', 'User\ManageYearlyPartnerController@show_unpicked_partners');
-                        Route::post('/create/confirm', 'User\ManageYearlyPartnerController@confirm_create')->name('create-confirm');
-                        Route::post('/create/yearly-partner', 'User\ManageYearlyPartnerController@create')->name('create');
+                        Route::get('/create', $yPartner_controller . 'show_createPage')->name('create-page');
+                        Route::post('/academic-year/{id}/partners', $yPartner_controller . 'show_unpicked_partners');
+                        Route::post('/create/confirm', $yPartner_controller . 'confirm_create')->name('create-confirm');
+                        Route::post('/create/yearly-partner', $yPartner_controller . 'create')->name('create');
 
-                        Route::get('/list/{academic_year_id}', 'User\ManageYearlyPartnerController@show_yearlyPartnerDetails')->name('details');
-                        Route::post('/delete/confirm/{yearly_partner_id}', 'User\ManageYearlyPartnerController@confirm_delete');
-                        Route::post('/delete/yearly-partner/', 'User\ManageYearlyPartnerController@delete')->name('delete');
+                        Route::get('/list/{academic_year_id}', $yPartner_controller . 'show_yearlyPartnerDetails')->name('details');
+                        Route::post('/delete/confirm/{yearly_partner_id}', $yPartner_controller . 'confirm_delete');
+                        Route::post('/delete/yearly-partner/', $yPartner_controller . 'delete')->name('delete');
                     });
                 });
 
                 Route::prefix('profile')->group(function(){
-                    Route::get('/', 'User\ManageProfileController@show_staffProfile')->name('profile');
-                    Route::get('change-pass', 'User\ManageProfileController@show_changePass')
-                        ->middleware('password.confirm')->name('change-pass-view');;
+                    $profile_controller = 'User\ManageProfileController@';
+                    Route::get('/', $profile_controller . 'show_staffProfile')->name('profile');
+                    Route::get('change-pass', $profile_controller . 'show_changePass')->middleware('password.confirm')->name('change-pass-view');;
                 });
             });
         });
@@ -104,9 +109,9 @@ Route::middleware('auth')->group(function(){
             Route::prefix('student')->group(function(){
                 Route::get('home', 'HomeController@student_index')->name('home');
                 Route::prefix('profile')->group(function(){
-                    Route::get('/', 'User\ManageProfileController@show_studentProfile')->name('profile');
-                    Route::get('change-pass', 'User\ManageProfileController@show_changePass')
-                        ->middleware('password.confirm')->name('change-pass-view');
+                    $profile_controller = 'User\ManageProfileController@';
+                    Route::get('/', $profile_controller . 'show_studentProfile')->name('profile');
+                    Route::get('change-pass', $profile_controller . 'show_changePass')->middleware('password.confirm')->name('change-pass-view');
                 });
                 Route::prefix('csaform')->group(function(){
                     Route::get('/', 'User\ManageCSAFormController@show_csaFormPage')->name('csaform');
@@ -118,6 +123,3 @@ Route::middleware('auth')->group(function(){
     Route::post('/password/change', 'User\ManageProfileController@handle_ChangePass')
         ->middleware('changePass')->name('change-pass');
 });
-
-// create route which does not show in address bar, like logout, using form action
-Route::get('ensure-user');
