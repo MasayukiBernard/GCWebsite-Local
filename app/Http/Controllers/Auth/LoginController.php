@@ -34,10 +34,10 @@ class LoginController extends Controller
     public function redirectTo()
     {
         if(Auth::user()->is_staff){
-            return '/staff/home';
+            return route('staff.home');
         }
         else{
-            return '/student/home';
+            return route('student.home');
         }
     }
 
