@@ -25,12 +25,12 @@
                             <tbody>
                                 <?php $i=0;?>
                                 @foreach ($yearly_partners as $yearly_partner)
-                                    <tr class="position-relative">
-                                        <th scope="row">{{++$i}}</th>
-                                        <td><a href="/staff/partner/details/{{$yearly_partner->partner_id}}" class="stretched-link text-decoration-none text-dark">{{$yearly_partner->partner->name}}</a></td>
-                                        <td>{{$yearly_partner->partner->location}}</td>
-                                        <td>{{$yearly_partner->partner->major->name}}</td>
-                                        <td><button type="button" class="btn btn-danger position-relative" onclick="deleteYearlyPartner({{$yearly_partner->id}})" style="z-index: 1;">Delete</button></td>
+                                    <tr>
+                                        <th style="cursor: pointer;" class="partner" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')" scope="row">{{++$i}}</th>
+                                        <td style="cursor: pointer;" class="partner" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->name}}</td>
+                                        <td style="cursor: pointer;" class="partner" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->location}}</td>
+                                        <td style="cursor: pointer;" class="partner" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->major->name}}</td>
+                                        <td><button type="button" class="btn btn-danger position-relative" onclick="deleteYearlyPartner({{$yearly_partner->id}})">Delete</button></td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -82,7 +82,7 @@
                         $('#popup_footer').append("<button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>");
                         $('#popup_footer').append("<button type=\"button\" class=\"btn btn-danger\" onclick=\"document.getElementById('delete_form').submit();\">Delete</button>");
                     }
-                    else if(response_data['failed']){
+                    else{
                         $('#deleteLabel').text('DATA NOT FOUND!!');
                         $('#popup_body').text('Please pick the yearly partner to delete from the provided list!!');
                         $('#popup_footer').empty();
