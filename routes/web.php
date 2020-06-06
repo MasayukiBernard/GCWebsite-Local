@@ -81,7 +81,7 @@ Route::middleware('auth')->group(function(){
 
                 Route::name('yearly-partner.')->group(function(){
                     Route::prefix('yearly-partner')->group(function(){
-                        $yPartner_controller = 'User\ManageYearlyPartnerController';
+                        $yPartner_controller = 'User\ManageYearlyPartnerController@';
                         Route::get('/', $yPartner_controller . 'show_yearlyPartnerPage')->name('page');
 
                         Route::get('/create', $yPartner_controller . 'show_createPage')->name('create-page');
