@@ -26,10 +26,10 @@
                                 <?php $i=0;?>
                                 @foreach ($yearly_partners as $yearly_partner)
                                     <tr>
-                                        <th style="cursor: pointer;" class="partner" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')" scope="row">{{++$i}}</th>
-                                        <td style="cursor: pointer;" class="partner" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->name}}</td>
-                                        <td style="cursor: pointer;" class="partner" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->location}}</td>
-                                        <td style="cursor: pointer;" class="partner" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->major->name}}</td>
+                                        <th style="cursor: pointer;" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')" scope="row">{{++$i}}</th>
+                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->name}}</td>
+                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->location}}</td>
+                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->major->name}}</td>
                                         <td><button type="button" class="btn btn-danger position-relative" onclick="deleteYearlyPartner({{$yearly_partner->id}})">Delete</button></td>
                                     </tr>
                                 @endforeach

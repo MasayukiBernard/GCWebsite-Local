@@ -80,11 +80,11 @@
                         $("#partner_tBody").append(
                             "<tr class=\"partner_tData position-relative\">" + 
                             "<th scope=row>" + (index+1) + "</th>" +
-                            "<td><a href=/staff/partner/details/" + data[index].id +  " class=\"stretched-link text-body text-decoration-none\">" + data[index].name + "</a></td>" + 
-                            "<td>" + data[index].location + "</td>" + 
-                            "<td>" + data[index].min_gpa + "</td>" + 
-                            "<td>" + data[index].eng_requirement + "</td>" + 
-                            "<td>" + truncatedString + "</td>" +
+                            "<td style=\"cursor: pointer;\" onclick=\"window.location.assign('/staff/partner/details/" + data[index].id + "')\">"   + data[index].name + "</td>" + 
+                            "<td style=\"cursor: pointer;\" onclick=\"window.location.assign('/staff/partner/details/" + data[index].id + "')\">" + data[index].location + "</td>" + 
+                            "<td style=\"cursor: pointer;\" onclick=\"window.location.assign('/staff/partner/details/" + data[index].id + "')\">" + data[index].min_gpa + "</td>" + 
+                            "<td style=\"cursor: pointer;\" onclick=\"window.location.assign('/staff/partner/details/" + data[index].id + "')\">" + data[index].eng_requirement + "</td>" + 
+                            "<td style=\"cursor: pointer;\" onclick=\"window.location.assign('/staff/partner/details/" + data[index].id + "')\">" + truncatedString + "</td>" +
                             "</tr>"
                         );
                     });
