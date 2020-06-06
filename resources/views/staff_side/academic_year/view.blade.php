@@ -86,7 +86,7 @@
                         $('#popup_footer').append("<button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>");
                         $('#popup_footer').append("<button type=\"button\" class=\"btn btn-danger\" onclick=\"document.getElementById('delete_form').submit();\">Delete</button>");
                     }
-                    else if(response_data['failed']){
+                    else{
                         $('#deleteLabel').text('DATA NOT FOUND!!');
                         $('#popup_body').text('Please pick the academic year to delete from the provided list!!');
                         $('#popup_footer').empty();
