@@ -14,6 +14,7 @@
                         <form method="POST" action=@yield('form-action')>
                             @csrf
                             @yield('form-inputs')
+                            <input type="submit" class="btn btn-success" value="Confirm New @yield('confirm-value')">
                         </form>
                     </div>
                 </div>

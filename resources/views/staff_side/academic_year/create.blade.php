@@ -40,6 +40,8 @@
     @error('smt-type')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
+@endsection
 
-    <input type="submit" class="btn btn-success" value="Confirm New Academic Year">
+@section('confirm-value')
+Academic Year
 @endsection

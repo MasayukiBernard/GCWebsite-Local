@@ -46,8 +46,10 @@
     @error('partner')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
+@endsection
 
-    <input type="submit" class="btn btn-success" value="Confirm New Yearly Partner">
+@section('confirm-value')
+Yearly Partner
 @endsection
 
 @push('scripts')

@@ -55,6 +55,8 @@
     @error('details')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
+@endsection
 
-    <input class="btn btn-success" type="submit" value="Add to Master Partner">
+@section('confirm-value')
+Master Partner
 @endsection
