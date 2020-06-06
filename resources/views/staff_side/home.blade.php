@@ -70,20 +70,25 @@
                 data: {_token: CSRF_TOKEN},
                 dataType: 'JSON',
                 success: function(response_data){
-                    var submission_percentage;
-                    var nominated_percentage;
-                    if (response_data['total_yearly_students'] == 0){
-                        submission_percentage = nominated_percentage = '-';
+                    if(response_data['empty'] === null){
+                        $("#academic_year_dropdown").text("No Data Yet");
                     }
                     else{
-                        submission_percentage = (response_data['submitted_csa_forms'] / response_data['total_yearly_students'] * 100);
-                        submission_percentage = submission_percentage.toFixed(2) + '%';
-                        nominated_percentage = (response_data['nominated_students'] / response_data['total_yearly_students'] * 100);
-                        nominated_percentage = nominated_percentage.toFixed(2) + '%';
+                        var submission_percentage;
+                        var nominated_percentage;
+                        if (response_data['total_yearly_students'] == 0){
+                            submission_percentage = nominated_percentage = '-';
+                        }
+                        else{
+                            submission_percentage = (response_data['submitted_csa_forms'] / response_data['total_yearly_students'] * 100);
+                            submission_percentage = submission_percentage.toFixed(2) + '%';
+                            nominated_percentage = (response_data['nominated_students'] / response_data['total_yearly_students'] * 100);
+                            nominated_percentage = nominated_percentage.toFixed(2) + '%';
+                        }
+                        $("#csa_percentage").text(submission_percentage);
+                        $('#nominated_percentage').text(nominated_percentage);
+                        $("#academic_year_dropdown").text($("#year_"+academic_year_id).text());
                     }
-                    $("#csa_percentage").text(submission_percentage);
-                    $('#nominated_percentage').text(nominated_percentage);
-                    $("#academic_year_dropdown").text($("#year_"+academic_year_id).text());
                 }
             });
         }

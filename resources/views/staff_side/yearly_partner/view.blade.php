@@ -19,12 +19,18 @@
                             <div class="col-8">
                                 <div class="dropdown show">
                                     <a class="btn btn-info btn-lg dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Academic Year
+                                        @if ($academic_years->count() > 0)
+                                            Academic Years
+                                        @else
+                                            No Data Yet
+                                        @endif
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        @foreach ($academic_years as $year)
-                                            <a class="dropdown-item" href="{{route('staff.yearly-partner.details', ['academic_year_id' => $year->id])}}">{{$year->starting_year}}/{{$year->ending_year}} - {{$year->odd_semester ? "Odd" : "Even    "}}</a>
-                                        @endforeach
+                                        @if ($academic_years->count() > 0)
+                                            @foreach ($academic_years as $year)
+                                                <a class="dropdown-item" href="{{route('staff.yearly-partner.details', ['academic_year_id' => $year->id])}}">{{$year->starting_year}}/{{$year->ending_year}} - {{$year->odd_semester ? "Odd" : "Even    "}}</a>
+                                            @endforeach
+                                        @endif
                                     </div>
                                 </div>
                             </div>
