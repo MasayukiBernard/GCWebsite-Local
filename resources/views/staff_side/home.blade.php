@@ -63,7 +63,7 @@
     <script>
         function get_percentages(academic_year_id){
             var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            var targetURL = '/staff/home/academic_year/' + academic_year_id;
+            var targetURL = '/staff/home/academic-year/' + academic_year_id;
             $.ajax({
                 type: 'POST',
                 url: targetURL,
