@@ -34,8 +34,8 @@
                         @auth
                             @if ((Auth::user()->is_staff))
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('staff.application') }}">
-                                    View Application
+                                <a class="nav-link" href="{{ route('staff.academic-year.page') }}">
+                                    Academic Year
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -46,6 +46,11 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('staff.yearly-partner.page') }}">
                                     Yearly Partner
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('staff.application') }}">
+                                    View Application
                                 </a>
                             </li>
                             @else
