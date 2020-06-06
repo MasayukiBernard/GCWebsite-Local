@@ -44,8 +44,20 @@ Route::middleware('auth')->group(function(){
                 Route::prefix('application')->group(function(){
                     Route::get('/', 'User\ManageApplicationController@show_applicationPage')->name('application');
                 });
-                 
-                // group route names
+                
+                Route::name('academic-year.')->group(function(){
+                    Route::prefix('academic-year')->group(function(){
+                        $year_controller = "User\ManageAcademicYearController@";
+                        Route::get('/', $year_controller . 'show_academicYearPage')->name('page');
+                        Route::get('/create', $year_controller . 'show_createPage')->name('create-page');
+                        Route::post('/create/confirm', $year_controller . 'confirm_create')->name('create-confirm');
+                        Route::post('/create/academic-year', $year_controller . 'create')->name('create');
+
+                        Route::post('/delete/confirm/{academic_year_id}', $year_controller . 'confirm_delete');
+                        Route::post('/delete/academic-year', $year_controller . 'delete')->name('delete');
+                    });
+                });
+
                 Route::name('partner.')->group(function(){
                     Route::prefix('partner')->group(function(){
                         Route::get('/', 'User\ManagePartnerController@show_partnerPage')->name('page');
@@ -81,7 +93,7 @@ Route::middleware('auth')->group(function(){
                 Route::prefix('profile')->group(function(){
                     Route::get('/', 'User\ManageProfileController@show_staffProfile')->name('profile');
                     Route::get('change-pass', 'User\ManageProfileController@show_changePass')
-                        ->middleware('password.confirm')->name('change-pass-view');
+                        ->middleware('password.confirm')->name('change-pass-view');;
                 });
             });
         });
