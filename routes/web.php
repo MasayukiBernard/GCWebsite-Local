@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function(){
                 Route::prefix('home')->group(function(){
                     $home_controller = 'HomeController@';
                     Route::get('/', $home_controller . 'staff_index')->name('home');
-                    Route::post('academic-year/{id}', $home_controller . 'HomeController@get_percentages');
+                    Route::post('/academic-year/{id}', $home_controller . 'get_percentages');
                 });
                 Route::prefix('application')->group(function(){
                     Route::get('/', 'User\ManageApplicationController@show_applicationPage')->name('application');
