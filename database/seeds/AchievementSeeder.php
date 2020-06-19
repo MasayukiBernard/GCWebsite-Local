@@ -24,7 +24,7 @@ class AchievementSeeder extends Seeder
                 'year' => 2017 + $j,
                 'institution' => 'Dummy Institution',
                 'other_details' => 'other detailed infos',
-                'proof_path' => '/non-public/students/achievements/dummy_certificate.jpg'
+                'proof_path' => 'students\achievements\dummy_certificate.jpg'
             ]);
             if($i == 2){
                 $timeToChange = true;

@@ -49,6 +49,18 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <div class="nav-link dropdown show">
+                                    <a class="text-decoration-none text-secondary dropdown-toggle" style="cursor: pointer;" role="button" id="studentDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Student
+                                    </a>
+                                  
+                                    <div class="dropdown-menu" aria-labelledby="studentDropdown">
+                                        <a class="dropdown-item" href="{{route('staff.yearly-student.page')}}">Yearly Student</a>
+                                        <a class="dropdown-item" href="{{route('staff.student.page')}}">Master Student</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('staff.application') }}">
                                     View Application
                                 </a>

@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Storage;
 
 class Kernel extends ConsoleKernel
 {
@@ -24,7 +25,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            // Delete temporary files in defined directories
+            Storage::disk('private')->deleteDirectory('staffs/temp/batch_students_templates');
+            Storage::disk('private')->makeDirectory('staffs/temp/batch_students_templates');
+        })->daily();
     }
 
     /**

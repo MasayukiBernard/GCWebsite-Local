@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,10 +32,10 @@ Auth::routes(['register' => false]);
 // -> Authenticated users
 Route::middleware('auth')->group(function(){
     Route::get('/test', function(){
-        
     });
     // -> Staff Users
     Route::middleware('staff')->group(function(){
+        Route::resource('photos', 'Staff\PhotoController');
         Route::name('staff.')->group(function(){
             Route::prefix('staff')->group(function(){
                 Route::prefix('home')->group(function(){
@@ -42,13 +43,14 @@ Route::middleware('auth')->group(function(){
                     Route::get('/', $home_controller . 'staff_index')->name('home');
                     Route::post('/academic-year/{id}', $home_controller . 'get_percentages');
                 });
+
                 Route::prefix('application')->group(function(){
-                    Route::get('/', 'User\ManageApplicationController@show_applicationPage')->name('application');
+                    Route::get('/', 'Staff\ManageApplicationController@show_applicationPage')->name('application');
                 });
                 
                 Route::name('academic-year.')->group(function(){
                     Route::prefix('academic-year')->group(function(){
-                        $year_controller = "User\ManageAcademicYearController@";
+                        $year_controller = "Staff\ManageAcademicYearController@";
 
                         Route::get('/', $year_controller . 'show_academicYearPage')->name('page');
                         Route::get('/create', $year_controller . 'show_createPage')->name('create-page');
@@ -62,7 +64,7 @@ Route::middleware('auth')->group(function(){
 
                 Route::name('partner.')->group(function(){
                     Route::prefix('partner')->group(function(){
-                        $partner_controller = 'User\ManagePartnerController@';
+                        $partner_controller = 'Staff\ManagePartnerController@';
 
                         Route::get('/', $partner_controller . 'show_partnerPage')->name('page');
                         Route::post('/major/{id}', $partner_controller . 'show_major_partners');
@@ -81,7 +83,7 @@ Route::middleware('auth')->group(function(){
 
                 Route::name('yearly-partner.')->group(function(){
                     Route::prefix('yearly-partner')->group(function(){
-                        $yPartner_controller = 'User\ManageYearlyPartnerController@';
+                        $yPartner_controller = 'Staff\ManageYearlyPartnerController@';
                         Route::get('/', $yPartner_controller . 'show_yearlyPartnerPage')->name('page');
 
                         Route::get('/create', $yPartner_controller . 'show_createPage')->name('create-page');
@@ -95,8 +97,47 @@ Route::middleware('auth')->group(function(){
                     });
                 });
 
+                Route::name('student.')->group(function(){
+                    Route::prefix('student')->group(function(){
+                        $student_controller = 'Staff\ManageStudentController@';
+                        Route::get('/', $student_controller . 'show_studentPage')->name('page');
+                        Route::post('/binusian-year/{year}', $student_controller . 'show_StudentsByYear');
+                        
+                        Route::get('/create', $student_controller . 'show_createPage')->name('create-page');
+                        Route::post('/download/batch-template', $student_controller . 'download_template')->name('download-batch-template');
+                        Route::get('/create/single', $student_controller . 'show_createSinglePage')->name('create-page-single');
+                        Route::post('/create/single/confirm', $student_controller . 'confirm_create_single')->name('create-single-confirm');
+                        Route::post('/create/single/student', $student_controller . 'create_single')->name('create-single');
+
+                        Route::get('/create/batch', $student_controller . 'show_createBatchPage')->name('create-page-batch');
+                        Route::post('/create/batch/confirm', $student_controller . 'confirm_create_batch')->name('create-batch-confirm');
+                        Route::post('/create/batch/student', $student_controller . 'create_batch')->name('create-batch');
+
+                        Route::get('/details/{user}', $student_controller . 'show_studentDetails');
+
+                        Route::post('/delete/student', $student_controller . 'delete')->name('delete');
+                    });
+                });
+
+                Route::name('yearly-student.')->group(function(){
+                    Route::prefix('yearly-student')->group(function(){
+                        $yStudent_controller = 'Staff\ManageYearlyStudentController@';
+                        Route::get('/', $yStudent_controller . 'show_yearlyStudentPage')->name('page');
+                        
+                        Route::get('/create', $yStudent_controller . 'show_createPage')->name('create-page');
+                        Route::post('/academic-year/{id}/students/{year}', $yStudent_controller . 'show_unpicked_students');
+                        Route::post('/create/confirm', $yStudent_controller . 'confirm_create')->name('create-confirm');
+                        Route::post('/create/yearly-student', $yStudent_controller . 'create')->name('create');
+
+                        Route::get('/list/{academic_year_id}', $yStudent_controller . 'show_yearlyStudentDetails')->name('details');
+
+                        Route::post('/delete/confirm/{yearly_student_id}', $yStudent_controller . 'confirm_delete');
+                        Route::post('/delete/yearly-partner', $yStudent_controller . 'delete')->name('delete');
+                    });
+                });
+
                 Route::prefix('profile')->group(function(){
-                    $profile_controller = 'User\ManageProfileController@';
+                    $profile_controller = 'ManageProfileController@';
                     Route::get('/', $profile_controller . 'show_staffProfile')->name('profile');
                     Route::get('change-pass', $profile_controller . 'show_changePass')->middleware('password.confirm')->name('change-pass-view');;
                 });
@@ -120,6 +161,6 @@ Route::middleware('auth')->group(function(){
         });
     });
     // -> Both
-    Route::post('/password/change', 'User\ManageProfileController@handle_ChangePass')
+    Route::post('/password/change', 'ManageProfileController@handle_ChangePass')
         ->middleware('changePass')->name('change-pass');
 });

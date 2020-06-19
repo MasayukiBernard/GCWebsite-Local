@@ -27,9 +27,9 @@ class StudentSeeder extends Seeder
                 'date_birth' => date('Y-m-d', mt_rand(915148800, 1586476800)),
                 'nationality' => 'Indonesian',
                 'address' =>'BINUS Street',
-                'picture_path' => '/non-public/students/pictures/Dummy_PP.png',
-                'id_card_picture_path' => '/non-public/students/ids/dummy_flazz.jpg',
-                'flazz_card_picture_path' => '/non-public/students/national_ids/dummy_e-ktp.jpg',
+                'picture_path' => 'students\pictures\Dummy_PP.png',
+                'id_card_picture_path' => 'students\national_ids\dummy_e-ktp.jpg',
+                'flazz_card_picture_path' => 'students\ids\dummy_flazz.jpg',
                 'binusian_year' => 2021,
             ]);
         }
