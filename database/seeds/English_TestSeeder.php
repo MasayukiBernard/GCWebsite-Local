@@ -22,7 +22,7 @@ class English_TestSeeder extends Seeder
                 'test_type' => $type[$i-1],
                 'score' => $score[$i-1],
                 'test_date' => $date[$i-1],
-                'proof_path' => '/non-public/students/english_tests/' . $path[$i-1]
+                'proof_path' => 'students\english_tests\\' . $path[$i-1]
             ]);
         }
     }
