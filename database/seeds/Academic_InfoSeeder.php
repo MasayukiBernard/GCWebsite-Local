@@ -22,7 +22,7 @@ class Academic_InfoSeeder extends Seeder
                 'class' => 'Global Class',
                 'semester' => $semester[$i-1],
                 'gpa' => 2.25,
-                'gpa_proof_path' => '/non-public/students/gpa_transcripts/dummy_gpa.png'
+                'gpa_proof_path' => 'students\gpa_transcripts\dummy_gpa.png'
             ]);
         }
     }
