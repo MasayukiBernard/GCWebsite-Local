@@ -46,14 +46,14 @@ class User extends Authenticatable
             return $this->hasOne('App\Student');
         }
         else{
-            // Raise exception or any error message that this method is not allowed
+            abort(404);
         }
     }
     public function staff(){
         if($this->is_staff){
             return $this->hasOne('App\Staff');
         }else{
-            // Raise exception or any error message that this method is not allowed
+            abort(404);
         }
     }
 }
