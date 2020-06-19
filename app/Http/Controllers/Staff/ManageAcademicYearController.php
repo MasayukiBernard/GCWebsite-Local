@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Staff;
 
 use App\Academic_Year;
 use App\Http\Controllers\Controller;
