@@ -39,6 +39,15 @@ class ManageYearlyStudentController extends Controller
         ]);
     }
 
+    public function show_csaFormsPage($yearly_student_id){
+        $yearly_student = Yearly_Student::where('id', $yearly_student_id)->first();
+        if($yearly_student == null){
+            abort(404);
+        }
+
+        return view('staff_side\yearly_student\csa-forms', ['yearly_student' => $yearly_student]);
+    }
+
     public function show_createPage(){
         return view('staff_side\yearly_student\create', [
             'academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get(),

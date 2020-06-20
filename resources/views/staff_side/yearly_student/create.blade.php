@@ -94,6 +94,9 @@ Yearly Student
         var enrolling_students = [];
 
         function get_students(academic_year_id, binusian_year){
+            $('#available_students_list').empty();
+            $('#enrolling_students_list').empty();
+            $('#enrolling_students_list').append("<li class=\"list-group-item\"> No Data Yet </li>");
             if(academic_year_id != " " && binusian_year != " "){
                 $('#pre_students_query_alert').empty();
                 var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
@@ -124,10 +127,7 @@ Yearly Student
                 });
             }
             else{
-                $('#available_students_list').empty();
                 $('#available_students_list').append("<li class=\"list-group-item\"> No Data Yet </li>");
-                $('#enrolling_students_list').empty();
-                $('#enrolling_students_list').append("<li class=\"list-group-item\"> No Data Yet </li>");
                 if (academic_year_id == " " && binusian_year == " "){
                     $('#pre_students_query_alert').text("Note: Pick an academic year and a binusian year!!");
                 }

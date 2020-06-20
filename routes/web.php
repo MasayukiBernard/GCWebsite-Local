@@ -35,17 +35,15 @@ Route::middleware('auth')->group(function(){
     });
     // -> Staff Users
     Route::middleware('staff')->group(function(){
+
         Route::resource('photos', 'Staff\PhotoController');
+
         Route::name('staff.')->group(function(){
             Route::prefix('staff')->group(function(){
                 Route::prefix('home')->group(function(){
                     $home_controller = 'HomeController@';
                     Route::get('/', $home_controller . 'staff_index')->name('home');
                     Route::post('/academic-year/{id}', $home_controller . 'get_percentages');
-                });
-
-                Route::prefix('application')->group(function(){
-                    Route::get('/', 'Staff\ManageApplicationController@show_applicationPage')->name('application');
                 });
                 
                 Route::name('academic-year.')->group(function(){
@@ -130,9 +128,19 @@ Route::middleware('auth')->group(function(){
                         Route::post('/create/yearly-student', $yStudent_controller . 'create')->name('create');
 
                         Route::get('/list/{academic_year_id}', $yStudent_controller . 'show_yearlyStudentDetails')->name('details');
+                        Route::get('/csa-forms/{yearly_student_id}', $yStudent_controller . 'show_csaFormsPage');
 
                         Route::post('/delete/confirm/{yearly_student_id}', $yStudent_controller . 'confirm_delete');
                         Route::post('/delete/yearly-partner', $yStudent_controller . 'delete')->name('delete');
+                    });
+                });
+
+                Route::name('csa-forms.')->group(function(){
+                    Route::prefix('csa-forms')->group(function(){
+                        $csa_form_controller = 'Staff\ManageCSAFormController@';
+
+                        Route::get('/', $csa_form_controller . 'show_page')->name('page');
+                        Route::get('/details/{csa_form_id}', $csa_form_controller . 'show_detailsPage')->name('details');
                     });
                 });
 

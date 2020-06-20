@@ -20,6 +20,7 @@
                                     <th scope="col">Name</th>
                                     <th scope="col">Major</th>
                                     <th scope="col">Nationality</th>
+                                    <th scope="col">Nominated</th>
                                     <th scope="col">Delete</th>
                                 </tr>
                               </thead>
@@ -27,12 +28,13 @@
                                 <?php $i=0;?>
                                 @foreach ($yearly_students as $yearly_student)
                                     <tr>
-                                        <th style="cursor: pointer;" onclick="window.location.assign('/staff/student/details/{{$yearly_student->student->user->id}}')" scope="row">{{++$i}}</th>
-                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/student/details/{{$yearly_student->student->user->id}}')">{{$yearly_student->student->nim}}</td>
-                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/student/details/{{$yearly_student->student->user->id}}')">{{$yearly_student->student->user->name}}</td>
-                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/student/details/{{$yearly_student->student->user->id}}')">{{$yearly_student->student->major->name}}</td>
-                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/student/details/{{$yearly_student->student->user->id}}')">{{$yearly_student->student->nationality}}</td>
-                                        <td><button type="button" class="btn btn-danger position-relative" onclick="deleteYearlyStudent({{$yearly_student->id}})">Delete</button></td>
+                                        <th style="cursor: pointer;" onclick="window.location.assign('/staff/yearly-student/csa-forms/{{$yearly_student->id}}');" scope="row">{{++$i}}</th>
+                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/yearly-student/csa-forms/{{$yearly_student->id}}');">{{$yearly_student->student->nim}}</td>
+                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/yearly-student/csa-forms/{{$yearly_student->id}}');">{{$yearly_student->student->user->name}}</td>
+                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/yearly-student/csa-forms/{{$yearly_student->id}}');">{{$yearly_student->student->major->name}}</td>
+                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/yearly-student/csa-forms/{{$yearly_student->id}}');">{{$yearly_student->student->nationality}}</td>
+                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/yearly-student/csa-forms/{{$yearly_student->id}}');">{{$yearly_student->is_nominated ? "Yes" : "No"}}</td>
+                                        <td><button type="button" class="btn btn-danger position-relative" onclick="deleteYearlyStudent({{$yearly_student->id}});">Delete</button></td>
                                     </tr>
                                 @endforeach
                             </tbody>
