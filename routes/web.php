@@ -60,6 +60,16 @@ Route::middleware('auth')->group(function(){
                     });
                 });
 
+                Route::name('major.')->group(function(){
+                    Route::prefix('major')->group(function(){
+                        $major_controller = 'Staff\ManageMajorController@';
+
+                        Route::get('/', $major_controller . 'show_majorPage')->name('page');
+                        Route::post('/create', $major_controller . 'show_createPage')->name('create-page');
+
+                    });
+                });
+
                 Route::name('partner.')->group(function(){
                     Route::prefix('partner')->group(function(){
                         $partner_controller = 'Staff\ManagePartnerController@';

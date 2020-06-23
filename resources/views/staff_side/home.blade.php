@@ -20,15 +20,30 @@
                         <h5 class="card-title">You are logged in as a Staff!</h5>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">
+                                Major:
+                                <div class="btn-group">
+                                    <button type="button" id="major_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        @foreach ($majors as $major)
+                                            <a id="major_{{$major->id}}" class="dropdown-item" style="cursor: pointer" 
+                                                onclick="get_percentages({{$major->id}})">
+                                                {{$major->name}}
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
                                 Academic Year:
                                 <div class="btn-group">
                                     <button type="button" id="academic_year_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     </button>
                                     <div class="dropdown-menu">
-                                        @foreach ($academic_years as $year)
-                                            <a id="year_{{$year->id}}" class="dropdown-item" style="cursor: pointer" 
-                                                onclick="get_percentages({{$year->id}})">
-                                                {{$year->starting_year}}/{{$year->ending_year}} - {{$year->odd_semester ? 'Odd' : 'Even'}}
+                                        @foreach ($academic_years as $academic_year)
+                                            <a id="year_{{$academic_year->id}}" class="dropdown-item" style="cursor: pointer" 
+                                                onclick="get_percentages({{$academic_year->id}})">
+                                                {{$academic_year->starting_year}}/{{$academic_year->ending_year}} - {{$academic_year->odd_semester == true ? 'Odd' : 'Even'}}
                                             </a>
                                         @endforeach
                                     </div>
