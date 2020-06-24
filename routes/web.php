@@ -140,7 +140,12 @@ Route::middleware('auth')->group(function(){
                         $csa_form_controller = 'Staff\ManageCSAFormController@';
 
                         Route::get('/', $csa_form_controller . 'show_page')->name('page');
+                        Route::get('/academic-year/{academic_year_id}/major/{major_id}', $csa_form_controller . 'get_CSAForms');
+
                         Route::get('/details/{csa_form_id}', $csa_form_controller . 'show_detailsPage')->name('details');
+                        Route::post('/{csa_form_id}/choice/{choice_id}/confirm-nomination', $csa_form_controller . 'confirm_nomination');
+                        Route::post('/nominate/csa_forms', $csa_form_controller . 'nominate')->name('nominate');
+                        Route::post('/{csa_form_id}/cancel-nomination', $csa_form_controller . 'cancel_nomination')->name('cancel-nomination');
                     });
                 });
 

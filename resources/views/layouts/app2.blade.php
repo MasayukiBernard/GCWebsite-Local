@@ -61,8 +61,8 @@
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('staff.application') }}">
-                                    View Application
+                                <a class="nav-link" href="{{ route('staff.csa-forms.page') }}">
+                                    CSA Application Forms
                                 </a>
                             </li>
                             @else
