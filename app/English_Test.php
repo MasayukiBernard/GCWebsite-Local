@@ -10,6 +10,9 @@ class English_Test extends Model
     protected $primaryKey = 'csa_form_id';
     public $incrementing = false;
 
+    // not to use the convention table
+    protected $table = 'english_tests';
+
     protected $guarded = ['csa_form_id', 'proof_path'];
 
     // Relationships
