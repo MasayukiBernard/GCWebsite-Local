@@ -19,4 +19,9 @@ class Yearly_Partner extends Model
      public function partner(){
           return $this->belongsTo('App\Partner');
      }
+
+     // Has Many Relationship
+     public function choices(){
+          return $this->hasMany('App\Choice', 'yearly_partner_id');
+     }
 }
