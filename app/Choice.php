@@ -16,4 +16,7 @@ class Choice extends Model
     public function csa_form(){
         return $this->belongsTo('App\CSA_Form', 'csa_form_id');
     }
+    public function yearly_partner(){
+        return $this->belongsTo('App\Yearly_Partner', 'yearly_partner_id');
+    }
 }
