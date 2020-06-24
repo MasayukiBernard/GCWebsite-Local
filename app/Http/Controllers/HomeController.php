@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Academic_Year;
+use App\Major;
 use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
@@ -24,11 +25,30 @@ class HomeController extends Controller
      */
 
     public function staff_index(){
-        return view('staff_side\home', ['academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get()]);
+        return view('staff_side\home', ['academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get(), 'majors'=> Major::orderBy('id')]);
     }
     
     public function student_index(){
         return view('student_side\home');
+    }
+
+    public function chartTest(){
+        $users = User::where(DB::raw("(DATE_FORMAT(created_at,'%Y'))"),date('Y'))
+    				->get();
+        $chart = Charts::database($users, 'bar', 'highcharts')
+			      ->title("Monthly new Register Users")
+			      ->elementLabel("Total Users")
+			      ->dimensions(1000, 500)
+			      ->responsive(false)
+			      ->groupByMonth(date('Y'), true);
+
+		$pie  =	 Charts::create('pie', 'highcharts')
+				    ->title('My nice chart')
+				    ->labels(['First', 'Second', 'Third'])
+				    ->values([5,10,20])
+				    ->dimensions(1000,500)
+				    ->responsive(false);
+        return view('chart',compact('chart','pie'));
     }
 
     public function get_percentages($id){

@@ -11,7 +11,7 @@
                 <div class="card">
                     <div class="card-header h2">Master Major</div>
                     <div class="card-body">
-                    <a class="btn btn-success text-light" role="button" href={{route('staff.major-create-page')}}>Add New Major</a>
+                    <a class="btn btn-success text-light" role="button" href={{route('staff.major.create-page')}}>Add New Major</a>
                     <table class="table table-striped table-bordered table-hover">
                             <thead>
                                 <tr>
@@ -25,19 +25,15 @@
                                     <th>{{$major->id}}</th>
                                     <th>{{$major->name}}</th>
                                     <th>
-                                        <a class="btn btn-primary text-light" role="button" href={{route('staff.major-edit-page', ['major' => $major])}}>Edit</a>
+                                        <a class="btn btn-primary text-light" role="button" href={{route('staff.major.edit-page', ['major' => $major])}}>Edit</a>
                                     </th>
                                     <th>
-                                        <a class="btn btn-danger text-light" role="button" onclick="document.getElementById('delete-form').submit();">Delete</a>
+                                        <a class="btn btn-danger text-light" role="button" href="staff/major/delete/{{$major->id}}">Delete</a>
                                     </th>
                                 </tr>
                                 @endforeach
                             </tbody>                         
                         </table>
-                        <form id="delete-form" method="POST" action={{route('staff.major-delete')}}>
-                            @csrf
-                            <input type="hidden" name="major-id" value="{{$major->id}}">
-                        </form>
                     </div>
                 </div>
             </div>

@@ -5,7 +5,7 @@
 @endsection
 
 @section('form-action')
-    /staff/major/create/master-major
+    {{route('staff.major.create')}}
 @endsection
 
 @section('form-inputs')

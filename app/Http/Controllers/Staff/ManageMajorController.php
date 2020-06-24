@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,11 +10,10 @@ use App\Major;
 class ManageMajorController extends Controller{
 
 
-    private function create_new_major($name){
+    private function model_assignment($major, $inputted_data){
 
-        $major = new Major();
         $major->id = $major->id;
-        $major->name = $name;
+        $major->name = $inputted_data['name'];
         $major->save();
     }
 
@@ -28,6 +27,28 @@ class ManageMajorController extends Controller{
 
     public function show_createPage(){
         return view('staff_side\master_major\create');
+    }
+
+    public function create(){
+        $inputted_major = session('inputted_major');
+        $major = new Major;
+        $this->model_assignment($major , $inputted_major);
+        session()->forget(['inputted_major']);
+        return redirect('staff_side\master_major\view');
+
+    }
+
+
+    public function show_editPage(){
+        return view('staff_side\master_major\edit');
+    }
+
+    public function delete($id){
+        $major = Major::find($id);
+        $data = [
+            'major' => $major,
+        ];
+        return view('staff_side\master_major\view', $data);
     }
 
 }

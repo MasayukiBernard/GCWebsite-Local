@@ -65,8 +65,19 @@ Route::middleware('auth')->group(function(){
                         $major_controller = 'Staff\ManageMajorController@';
 
                         Route::get('/', $major_controller . 'show_majorPage')->name('page');
-                        Route::post('/create', $major_controller . 'show_createPage')->name('create-page');
+                        Route::get('/create', $major_controller . 'show_createPage')->name('create-page');
+                        Route::post('create/master-major', $major_controller . 'create')->name('create');
+                        Route::get('/edit/{major}' , $major_controller . 'show_editPage')->name('edit-page');
+                        Route::get('/delete/{id}', $major_controller . 'delete')->name('delete');
 
+                    });
+                });
+
+                Route::name('application.')->group(function(){
+                    Route::prefix('application')->group(function(){
+                        $application_controller = 'Staff\ManageApplicationController@';
+
+                        Route::get('/', $application_controller . 'show_applicationPage')->name('page');
                     });
                 });
 

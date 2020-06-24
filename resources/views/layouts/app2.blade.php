@@ -39,13 +39,20 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('staff.partner.page') }}">
-                                    Partner
-                                </a>
+                                <div class="nav-link dropdown show">
+                                    <a class="text-decoration-none text-secondary dropdown-toggle" style="cursor: pointer;" role="button" id="partnerDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Partner
+                                    </a>
+                                  
+                                    <div class="dropdown-menu" aria-labelledby="partnerDropdown">
+                                        <a class="dropdown-item" href="{{route('staff.partner.page')}}">Master Major</a>
+                                        <a class="dropdown-item" href="{{route('staff.yearly-partner.page')}}">Yearly Partner</a>
+                                    </div>
+                                </div>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('staff.yearly-partner.page') }}">
-                                    Yearly Partner
+                                <a class="nav-link" href="{{ route('staff.major.page') }}">
+                                    Major
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -61,7 +68,7 @@
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('staff.application') }}">
+                                <a class="nav-link" href="{{ route('staff.application.page') }}">
                                     View Application
                                 </a>
                             </li>
