@@ -22,7 +22,7 @@ class CreateEnglishTestsTable extends Migration
                 ->onUpdate('cascade')
                 ->primary();
             $table->char('test_type', 5);
-            $table->decimal('score', 8, 4, true);
+            $table->decimal('score', 8, 1, true);
             $table->date('test_date');
             $table->string('proof_path', 100);
             $table->timestamps();
