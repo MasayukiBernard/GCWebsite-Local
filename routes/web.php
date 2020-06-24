@@ -73,14 +73,6 @@ Route::middleware('auth')->group(function(){
                     });
                 });
 
-                Route::name('application.')->group(function(){
-                    Route::prefix('application')->group(function(){
-                        $application_controller = 'Staff\ManageApplicationController@';
-
-                        Route::get('/', $application_controller . 'show_applicationPage')->name('page');
-                    });
-                });
-
                 Route::name('partner.')->group(function(){
                     Route::prefix('partner')->group(function(){
                         $partner_controller = 'Staff\ManagePartnerController@';
