@@ -17,6 +17,7 @@ class EmergencySeeder extends Seeder
             'csa_form_id' => $i,
             'gender' => 'F',
             'name' => 'Student_1\'s mom',
+            'relationship' => 'Mother',
             'address' => 'somewhere street',
             'mobile' => '8120000000123',
             'telp_num' => '21012345678987',

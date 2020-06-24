@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Academic_Year extends Model
 {
-    // not to use the convention table 'CSA_Forms'
+    // not to use the convention table
     protected $table = 'academic_years';
 
     protected $guarded = [];

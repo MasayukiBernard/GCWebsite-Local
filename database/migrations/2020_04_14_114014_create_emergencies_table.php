@@ -23,6 +23,7 @@ class CreateEmergenciesTable extends Migration
                 ->primary();
             $table->char('gender', 1);
             $table->string('name', 75);
+            $table->string('relationship', 20);
             $table->string('address', 200);
             $table->char('mobile', 13);
             $table->char('telp_num', 14);
