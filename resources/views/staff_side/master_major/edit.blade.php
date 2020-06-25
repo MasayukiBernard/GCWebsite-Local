@@ -10,14 +10,14 @@
         <tbody>
             <tr>
                 <th scope="row">Major Name</th>
-                <td>{{$major->name}}</td>
+                <td>{{$referred_major->name}}</td>
             </tr>
             </tbody>
     </table>
 @endsection
 
 @section('form-action')
-    {{route('staff.major.update')}}
+    {{route('staff.major.update-confirm')}}
 @endsection
 
 
@@ -27,7 +27,7 @@
             <tr>
                 <th scope="row">Major Name</th>
                 <td>
-                    <input type="text" name="major-name" class="@error('major-name') is-invalid @enderror" value="{{$major->name}}"><br>
+                    <input type="text" name="major-name" class="@error('major-name') is-invalid @enderror" value="{{old('major-name') == null ? $referred_major->name : old('major-name')}}"><br>
                     @error('major-name')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
@@ -35,7 +35,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <input class="btn btn-primary btn-block" type="submit" value="Update Major">
+                    <input class="btn btn-primary btn-block" type="submit" value="Confirm Update Major">
                 </td>
             </tr>
         </tbody>

@@ -5,7 +5,7 @@
 @endsection
 
 @section('form-action')
-    {{route('staff.major.create')}}
+    {{route('staff.major.create-confirm')}}
 @endsection
 
 @section('form-inputs')
@@ -15,4 +15,8 @@
     @error('major-name')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
+@endsection
+
+@section('confirm-value')
+Master Major
 @endsection
