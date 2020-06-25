@@ -45,7 +45,7 @@
                                     </a>
                                   
                                     <div class="dropdown-menu" aria-labelledby="partnerDropdown">
-                                        <a class="dropdown-item" href="{{route('staff.partner.page')}}">Master Major</a>
+                                        <a class="dropdown-item" href="{{route('staff.partner.page')}}">Master Partner</a>
                                         <a class="dropdown-item" href="{{route('staff.yearly-partner.page')}}">Yearly Partner</a>
                                     </div>
                                 </div>

@@ -15,6 +15,4 @@
     @error('major-name')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
-
-    <input class="btn btn-success" type="submit" value="Add to Master Major">
 @endsection

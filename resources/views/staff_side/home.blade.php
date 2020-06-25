@@ -25,12 +25,13 @@
                                     <button type="button" id="major_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     </button>
                                     <div class="dropdown-menu">
-                                        @foreach ($majors as $major)
-                                            <a id="major_{{$major->id}}" class="dropdown-item" style="cursor: pointer" 
-                                                onclick="get_percentages({{$major->id}})">
+                                        @isset ($majors)
+                                            @foreach ($majors as $major)
+                                                <a id="major_{{$major->id}}" class="dropdown=item" style="cursor: pointer">
                                                 {{$major->name}}
-                                            </a>
-                                        @endforeach
+                                                </a>
+                                            @endforeach
+                                        @endisset
                                     </div>
                                 </div>
                             </li>
@@ -86,6 +87,8 @@
     data from the server without refreshing the page.
 
 --}}
+
+
 @push('scripts')
     <script>
         function get_percentages(academic_year_id){

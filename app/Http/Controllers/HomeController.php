@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Academic_Year;
+use App\Major;
+use App\Charts\CSAChart;
+
+
 
 class HomeController extends Controller
 {
+
     private function count_percentages($id, $responseType){
         $academic_year = Academic_Year::where('id', $id)->first();
         if($academic_year != null){
@@ -47,7 +52,10 @@ class HomeController extends Controller
     }
 
     public function staff_index(){
+        
+        $majors = Major::orderBy('id')->get();
         $academic_years = Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get();
+
 
         if($academic_years->count() > 0){
             $initial_percentages = $this->count_percentages($academic_years->first()->id, "HTML5");
@@ -61,30 +69,11 @@ class HomeController extends Controller
         }
         return view('staff_side\home', [
             'failed' => true
-        ]);
+        ], compact('majors', 'academic_years'));
     }
     
     public function student_index(){
         return view('student_side\home');
-    }
-
-    public function chartTest(){
-        $users = User::where(DB::raw("(DATE_FORMAT(created_at,'%Y'))"),date('Y'))
-    				->get();
-        $chart = Charts::database($users, 'bar', 'highcharts')
-			      ->title("Monthly new Register Users")
-			      ->elementLabel("Total Users")
-			      ->dimensions(1000, 500)
-			      ->responsive(false)
-			      ->groupByMonth(date('Y'), true);
-
-		$pie  =	 Charts::create('pie', 'highcharts')
-				    ->title('My nice chart')
-				    ->labels(['First', 'Second', 'Third'])
-				    ->values([5,10,20])
-				    ->dimensions(1000,500)
-				    ->responsive(false);
-        return view('chart',compact('chart','pie'));
     }
 
     public function get_percentages($id){

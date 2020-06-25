@@ -37,7 +37,15 @@ class ManageMajorController extends Controller{
         return redirect('staff_side\master_major\view');
 
     }
+    
+    public function update($id){
+        $major = Major::find($id);
 
+        $data = [
+            'major' => $major,
+        ];
+        return view('staff_side\master_major\edit', $data);
+    }
 
     public function show_editPage(){
         return view('staff_side\master_major\edit');

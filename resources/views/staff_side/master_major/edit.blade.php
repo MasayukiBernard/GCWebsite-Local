@@ -4,9 +4,6 @@
     Major
 @endsection
 
-@section('form-action')
-    {{route('staff.major-update')}}
-@endsection
 
 @section('old-data')
     <table class="table table-bordered">
@@ -18,6 +15,11 @@
             </tbody>
     </table>
 @endsection
+
+@section('form-action')
+    {{route('staff.major.update')}}
+@endsection
+
 
 @section('form-inputs')
     <table class="table table-bordered">
