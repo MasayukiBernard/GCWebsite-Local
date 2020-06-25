@@ -38,24 +38,36 @@
                                 Academic Year:
                                 <div class="btn-group">
                                     <button type="button" id="academic_year_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        @isset($initial_percentages)
+                                            {{$initial_percentages['year']}}
+                                        @endisset
                                     </button>
                                     <div class="dropdown-menu">
-                                        @foreach ($academic_years as $academic_year)
-                                            <a id="year_{{$academic_year->id}}" class="dropdown-item" style="cursor: pointer" 
-                                                onclick="get_percentages({{$academic_year->id}})">
-                                                {{$academic_year->starting_year}}/{{$academic_year->ending_year}} - {{$academic_year->odd_semester == true ? 'Odd' : 'Even'}}
-                                            </a>
-                                        @endforeach
+                                        @isset ($academic_years)
+                                            @foreach ($academic_years as $year)
+                                                <a id="year_{{$year->id}}" class="dropdown-item" style="cursor: pointer" 
+                                                    onclick="get_percentages({{$year->id}})">
+                                                    {{$year->starting_year}}/{{$year->ending_year}} - {{$year->odd_semester ? 'Odd' : 'Even'}}
+                                                </a>
+                                            @endforeach
+                                        @endisset
                                     </div>
                                 </div>
                             </li>
                             <li class="list-group-item">
-                                <div class="card-text">
-                                    CSA Form Submission Percentage: <span id="csa_percentage"></span>
-                                </div>
-                                <div class="card-text">
-                                    Nominated Student Percentage: <span id="nominated_percentage"></span>
-                                </div>
+                                @isset($initial_percentages)
+                                    <div class="card-text">
+                                        CSA Form Submission Percentage: <span id="csa_percentage">{{$initial_percentages['submitted_percentage']}}%</span>
+                                    </div>
+                                    <div class="card-text">
+                                        Nominated Student Percentage: <span id="nominated_percentage">{{$initial_percentages['nominated_percentage']}}%</span>
+                                    </div>
+                                @endisset
+                                @isset($failed)
+                                    <div class="card-text text-danger">
+                                        No academic year data yet!!
+                                    </div>
+                                @endisset
                             </li>
                         </ul>
                     </div>
