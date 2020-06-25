@@ -8,7 +8,7 @@ use PDO;
 
 class EnsureChangePass
 {
-    // To ensure that user must always use route('student/staff.change-pass-view') before doing a POST
+    // To ensure that user must always use route('[student|staff]/staff.change-pass-page') before doing a POST
     // for password change. Prevent unauthenticated users to change pass.
     // when this is middleware is used, CSRF middleware must had already been applied
     /**
@@ -21,8 +21,8 @@ class EnsureChangePass
     public function handle($request, Closure $next)
     {
         $prevURL = url()->previous();
-        $staffViewRoute = route('staff.change-pass-view');
-        $studentViewRoute = route('student.change-pass-view');
+        $staffViewRoute = route('staff.change-pass-page');
+        $studentViewRoute = route('student.change-pass-page');
         if(Auth::user()->is_staff){
             if($prevURL !== $staffViewRoute){
                 return redirect ($staffViewRoute);

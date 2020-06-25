@@ -152,7 +152,12 @@ Route::middleware('auth')->group(function(){
                 Route::prefix('profile')->group(function(){
                     $profile_controller = 'ManageProfileController@';
                     Route::get('/', $profile_controller . 'show_staffProfile')->name('profile');
-                    Route::get('change-pass', $profile_controller . 'show_changePass')->middleware('password.confirm')->name('change-pass-view');;
+
+                    Route::get('/change-pass', $profile_controller . 'show_changePass')->middleware('password.confirm')->name('change-pass-page');
+
+                    Route::get('/edit', $profile_controller . 'show_editPage')->name('profile-edit-page');
+                    Route::post('/edit/confirm', $profile_controller . 'confirm_edit')->name('profile-edit-confirm');
+                    Route::post('/edit/user', $profile_controller . 'update')->name('profile-edit');
                 });
             });
         });
@@ -165,7 +170,7 @@ Route::middleware('auth')->group(function(){
                 Route::prefix('profile')->group(function(){
                     $profile_controller = 'User\ManageProfileController@';
                     Route::get('/', $profile_controller . 'show_studentProfile')->name('profile');
-                    Route::get('change-pass', $profile_controller . 'show_changePass')->middleware('password.confirm')->name('change-pass-view');
+                    Route::get('change-pass', $profile_controller . 'show_changePass')->middleware('password.confirm')->name('change-pass-page');
                 });
                 Route::prefix('csaform')->group(function(){
                     Route::get('/', 'User\ManageCSAFormController@show_csaFormPage')->name('csaform');
