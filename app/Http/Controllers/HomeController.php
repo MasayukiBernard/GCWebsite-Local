@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Academic_Year;
+use App\Major;
+use App\Charts\CSAChart;
+
+
 
 class HomeController extends Controller
 {
+
     private function count_percentages($id, $responseType){
         $academic_year = Academic_Year::where('id', $id)->first();
         if($academic_year != null){
@@ -47,7 +52,10 @@ class HomeController extends Controller
     }
 
     public function staff_index(){
+        
+        $majors = Major::orderBy('id')->get();
         $academic_years = Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get();
+
 
         if($academic_years->count() > 0){
             $initial_percentages = $this->count_percentages($academic_years->first()->id, "HTML5");
@@ -61,7 +69,7 @@ class HomeController extends Controller
         }
         return view('staff_side\home', [
             'failed' => true
-        ]);
+        ], compact('majors', 'academic_years'));
     }
     
     public function student_index(){

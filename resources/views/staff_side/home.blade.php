@@ -20,6 +20,22 @@
                         <h5 class="card-title">You are logged in as a Staff!</h5>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">
+                                Major:
+                                <div class="btn-group">
+                                    <button type="button" id="major_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        @isset ($majors)
+                                            @foreach ($majors as $major)
+                                                <a id="major_{{$major->id}}" class="dropdown=item" style="cursor: pointer">
+                                                {{$major->name}}
+                                                </a>
+                                            @endforeach
+                                        @endisset
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
                                 Academic Year:
                                 <div class="btn-group">
                                     <button type="button" id="academic_year_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -71,6 +87,8 @@
     data from the server without refreshing the page.
 
 --}}
+
+
 @push('scripts')
     <script>
         function get_percentages(academic_year_id){

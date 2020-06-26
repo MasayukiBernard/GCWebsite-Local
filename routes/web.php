@@ -60,6 +60,26 @@ Route::middleware('auth')->group(function(){
                     });
                 });
 
+                Route::name('major.')->group(function(){
+                    Route::prefix('major')->group(function(){
+                        $major_controller = 'Staff\ManageMajorController@';
+
+                        Route::get('/', $major_controller . 'show_majorPage')->name('page');
+
+                        Route::get('/create', $major_controller . 'show_createPage')->name('create-page');
+                        Route::post('/create/confirm', $major_controller . 'confirm_create')->name('create-confirm');
+                        Route::post('/create/master-major', $major_controller . 'create')->name('create');
+
+                        Route::get('/edit/{major}' , $major_controller . 'show_editPage')->name('edit-page');
+                        Route::post('update/confirm', $major_controller . 'confirm_update')->name('update-confirm');
+                        Route::post('/update/master-major', $major_controller . 'update')->name('update');
+
+                        Route::post('/delete/confirm/{major_id}', $major_controller . 'confirm_delete');
+                        Route::post('/delete/major', $major_controller . 'delete')->name('delete');
+
+                    });
+                });
+
                 Route::name('partner.')->group(function(){
                     Route::prefix('partner')->group(function(){
                         $partner_controller = 'Staff\ManagePartnerController@';
