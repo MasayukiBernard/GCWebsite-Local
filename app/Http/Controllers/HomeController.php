@@ -53,7 +53,7 @@ class HomeController extends Controller
 
     public function staff_index(){
         
-        $majors = Major::orderBy('id')->get();
+        $majors = Major::orderBy('name')->get();
         $academic_years = Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get();
 
 
@@ -63,39 +63,63 @@ class HomeController extends Controller
             if(strcmp(gettype($initial_percentages), "array") === 0){
                 return view('staff_side\home', [
                     'academic_years' => $academic_years,
-                    'initial_percentages' => $initial_percentages
+                    'majors' => $majors,
+                    'initial_percentages' => $initial_percentages,
                 ]);
             }
         }
         return view('staff_side\home', [
-            'failed' => true
-        ], compact('majors', 'academic_years'));
+            'failed' => true,
+        ]);
     }
     
     public function student_index(){
         return view('student_side\home');
     }
 
-    public function get_percentages($id){
-        // Submitted CSA Form and Nominated Student percentage per Academic Year
-        $academic_year = Academic_Year::where('id', $id)->first();
+    public function get_percentages($major_id, $academic_year_id){
+        // Submitted CSA Form and Nominated Student percentage per Academic Year by Major Type
+        $major = Major::where('id', $major_id)->first();
+        $academic_year = Academic_Year::where('id', $academic_year_id)->first();
         if($academic_year != null){
             $yearly_students = $academic_year->yearly_students;
-            $total_student = $yearly_students->count();
+            $total_student = 0;
+            if($major_id == 0){
+                $total_student = $yearly_students->count();
+            }
             $is_submitted = 0;
             $is_nominated = 0;
-            foreach($yearly_students as $yearly_student){
-                if($yearly_student->csa_form != null && $yearly_student->csa_form->is_submitted == true){
-                    $is_submitted++;
-                }
-                if($yearly_student->is_nominated){
-                    $is_nominated++;
+
+            if($major_id > 0){
+                foreach($yearly_students as $yearly_student){
+                    if($yearly_student->student->major->id == $major_id){
+                        ++$total_student;
+
+                        if($yearly_student->csa_form != null && $yearly_student->csa_form->is_submitted == true){
+                            $is_submitted++;
+                        }
+                        if($yearly_student->is_nominated){
+                            $is_nominated++;
+                        }
+                    }
+                }    
+            }
+            else if ($major_id == 0){
+                foreach($yearly_students as $yearly_student){
+                    if($yearly_student->csa_form != null && $yearly_student->csa_form->is_submitted == true){
+                        $is_submitted++;
+                    }
+                    if($yearly_student->is_nominated){
+                        $is_nominated++;
+                    }
                 }
             }
+
             return response()->json([
                 'submitted_csa_forms' => $is_submitted,
                 'total_yearly_students' => $total_student,
-                'nominated_students' =>$is_nominated
+                'nominated_students' =>$is_nominated,
+                'empty' => false
             ]);
         }
         else{

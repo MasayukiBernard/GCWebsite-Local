@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function(){
                 Route::prefix('home')->group(function(){
                     $home_controller = 'HomeController@';
                     Route::get('/', $home_controller . 'staff_index')->name('home');
-                    Route::post('/academic-year/{id}', $home_controller . 'get_percentages');
+                    Route::post('/major/{major_id}/academic-year/{academic_year_id}', $home_controller . 'get_percentages');
                 });
                 
                 Route::name('academic-year.')->group(function(){
