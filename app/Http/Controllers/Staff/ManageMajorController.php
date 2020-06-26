@@ -56,6 +56,7 @@ class ManageMajorController extends Controller{
     public function update(){
         $inputted_major = session('inputted_major');
         $major = Major::where('id', session('referred_major_id'))->first();
+        
         if($major != null){
             $this->model_assignment($major, $inputted_major);
             session()->forget(['inputted_major', 'referred_major_id']);
@@ -64,6 +65,7 @@ class ManageMajorController extends Controller{
     }
 
     public function show_editPage(Major $major){
+        Session()->put('referred_major_id', $major->id);
         return view('staff_side\master_major\edit', ['referred_major' => $major]);
     }
 
