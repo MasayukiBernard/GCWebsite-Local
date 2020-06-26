@@ -28,9 +28,7 @@
                                         <a class="btn btn-primary text-light" role="button" href={{route('staff.major.edit-page', ['major' => $major])}}>Edit</a>
                                     </th>
                                     <th>
-                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
-                                            Delete
-                                        </button>
+                                    <button type="button" class="btn btn-danger" onclick="deleteMajor({{$major->id}});">Delete</button>
                                     </th>
                                 </tr>
                                 @endforeach
@@ -42,27 +40,55 @@
         </div>
     </div>
 
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Confirm delete</h5>
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="deleteLabel"></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
+                </div>
+                <div id="popup_body" class="modal-body">
+                </div>
+                <div id="popup_footer" class="modal-footer">
+                </div>
             </div>
-            <div class="modal-body">
-                Confirm the deletion of '{{$referred_major->name}}' data!!
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" onclick="document.getElementById('delete-form').submit();">Confirm</button>
-            </div>
-        </div>
         </div>
     </div>
-    <form id="delete-form" method="POST" action={{route('staff.major.delete')}}>
+
+    <form id="delete_form" method="POST" action="{{route('staff.major.delete')}}">
         @csrf
     </form>
-
 @endsection
+
+@push('scripts')
+    <script>
+        function deleteMajor(major_id){
+            var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            var targetURL = '/staff/major/delete/confirm/' + major_id;
+            $.ajax({
+                type: 'POST',
+                url: targetURL,
+                data: {_token: CSRF_TOKEN},
+                dataType: 'JSON',
+                success: function(response_data){
+                    if(response_data['failed'] == null){
+                        var data = response_data['referred_major'];
+                        $('#deleteLabel').text('Confirm delete');
+                        $('#popup_body').text('Confirm the deletion of "' + data.name+ '"');
+                        $('#popup_footer').empty();
+                        $('#popup_footer').append("<button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Cancel</button>");
+                        $('#popup_footer').append("<button type=\"button\" class=\"btn btn-danger\" onclick=\"document.getElementById('delete_form').submit();\">Delete</button>");
+                    }
+                    else{
+                        $('#deleteLabel').text('DATA NOT FOUND!!');
+                        $('#popup_body').text('Please pick the major to delete from the provided list!!');
+                        $('#popup_footer').empty();
+                    }
+                    $('#confirmDeleteModal').modal();
+                }
+            });
+        }
+    </script>
+@endpush

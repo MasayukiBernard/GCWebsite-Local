@@ -73,7 +73,9 @@ Route::middleware('auth')->group(function(){
                         Route::get('/edit/{major}' , $major_controller . 'show_editPage')->name('edit-page');
                         Route::post('update/confirm', $major_controller . 'confirm_update')->name('update-confirm');
                         Route::post('/update/master-major', $major_controller . 'update')->name('update');
-                        Route::post('/delete/master-major/', $major_controller . 'delete')->name('delete');
+
+                        Route::post('/delete/confirm/{major_id}', $major_controller . 'confirm_delete');
+                        Route::post('/delete/major', $major_controller . 'delete')->name('delete');
 
                     });
                 });

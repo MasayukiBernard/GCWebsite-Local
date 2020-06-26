@@ -42,7 +42,7 @@ class ManageMajorController extends Controller{
         $major = new Major;
         $this->model_assignment($major , $inputted_major);
         session()->forget(['inputted_major']);
-        return redirect(route('staff.home'));
+        return redirect(route('staff.major.page'));
 
     }
     
@@ -69,12 +69,21 @@ class ManageMajorController extends Controller{
         return view('staff_side\master_major\edit', ['referred_major' => $major]);
     }
 
-    public function delete(){
-        $major = Major::where('id', session('referred_major_id'))->first();
+    public function confirm_delete($major_id){
+        $major = Major::where('id', $major_id)->first();
         if($major != null){
-            $major->delete();
-            session()->forget('referred_major_id');
+            session()->put('referred_major_id', $major->id);
+            return response()->json(['referred_major' => $major]);
         }
+        else{
+            return response()->json(['failed' => true]);
+        }
+    }
+
+    public function delete(){
+        $major = Major::find(session('referred_major_id'));
+        $major->delete();
+        session()->forget('referred_major_id');
         return redirect(route('staff.major.page'));
     }
 
