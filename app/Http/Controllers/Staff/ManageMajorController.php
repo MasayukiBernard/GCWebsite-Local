@@ -23,7 +23,7 @@ class ManageMajorController extends Controller{
         $data =[
             'majors' => $major
         ];
-        return view('staff_side\master_major\view', $data);
+        return view('staff_side\master_major\view', $data );
     }
 
     public function show_createPage(){
@@ -67,12 +67,13 @@ class ManageMajorController extends Controller{
         return view('staff_side\master_major\edit', ['referred_major' => $major]);
     }
 
-    public function delete($id){
-        $major = Major::find($id);
-        $data = [
-            'major' => $major,
-        ];
-        return view('staff_side\master_major\view', $data);
+    public function delete(){
+        $major = Major::where('id', session('referred_major_id'))->first();
+        if($major != null){
+            $major->delete();
+            session()->forget('referred_major_id');
+        }
+        return redirect(route('staff.major.page'));
     }
 
 }

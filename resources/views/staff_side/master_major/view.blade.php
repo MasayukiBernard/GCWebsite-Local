@@ -28,7 +28,9 @@
                                         <a class="btn btn-primary text-light" role="button" href={{route('staff.major.edit-page', ['major' => $major])}}>Edit</a>
                                     </th>
                                     <th>
-                                        <a class="btn btn-danger text-light" role="button" href="staff/major/delete/{{$major->id}}">Delete</a>
+                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+                                            Delete
+                                        </button>
                                     </th>
                                 </tr>
                                 @endforeach
@@ -39,4 +41,28 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirm delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Confirm the deletion of '{{$referred_major->name}}' data!!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="document.getElementById('delete-form').submit();">Confirm</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <form id="delete-form" method="POST" action={{route('staff.major.delete')}}>
+        @csrf
+    </form>
+
 @endsection
