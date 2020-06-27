@@ -21,11 +21,18 @@
                         <table class="table table-bordered table-sm">
                             <tbody>
                                 <tr>
+                                    <td class="text-center h3" colspan="3">Yearly Students' Data Overview</td>
+                                </tr>
+                                <tr>
                                     <td class="align-middle col-2">Major</td>
                                     <td class="align-middle col-2">
                                         <div class="btn-group">
                                             <button type="button" id="major_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                All Majors
+                                                @if (isset($majors))
+                                                    All Majors
+                                                @else
+                                                    No academic year data yet!!
+                                                @endif
                                             </button>
                                             <div class="dropdown-menu">
                                                 @isset ($majors)
@@ -49,13 +56,13 @@
                                                 <tr>
                                                     <td>CSA Form Submission</td>
                                                     <td>
-                                                        : <span id="csa_percentage">{{$initial_percentages['submitted_percentage']}}%</span>
+                                                        : <span id="csa_percentage">{{$initial_percentages['submitted_percentage']}}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Nominated Student</td>
                                                     <td>
-                                                        : <span id="nominated_percentage">{{$initial_percentages['nominated_percentage']}}%</span>
+                                                        : <span id="nominated_percentage">{{$initial_percentages['nominated_percentage']}}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -68,7 +75,7 @@
                                             @isset($failed)
                                                 <tr>
                                                     <td class="text-danger">
-                                                        No academic year data yet!!
+                                                        No existing data yet!!
                                                     </td>
                                                 </tr>
                                         @endisset
@@ -80,9 +87,13 @@
                                     <td class="align-middle">
                                         <div class="btn-group">
                                             <button type="button" id="academic_year_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                @isset($initial_percentages)
-                                                    {{$initial_percentages['year']}}
-                                                @endisset
+                                                @if (isset($academic_years))
+                                                    @isset($initial_percentages)
+                                                        {{$initial_percentages['year']}}
+                                                    @endisset
+                                                @else
+                                                    No academic year data yet!!
+                                                @endif
                                             </button>
                                             <div class="dropdown-menu">
                                                 @isset ($academic_years)
@@ -97,27 +108,28 @@
                                         </div>
                                     </td>
                                 </tr>
+                                <tr class="text-center h3">
+                                    <td colspan="3" class="border-bottom-0 pt-3">CSA Form Submission</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="align-middle border-top-0 text-center">
+                                        <div id="submission_chart" style="height: 350px;" class="text-center mt-n5 mb-0"></div>
+                                    </td>
+                                </tr>
+                                <tr class="text-center h3">
+                                    <td colspan="3" class="border-bottom-0 pt-3">Students' Nomination</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="align-middle border-top-0 text-center">
+                                        <div id="nomination_chart" style="height: 350px;" class="text-center mt-n5 mb-0"></div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
 
                         <table class="table table-bordered table-sm">
                             <tbody>
-                                <tr class="text-center h3">
-                                    <td class="border-bottom-0 pt-3">CSA Form Submission</td>
-                                </tr>
-                                <tr>
-                                    <td class="align-middle border-top-0 text-center">
-                                        <div id="submission_chart" style="height: 350px;" class="text-center mt-n5 mb-0"></div>
-                                    </td>
-                                </tr>
-                                <tr class="text-center h3">
-                                    <td class="border-bottom-0 pt-3">Students' Nomination</td>
-                                </tr>
-                                <tr>
-                                    <td class="align-middle border-top-0 text-center">
-                                        <div id="nomination_chart" style="height: 350px;" class="text-center mt-n5 mb-0"></div>
-                                    </td>
-                                </tr>
+                                
                             </tbody>
                         </table>
                     </div>
@@ -140,7 +152,7 @@
 
 @push('scripts')
     <script>
-        var major_id = 0, academic_year_id = {{$academic_years->first()->id}};
+        var major_id = 0, academic_year_id = {{isset($academic_years) ? $academic_years->first()->id : 0}};
 
         function set_major(id){
             major_id = id;
@@ -170,7 +182,8 @@
                         else if (response_data['failed'] === false){
                             var submission_percentage, nominated_percentage, total_yearly_students;
                             if (response_data['total_yearly_students'] == 0){
-                                submission_percentage = nominated_percentage = total_yearly_students = '-';
+                                submission_percentage = nominated_percentage = '-';
+                                total_yearly_students = 0;
                                 $('#submission_chart').empty();
                                 $('#nomination_chart').empty();
                                 $('.no-data-alert').remove();
@@ -208,8 +221,22 @@
 
     <script>
         window.onload = (event) => {
-            show_submission_chart({{$initial_percentages['is_submitted']}}, {{$initial_percentages['con_is_submitted']}});
-            show_nomination_chart({{$initial_percentages['is_nominated']}}, {{$initial_percentages['con_is_nominated']}});
+            <?php
+                if(isset($initial_percentages) && $initial_percentages['total_student'] == 0){
+                    echo "$('.no-data-alert').remove();";
+                    echo "$('#submission_chart').before('<span class=\"h4 bg-warning mb-0 no-data-alert\">No Data Yet!!</span>');";
+                    echo "$('#nomination_chart').before('<span class=\"h4 bg-warning mb-0 no-data-alert\">No Data Yet!!</span>');";
+                }
+                else if(isset($initial_percentages)){
+                    echo "show_submission_chart({{$initial_percentages['is_submitted']}}, {{$initial_percentages['con_is_submitted']}});";
+                    echo "show_nomination_chart({{$initial_percentages['is_nominated']}}, {{$initial_percentages['con_is_nominated']}});";
+                }
+                else{
+                    echo "$('.no-data-alert').remove();";
+                    echo "$('#submission_chart').before('<span class=\"h4 bg-warning mb-0 no-data-alert\">No Data Yet!!</span>');";
+                    echo "$('#nomination_chart').before('<span class=\"h4 bg-warning mb-0 no-data-alert\">No Data Yet!!</span>');";
+                }
+            ?>
         };
 
         function show_submission_chart(submitted, hasnt){

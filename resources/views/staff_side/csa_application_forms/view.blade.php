@@ -37,14 +37,16 @@
                             <?php $i = 0;?>
                             <tbody>
                                 @foreach ($yearly_students as $yearly_student)
-                                    <tr onclick="window.location.assign('/staff/csa-forms/details/{{$yearly_student->csa_form->id}}');" style="cursor: pointer;">
-                                        <th scope="row">{{++$i}}</th>
-                                        <td>{{$yearly_student->student->nim}}</td>
-                                        <td>{{$yearly_student->student->user->name}}</td>
-                                        <td>{{$yearly_student->csa_form->is_submitted ? "Submitted" : "On Process"}}</td>
-                                        <td>{{$yearly_student->csa_form->created_at == null ? "Null" : $yearly_student->csa_form->created_at}}</td>
-                                        <td>{{$yearly_student->is_nominated ? "Nominated" : "Not Yet Nominated"}}</td>
-                                    </tr>
+                                    @if ($yearly_student->csa_form != null)
+                                        <tr onclick="window.location.assign('/staff/csa-forms/details/{{$yearly_student->csa_form->id}}');" style="cursor: pointer;">
+                                            <th scope="row">{{++$i}}</th>
+                                            <td>{{$yearly_student->student->nim}}</td>
+                                            <td>{{$yearly_student->student->user->name}}</td>
+                                            <td>{{$yearly_student->csa_form->is_submitted ? "Submitted" : "On Process"}}</td>
+                                            <td>{{$yearly_student->csa_form->created_at == null ? "Null" : $yearly_student->csa_form->created_at}}</td>
+                                            <td>{{$yearly_student->is_nominated ? "Nominated" : "Not Yet Nominated"}}</td>
+                                        </tr>
+                                    @endif
                                 @endforeach
                             </tbody>
                         </table>

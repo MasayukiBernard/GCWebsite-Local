@@ -19,7 +19,7 @@
                                 @if($binusian_years->count() > 0)
                                     B{{$binusian_years->first()->binusian_year}}
                                 @else
-                                    No Data Yet
+                                    No Binusian Year Data Yet
                                 @endif
                             </button>
                             <div class="dropdown-menu">
@@ -43,15 +43,17 @@
                             </thead>
                             <tbody id="students_data">
                                 <?php $i = 0;?>
-                                @foreach ($students as $student)
-                                    <tr style="cursor: pointer;" onclick="window.location.assign('/staff/student/details/{{$student->user_id}}');">
-                                        <th scope="row">{{++$i}}</th>
-                                        <td>{{$student->nim}}</td>
-                                        <td>{{$student->user->name}}</td>
-                                        <td>{{$student->major->name}}</td>
-                                        <td>{{$student->nationality}}</td>
-                                    </tr>
-                                @endforeach
+                                @if (isset($students))
+                                    @foreach ($students as $student)
+                                        <tr style="cursor: pointer;" onclick="window.location.assign('/staff/student/details/{{$student->user_id}}');">
+                                            <th scope="row">{{++$i}}</th>
+                                            <td>{{$student->nim}}</td>
+                                            <td>{{$student->user->name}}</td>
+                                            <td>{{$student->major->name}}</td>
+                                            <td>{{$student->nationality}}</td>
+                                        </tr>
+                                    @endforeach
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -92,9 +94,6 @@
                             );
                         }
                         $("#binusian_year_dropdown").text('B' + year);
-                    }
-                    else{
-
                     }
                 }
             });

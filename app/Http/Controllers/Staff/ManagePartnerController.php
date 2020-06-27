@@ -37,7 +37,7 @@ class ManagePartnerController extends Controller
     }
 
     public function show_createPage(){
-        return view('staff_side\master_partner\create', ['all_majors' => Major::all(), 'first_partner_id' => DB::table('partners')->orderBy('id')->first()->id]);
+        return view('staff_side\master_partner\create', ['all_majors' => Major::all()]);
     }
 
     public function confirm_create(PartnerCRUD $request){

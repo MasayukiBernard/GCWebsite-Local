@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -43,7 +42,11 @@ class ManageStudentController extends Controller
     }
 
     public function show_studentPage(){
-        $students = Student::where('binusian_year', DB::table('students')->select('binusian_year')->orderByDesc('binusian_year')->first()->binusian_year)->orderBy('nim')->get();
+        $binusian_year = DB::table('students')->select('binusian_year')->orderByDesc('binusian_year')->first();
+        $students = null;
+        if($binusian_year != null){
+            $students = Student::where('binusian_year', $binusian_year->binusian_year)->orderBy('nim')->get();
+        }
         return view('staff_side/master_student/view', ['students' => $students, 'binusian_years' => DB::table('students')->select('binusian_year')->distinct()->orderBy('binusian_year', 'desc')->get()]);
     }
 
@@ -70,7 +73,6 @@ class ManageStudentController extends Controller
     }
 
     public function download_template(){
-        Log::info('Test');
         return Storage::disk('private')->download('staffs/templates/create-batch-student-template.xlsx');
     }
 
@@ -79,6 +81,12 @@ class ManageStudentController extends Controller
     }
 
     public function confirm_create_single(Request $request){
+        $first_major_id = DB::table('majors')->select('id')->first();
+        if($first_major_id == null){
+            // Failed, notice to make a major first
+            return redirect(route('staff.student.create-page'));
+        }
+
         $request->flash();
         $validatedData = $request->validate([
             'nim' => ['required', 'string', 'digits:10'],
@@ -86,7 +94,8 @@ class ManageStudentController extends Controller
         ]);
         $request->session()->put('validatedData', $validatedData);
         $validatedData['password'] = Str::substr($validatedData['password'], 0, 5) . '.......';
-        return view ('staff_side/master_student/confirm-create-single', ['validatedData' => $validatedData]);
+
+        return view ('staff_side/master_student/confirm-create-single', ['validatedData' => $validatedData, 'first_major' => Major::find($first_major_id->id)]);
     }
 
     public function create_single(){
@@ -107,6 +116,12 @@ class ManageStudentController extends Controller
     }
 
     public function confirm_create_batch(Request $request){
+        $first_major_id = DB::table('majors')->select('id')->first();
+        if($first_major_id == null){
+            // Failed, notice to make a major first
+            return redirect(route('staff.student.create-page'));
+        }
+        
         $validator = Validator::make($request->all(),[
             'batch-students' => ['required', 'mimes:txt', 'mimetypes:text/plain']
         ],[],
@@ -139,7 +154,6 @@ class ManageStudentController extends Controller
             while(!empty($current) && strcmp($current, "\t") != 0){
                 $nim = Str::before($current, "\t");
                 $pass = Str::between($current, "\t", "\r");
-                Log::info(++$i . ' ' . '\'' . $current . '\'' . ' ' . $nim . ' ' . $pass);
                 if(!preg_match($must_be_nim_regex, $nim) || !preg_match($must_be_pass_regex, $pass) || strlen($pass) > 100){
                     // Return error response
                     session()->put('template_error', true);
@@ -151,7 +165,7 @@ class ManageStudentController extends Controller
             }
         }
 
-        return view('staff_side/master_student/confirm-create-batch', ['enrolling_students' => $enrolling_students]);
+        return view('staff_side/master_student/confirm-create-batch', ['enrolling_students' => $enrolling_students, 'first_major' => Major::find($first_major_id->id)]);
     }
 
     public function create_batch(){

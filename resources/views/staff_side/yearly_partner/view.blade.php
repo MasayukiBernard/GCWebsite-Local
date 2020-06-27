@@ -22,7 +22,7 @@
                                         @if ($academic_years->count() > 0)
                                             Academic Years
                                         @else
-                                            No Data Yet
+                                            No Data Yet!!
                                         @endif
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">

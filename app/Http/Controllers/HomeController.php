@@ -54,8 +54,11 @@ class HomeController extends Controller
                 );
             }
             else if($responseType === "HTML5"){
-                $submitted_percentage = round($is_submitted / $total_student * 100, 2);
-                $nominated_percentage = round($is_nominated / $total_student * 100, 2);
+                $submitted_percentage = $nominated_percentage = '-';
+                if($total_student != 0){
+                    $submitted_percentage = round($is_submitted / $total_student * 100, 2) . '%';
+                    $nominated_percentage = round($is_nominated / $total_student * 100, 2) . '%';
+                }
                 return array(
                     "year" => $academic_year->starting_year . '/' . $academic_year->ending_year . ' - ' . ($academic_year->odd_semester ? 'Odd' : 'Even'),
                     "submitted_percentage" => $submitted_percentage,

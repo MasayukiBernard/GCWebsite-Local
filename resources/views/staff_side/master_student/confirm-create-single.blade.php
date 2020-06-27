@@ -42,7 +42,9 @@
             </tr>
             <tr>
                 <th scope="row">Major</th>
-                <td>Computer Science</td>
+                <td>
+                    {{$first_major->name}}
+                </td>
             </tr>
             <tr>
                 <th scope="row">Place of Birth</th>

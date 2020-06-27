@@ -16,9 +16,25 @@ class ManageAcademicYearController extends Controller
         $latest_year = Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->first();
         $temp_year = new Academic_Year();
         if($latest_year == null){
-            $temp_year->starting_year = date('Y', time());
-            $temp_year->ending_year = $temp_year->starting_year + 1;
-            $temp_year->odd_semester = true;
+            $curr_month = intval(date('m', time()));
+            if($curr_month >= 2 && $curr_month <= 12){
+                $temp_year->starting_year = date('Y', time());
+                $temp_year->ending_year = $temp_year->starting_year + 1;
+                if($curr_month >= 2 && $curr_month <= 8){
+                    // Odd semester
+                    $temp_year->odd_semester = true;
+                }
+                else if($curr_month > 8 && $curr_month <= 12){
+                    // Even semester starting current year
+                    $temp_year->odd_semester = false;
+                }
+            }
+            else if($curr_month == 1){
+                // Even semester starting prev year
+                $temp_year->starting_year = intval(date('Y', time()))-1;
+                $temp_year->ending_year = $temp_year->starting_year + 1;
+                $temp_year->odd_semester = false;
+            }
         }
         else{
             if($latest_year->odd_semester){

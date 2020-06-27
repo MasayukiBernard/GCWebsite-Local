@@ -15,7 +15,11 @@
                         List of all partners for students majoring in:<br>
                         <div class="btn-group">
                             <button type="button" id="major_name_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Major Name
+                                @if ($all_majors->count() > 0)
+                                    Major Name
+                                @else
+                                    No major data yet!!
+                                @endif
                             </button>
                             <div class="dropdown-menu">
                                 @foreach($all_majors as $major)

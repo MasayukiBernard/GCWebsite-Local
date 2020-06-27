@@ -27,8 +27,13 @@ class ManageCSAFormController extends Controller
             $students_nim_by_major = DB::table('students')->select('nim')->where('major_id', $major_id)->get();
             $yearly_students = Yearly_Student::where('academic_year_id', $academic_year_id)->whereIn('nim', Arr::pluck($students_nim_by_major,'nim'))->orderBy('is_nominated')->get();
 
-            return view('staff_side\csa_application_forms\view', ['yearly_students' => $yearly_students, 'academic_year' => $academic_year, 'major' => $major]);
+            if($yearly_students->first() != null){
+                return view('staff_side\csa_application_forms\view', ['yearly_students' => $yearly_students, 'academic_year' => $academic_year, 'major' => $major]);
+            }
         }
+
+        // Failed, notice yearly student not yet available
+        return redirect(route('staff.csa-forms.page'));
     }
 
     public function show_detailsPage($csa_form_id){

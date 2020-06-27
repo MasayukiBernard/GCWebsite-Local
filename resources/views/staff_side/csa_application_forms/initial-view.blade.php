@@ -19,7 +19,11 @@
                                     <td>
                                     <div class="dropdown">
                                             <button class="btn btn-primary dropdown-toggle" type="button" id="academicYearDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Academic Year
+                                                @if ($academic_years->count() > 0)
+                                                    Academic Year
+                                                @else
+                                                    No academic year data yet!!
+                                                @endif
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="academicYearDropdownMenuButton">
                                                 @foreach ($academic_years as $year)
@@ -34,7 +38,11 @@
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle xml-3" type="button" id="majorDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Major Name
+                                                @if ($majors->count() > 0)
+                                                    Major Name
+                                                @else
+                                                    No major data yet!!
+                                                @endif
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="majorDropdownMenuButton">
                                                 @foreach ($majors as $major)
@@ -46,9 +54,11 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="text-center">
-                                        <a onclick="get_view();" class="btn btn-success btn-lg text-light px-5" role="button">
-                                            Search
-                                        </a>
+                                        @if ($academic_years->count() > 0 && $majors->count() > 0)
+                                            <a onclick="get_view();" class="btn btn-success btn-lg text-light px-5" role="button">
+                                                Search
+                                            </a>
+                                        @endif
                                     </td>
                                 </tr>
                             </tbody>
