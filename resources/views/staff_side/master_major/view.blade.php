@@ -19,7 +19,7 @@
                                     <th scope="col">Major Name</th>
                                 </tr>
                             </thead>
-                            <tbody >
+                            <tbody>
                                 @foreach($majors as $major)
                                 <tr>
                                     <th>{{$major->id}}</th>

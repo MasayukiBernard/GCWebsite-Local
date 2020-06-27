@@ -10,7 +10,6 @@ use App\Major;
 use App\Yearly_Student;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class ManageCSAFormController extends Controller
 {
