@@ -22,7 +22,7 @@
                             <tbody>
                                 <tr>
                                     <td class="align-middle col-2">Major</td>
-                                    <td class="align-middle col-3">
+                                    <td class="align-middle col-2">
                                         <div class="btn-group">
                                             <button type="button" id="major_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 All Majors
@@ -43,7 +43,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td rowspan="2" class="align-middle pl-3 col-7">
+                                    <td rowspan="2" class="align-middle pl-3 col-8">
                                         <table class="table table-borderless table-sm mb-0 w-auto">
                                             @isset($initial_percentages)
                                                 <tr>
@@ -58,6 +58,12 @@
                                                         : <span id="nominated_percentage">{{$initial_percentages['nominated_percentage']}}%</span>
                                                     </td>
                                                 </tr>
+                                                <tr>
+                                                    <td>Total Number of Student</td>
+                                                    <td>
+                                                        : <span id="total_yearly_students">{{$initial_percentages['total_student']}}</span>
+                                                    </td>
+                                                </tr>
                                             @endisset
                                             @isset($failed)
                                                 <tr>
@@ -70,8 +76,8 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Academic Year</td>
-                                    <td>
+                                    <td class="align-middle">Academic Year</td>
+                                    <td class="align-middle">
                                         <div class="btn-group">
                                             <button type="button" id="academic_year_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 @isset($initial_percentages)
@@ -89,6 +95,27 @@
                                                 @endisset
                                             </div>
                                         </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="table table-bordered table-sm">
+                            <tbody>
+                                <tr class="text-center h3">
+                                    <td class="border-bottom-0 pt-3">CSA Form Submission</td>
+                                </tr>
+                                <tr>
+                                    <td class="align-middle border-top-0 text-center">
+                                        <div id="submission_chart" style="height: 350px;" class="text-center mt-n5 mb-0"></div>
+                                    </td>
+                                </tr>
+                                <tr class="text-center h3">
+                                    <td class="border-bottom-0 pt-3">Students' Nomination</td>
+                                </tr>
+                                <tr>
+                                    <td class="align-middle border-top-0 text-center">
+                                        <div id="nomination_chart" style="height: 350px;" class="text-center mt-n5 mb-0"></div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -135,26 +162,38 @@
                     data: {_token: CSRF_TOKEN},
                     dataType: 'JSON',
                     success: function(response_data){
-                        console.log('succeed');
-                        if(response_data['empty'] === true){
+                        if(response_data['failed'] === true){
                             $("#academic_year_dropdown").text("No Data Yet");
+                            $('#submission_chart').empty();
+                            $('#nomination_chart').empty();
                         }
-                        else{
-                            var submission_percentage;
-                            var nominated_percentage;
+                        else if (response_data['failed'] === false){
+                            var submission_percentage, nominated_percentage, total_yearly_students;
                             if (response_data['total_yearly_students'] == 0){
-                                submission_percentage = nominated_percentage = '-';
+                                submission_percentage = nominated_percentage = total_yearly_students = '-';
+                                $('#submission_chart').empty();
+                                $('#nomination_chart').empty();
+                                $('.no-data-alert').remove();
+                                $('#submission_chart').before('<span class="h4 bg-warning mb-0 no-data-alert">No Data Yet!!</span>');
+                                $('#nomination_chart').before('<span class="h4 bg-warning mb-0 no-data-alert">No Data Yet!!</span>');
                             }
                             else{
+                                $('.no-data-alert').remove();
                                 submission_percentage = (response_data['submitted_csa_forms'] / response_data['total_yearly_students'] * 100);
                                 submission_percentage = Number(submission_percentage.toFixed(2)) + '%';
                                 nominated_percentage = (response_data['nominated_students'] / response_data['total_yearly_students'] * 100);
                                 nominated_percentage = Number(nominated_percentage.toFixed(2))   + '%';
+                                total_yearly_students = response_data['total_yearly_students'];
+                                $('#submission_chart').empty();
+                                $('#nomination_chart').empty();
+                                show_submission_chart(response_data['submitted_csa_forms'], response_data['total_yearly_students']-response_data['submitted_csa_forms']);
+                                show_nomination_chart(response_data['nominated_students'], response_data['total_yearly_students']-response_data['nominated_students']);
                             }
                             $("#csa_percentage").text(submission_percentage);
                             $('#nominated_percentage').text(nominated_percentage);
                             $("#major_dropdown").text($("#major_"+major_id).text());
                             $("#academic_year_dropdown").text($("#year_"+academic_year_id).text());
+                            $('#total_yearly_students').text(total_yearly_students);
                         }
                     }
                 });
@@ -163,8 +202,48 @@
     </script>
 
     <!-- Charting library -->
-    <script src="https://unpkg.com/chart.js/dist/Chart.min.js"></script>
-
+    <script src="https://unpkg.com/echarts/dist/echarts.min.js"></script>
     <!-- Chartisan -->
-    <script src="https://unpkg.com/@chartisan/chartjs/dist/chartisan_chartjs.js"></script>
+    <script src="https://unpkg.com/@chartisan/echarts/dist/chartisan_echarts.js"></script>
+
+    <script>
+        window.onload = (event) => {
+            show_submission_chart({{$initial_percentages['is_submitted']}}, {{$initial_percentages['con_is_submitted']}});
+            show_nomination_chart({{$initial_percentages['is_nominated']}}, {{$initial_percentages['con_is_nominated']}});
+        };
+
+        function show_submission_chart(submitted, hasnt){
+            const chart = new Chartisan({
+            el: '#submission_chart',
+            data: {
+                chart: {labels: [''] },
+                datasets: [
+                    { name: 'Has Submitted', values: [submitted] },
+                    { name: 'Hasn\'t Submitted', values: [hasnt] },
+                ],
+            },
+            hooks: new ChartisanHooks()
+                    .colors(['#008000', '#ff0000'])
+                    .tooltip(true)
+                    .datasets('bar')
+            });
+        }
+
+        function show_nomination_chart(nominated, hasnt){
+            const chart = new Chartisan({
+            el: '#nomination_chart',
+            data: {
+                chart: {labels: [''] },
+                datasets: [
+                    { name: 'Nominated', values: [nominated] },
+                    { name: 'Not yet nominated', values: [hasnt] },
+                ],
+            },
+            hooks: new ChartisanHooks()
+                    .colors(['#008000', '#ff0000'])
+                    .tooltip(true)
+                    .datasets('bar')
+            });
+        }
+    </script>
 @endpush
