@@ -17,19 +17,18 @@
                                 <tr>
                                     <th scope="col">No.</th>
                                     <th scope="col">Major Name</th>
+                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($majors as $major)
                                 <tr>
-                                    <th>{{$major->id}}</th>
-                                    <th>{{$major->name}}</th>
-                                    <th>
-                                        <a class="btn btn-primary text-light" role="button" href={{route('staff.major.edit-page', ['major' => $major])}}>Edit</a>
-                                    </th>
-                                    <th>
-                                    <button type="button" class="btn btn-danger" onclick="deleteMajor({{$major->id}});">Delete</button>
-                                    </th>
+                                    <td>{{$major->id}}</td>
+                                    <td>{{$major->name}}</td>
+                                    <td>
+                                        <a class="btn btn-primary text-light mr-2" role="button" href={{route('staff.major.edit-page', ['major' => $major])}}>Edit</a>
+                                        <button type="button" class="btn btn-danger" onclick="deleteMajor({{$major->id}});">Delete</button>
+                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>                         
