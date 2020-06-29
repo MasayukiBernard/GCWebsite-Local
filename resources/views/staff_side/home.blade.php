@@ -202,6 +202,7 @@
                                 show_submission_chart(response_data['submitted_csa_forms'], response_data['total_yearly_students']-response_data['submitted_csa_forms']);
                                 show_nomination_chart(response_data['nominated_students'], response_data['total_yearly_students']-response_data['nominated_students']);
                             }
+                            console.log("SUCCEED");
                             $("#csa_percentage").text(submission_percentage);
                             $('#nominated_percentage').text(nominated_percentage);
                             $("#major_dropdown").text($("#major_"+major_id).text());
@@ -228,8 +229,8 @@
                     echo "$('#nomination_chart').before('<span class=\"h4 bg-warning mb-0 no-data-alert\">No Data Yet!!</span>');";
                 }
                 else if(isset($initial_percentages)){
-                    echo "show_submission_chart({{$initial_percentages['is_submitted']}}, {{$initial_percentages['con_is_submitted']}});";
-                    echo "show_nomination_chart({{$initial_percentages['is_nominated']}}, {{$initial_percentages['con_is_nominated']}});";
+                    echo "show_submission_chart(" . $initial_percentages['is_submitted'] . ", " . $initial_percentages['con_is_submitted'] . ");";
+                    echo "show_nomination_chart(" . $initial_percentages['is_nominated'] . ", " . $initial_percentages['con_is_nominated'] . ");";
                 }
                 else{
                     echo "$('.no-data-alert').remove();";
