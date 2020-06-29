@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 Use Illuminate\Support\Str;
 
@@ -52,19 +54,27 @@ class PhotoController extends Controller
         /*
             url format = /photos/{table}_id={id}&opt={column}
         */
-        $table  = Str::before($path, '_');
+        $table  = Str::before($path, '_id');
         $id     = Str::between($path, 'id=', '&');
         $column = Str::after($path, 'opt=');
         $actual_path = null;
+        $id_col_name = array(
+            'students' => 'user_id',
+            'achievements'  => 'id', 
+            'english_tests'  => 'csa_form_id',
+            'academic_infos'  => 'csa_form_id',
+            'passports'  => 'csa_form_id'
+        );
+
         if($table === 'users'){
             $table = 'students';
-            if(DB::table($table)->where('user_id', $id)->first() != null){
-                $actual_path = DB::table($table)->select($column)->where('user_id', $id)->first()->$column;
-            }
         }
-        else{
-            $actual_path = DB::table($table)->select($column)->where('id', $id)->first()->$column;
+
+        if(Arr::exists($id_col_name, $table) && DB::table($table)->where($id_col_name[$table], $id)->first() != null){
+            $actual_path = DB::table($table)->select($column)->where($id_col_name[$table], $id)->first()->$column;
         }
+
+        Log::info($table . ' ' . $id . ' ' . $column);
 
         if($actual_path != null){
             if(Storage::disk('private')->exists($actual_path)){
