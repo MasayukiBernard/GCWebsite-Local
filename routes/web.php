@@ -35,7 +35,9 @@ Route::middleware('auth')->group(function(){
     });
     // -> Staff Users
     Route::middleware('staff')->group(function(){
-
+        Route::get('/image/{table_name}/{id}/{column_name}', 'Staff\ShowPhotoController')->name('see-image');
+        
+        // Prevent this route to be accessed directly from GET requests
         Route::resource('photos', 'Staff\PhotoController');
 
         Route::name('staff.')->group(function(){
