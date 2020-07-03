@@ -14,18 +14,19 @@
                     <a class="btn btn-success text-light" role="button" href={{route('staff.major.create-page')}}>Add New Major</a>
                     <table class="table table-striped table-bordered table-hover">
                             <thead>
-                                <tr>
-                                    <th scope="col">No.</th>
-                                    <th scope="col">Major Name</th>
-                                    <th scope="col">Action</th>
+                                <tr class="d-flex">
+                                    <th class="col-1 text-center" scope="col">No.</th>
+                                    <th class="col-9" scope="col">Major Name</th>
+                                    <th class="col-2 text-center" scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php $i = 0;?>
                                 @foreach($majors as $major)
-                                <tr>
-                                    <td>{{$major->id}}</td>
-                                    <td>{{$major->name}}</td>
-                                    <td>
+                                <tr class="d-flex">
+                                    <td class="col-1 d-flex align-items-center justify-content-center text-center">{{++$i}}</td>
+                                    <td class="col-9 d-flex align-items-center">{{$major->name}}</td>
+                                    <td class="col-2 d-flex align-items-center d-flex justify-content-center">
                                         <a class="btn btn-primary text-light mr-2" role="button" href={{route('staff.major.edit-page', ['major' => $major])}}>Edit</a>
                                         <button type="button" class="btn btn-danger" onclick="deleteMajor({{$major->id}});">Delete</button>
                                     </td>
@@ -72,7 +73,7 @@
                 data: {_token: CSRF_TOKEN},
                 dataType: 'JSON',
                 success: function(response_data){
-                    if(response_data['failed'] == null){
+                    if(response_data['failed'] === false){
                         var data = response_data['referred_major'];
                         $('#deleteLabel').text('Confirm delete');
                         $('#popup_body').text('Confirm the deletion of "' + data.name+ '"');
