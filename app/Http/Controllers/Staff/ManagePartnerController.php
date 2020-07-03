@@ -23,7 +23,7 @@ class ManagePartnerController extends Controller
     }
 
     public function show_partnerPage(){
-        return view('staff_side\master_partner\view', ['all_majors' => Major::all()]);
+        return view('staff_side\master_partner\view', ['all_majors' => Major::orderBy('name')->get()]);
     }
     
     public function show_major_partners($id, $field, $sort_type){
@@ -71,7 +71,7 @@ class ManagePartnerController extends Controller
     }
 
     public function show_editPage(Partner $partner){
-        return view('staff_side/master_partner/edit', ['referred_partner' => $partner, 'all_majors' => Major::all()]);
+        return view('staff_side/master_partner/edit', ['referred_partner' => $partner, 'all_majors' => Major::orderBy('name')->get()]);
     }
 
     public function confirm_update(PartnerCRUD $request){

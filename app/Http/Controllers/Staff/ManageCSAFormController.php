@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 class ManageCSAFormController extends Controller
 {
     public function show_page(){
-        return view('staff_side\csa_application_forms\initial-view', ['academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get(), 'majors' => Major::all()]);
+        return view('staff_side\csa_application_forms\initial-view', ['academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get(), 'majors' => Major::orderBy('name')->get()]);
     }
     
     public function get_CSAForms($academic_year_id, $major_id){
