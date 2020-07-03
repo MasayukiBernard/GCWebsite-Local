@@ -32,7 +32,7 @@
                         </div>
                         <a class="btn btn-success text-light" role="button" href={{route('staff.partner.create-page')}}>Add New Partner</a>
 
-                        <table class="table table-striped table-bordered table-hover">
+                        <table class="table table-striped table-bordered table-hover m-0">
                             <thead>
                                 <tr class="d-flex justify-content-center">
                                     <th class="d-flex col-6 p-0">
@@ -69,6 +69,17 @@
                             <tbody id="partner_tBody">
                             </tbody>
                         </table>
+                        <div class="row" id="loading_bar_container">
+                            <div class="col-12">
+                                <div class="row" style="position: relative;">
+                                    <div class="col-6 p-0 text-right">Loading</div>
+                                    <div id="dots" class="col-6 p-0"></div>
+                                </div>
+                                <div class="progress mt-n4" style="height: 25px;">
+                                    <div id="loading_bar1" class="progress-bar progress-bar-striped progress-bar-animated bg-success rounded" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%; margin-left: -50%;"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -76,17 +87,12 @@
     </div>
 @endsection
 
-{{-- 
-    get_partners() description:
-    The function uses jquery library and utilizes AJAX feature provided by jquery.
-    Perform async HTTP request to web server, in this case a POST request to a designated route,
-    with 'X-CSRF-TOKEN' as the data in the POST body, it also expects JSON response from the server
-    which is fulfilled in the controller, upon request success the method will show the the partners from
-    requested major data from the server without refreshing the page.
-
---}}
 @push('scripts')
     <script>
+        window.onload = function(){
+            $('#loading_bar_container').fadeOut(0);
+        };
+
         var major_id = 0;
         var sort_states ={
             name: 'n',
@@ -150,6 +156,9 @@
                     url: targetURL,
                     data: {_token: CSRF_TOKEN},
                     dataType: 'JSON',
+                    beforeSend: function(){
+                        animate_loading();
+                    },
                     success: function(response_data){
                         if(response_data['failed'] === false){
                             var data = response_data['major_partners'];
@@ -171,6 +180,11 @@
                             });
                             $("#major_name_dropdown").text($("#major_" + major_id).text());
                         }
+                    },
+                    complete: function(){
+                        clearInterval(bar_interval);
+                        clearInterval(dots_interval);
+                        $('#loading_bar_container').fadeOut(750);
                     }
                 });
             }
@@ -178,6 +192,27 @@
 
         function go_to(partner_id){
             window.location.assign('/staff/partner/details/' + partner_id);
+        }
+
+        var bar_interval, dots_interval, freq = 0;
+        function animate_loading(){
+            $('#loading_bar_container').fadeIn(0);
+            ++freq;
+            if(freq == 1){
+                $('#loading_bar1').animate({'margin-left': '+=125%'}, 2500);
+                $('#loading_bar1').animate({'margin-left': '-=100%'}, 2000);
+            }
+            run_1();
+            dots_interval = setInterval(run_2, 1300);
+            bar_interval = setInterval(run_1, 4000);
+            function run_1(){
+                $('#loading_bar1').animate({'margin-left': '+=100%'}, 2000);
+                $('#loading_bar1').animate({'margin-left': '-=100%'}, 2000);
+                $('#dots').empty();
+            }
+            function run_2(){
+                $('#dots').append(' .');
+            }
         }
     </script>
 @endpush

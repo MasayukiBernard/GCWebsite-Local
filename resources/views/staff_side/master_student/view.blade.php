@@ -31,7 +31,7 @@
                             </div>
                         </div>
 
-                        <table class="table table-striped table-bordered table-hover">
+                        <table class="table table-striped table-bordered table-hover m-0">
                             <thead>
                                 <tr class="d-flex">
                                     <th scope="col" class="col-1 text-center">No.</th>
@@ -76,6 +76,17 @@
                                 @endif
                             </tbody>
                         </table>
+                        <div class="row" id="loading_bar_container">
+                            <div class="col-12">
+                                <div class="row" style="position: relative;">
+                                    <div class="col-6 p-0 text-right">Loading</div>
+                                    <div id="dots" class="col-6 p-0"></div>
+                                </div>
+                                <div class="progress mt-n4" style="height: 25px;">
+                                    <div id="loading_bar1" class="progress-bar progress-bar-striped progress-bar-animated bg-success rounded" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%; margin-left: -50%;"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -85,6 +96,10 @@
 
 @push('scripts')
     <script>
+        window.onload = function(){
+            $('#loading_bar_container').fadeOut(0);
+        };
+        
         var year = {{isset($binusian_years) ? $binusian_years->first()->binusian_year : '0'}};
         
         var sort_states ={
@@ -148,6 +163,9 @@
                     url: targetURL,
                     data: {_token: CSRF_TOKEN},
                     dataType: 'JSON',
+                    beforeSend: function(){
+                        animate_loading();
+                    },
                     success: function(response_data){
                         if(response_data['failed'] === false){
                             $("#students_data").empty();
@@ -166,8 +184,34 @@
                             });
                             $("#binusian_year_dropdown").text('B' + year);
                         }
+                    },
+                    complete: function(){
+                        clearInterval(bar_interval);
+                        clearInterval(dots_interval);
+                        $('#loading_bar_container').fadeOut(750);
                     }
                 });
+            }
+        }
+
+        var bar_interval, dots_interval, freq = 0;
+        function animate_loading(){
+            $('#loading_bar_container').fadeIn(0);
+            ++freq;
+            if(freq == 1){
+                $('#loading_bar1').animate({'margin-left': '+=125%'}, 2500);
+                $('#loading_bar1').animate({'margin-left': '-=100%'}, 2000);
+            }
+            run_1();
+            dots_interval = setInterval(run_2, 1300);
+            bar_interval = setInterval(run_1, 4000);
+            function run_1(){
+                $('#loading_bar1').animate({'margin-left': '+=100%'}, 2000);
+                $('#loading_bar1').animate({'margin-left': '-=100%'}, 2000);
+                $('#dots').empty();
+            }
+            function run_2(){
+                $('#dots').append(' .');
             }
         }
     </script>
