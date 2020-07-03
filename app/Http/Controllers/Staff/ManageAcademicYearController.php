@@ -9,7 +9,7 @@ use App\Http\Requests\AcademicYearCRUD;
 class ManageAcademicYearController extends Controller
 {
     public function show_academicYearPage(){
-        return view('staff_side/academic_year/view', ['academic_years' => Academic_Year::orderBy('starting_year')->orderBy('odd_semester', 'desc')->get()]);
+        return view('staff_side/academic_year/view', ['academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester', 'desc')->get()]);
     }
     
     public function show_createPage(){
@@ -72,7 +72,10 @@ class ManageAcademicYearController extends Controller
         $academic_year = Academic_Year::where('id', $academic_year_id)->first();
         if($academic_year != null){
             session()->put('reffered_academic_year_id', $academic_year->id);
-            return response()->json(['reffered_academic_year' => $academic_year]);
+            return response()->json([
+                'reffered_academic_year' => $academic_year,
+                'failed' => false
+            ]);
         }
         else{
             return response()->json(['failed' => true]);

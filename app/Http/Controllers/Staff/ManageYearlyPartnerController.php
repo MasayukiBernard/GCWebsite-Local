@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Staff;
 
 use App\Academic_Year;
 use App\Http\Controllers\Controller;
+use App\Major;
 use App\Partner;
 use App\Yearly_Partner;
 use Illuminate\Http\Request;
@@ -22,20 +23,48 @@ class ManageYearlyPartnerController extends Controller
         return view('staff_side/yearly_partner/view', ['academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get()]);
     }
 
-    public function show_yearlyPartnerDetails($academic_year_id){
+    public function show_yearlyPartnerDetailsPage($academic_year_id){
+        session()->forget('latest_yearly_partner_year_id');
         session()->put('latest_yearly_partner_year_id', $academic_year_id);
-        return view('staff_side/yearly_partner/details', ['academic_year' => Academic_Year::find($academic_year_id), 'yearly_partners' => Yearly_Partner::where('academic_year_id', $academic_year_id)->get()]);
+        return view('staff_side/yearly_partner/details', ['academic_year' => Academic_Year::where('id', $academic_year_id)->first(), 'all_majors' => Major::orderBy('name')->get()]);
+    }
+
+    public function get_yearlyPartnerDetails($academic_year_id, $major_id, $field, $sort_type){
+        $available_fields = array('name', 'location');
+        $sort_types = array('a' => 'asc', 'd' => 'desc');
+
+        if(is_numeric($academic_year_id) && in_array($field, $available_fields) && Arr::exists($sort_types, $sort_type)){
+            $yearly_partners = DB::table('yearly_partners')->select('partner_id')->where('academic_year_id', $academic_year_id)->get();
+            $partners = Partner::whereIn('id', Arr::pluck($yearly_partners, 'partner_id'))->where('major_id', $major_id)->orderBy($field, $sort_types[$sort_type])->get();
+
+            if($partners->first() != null){
+                return response()->json([
+                    'yearly-partners' => $partners,
+                    'failed' => false
+                ]);
+            }
+        }
+
+        return response()->json([
+            'failed' => true
+        ]);
     }
 
     public function show_createPage(){
-        return view('staff_side/yearly_partner/create', ['academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get(), 'unpicked_partners' => $this->unpicked_partners(session('latest_yearly_partner_year_id'))]);
+        return view('staff_side/yearly_partner/create', [
+            'academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get(), 
+            'unpicked_partners' => $this->unpicked_partners(session('latest_yearly_partner_year_id'))
+        ]);
     }
 
     public function show_unpicked_partners($id){
         $academic_year = Academic_Year::where('id', $id)->first();
         if($academic_year != null){
             $partners = $this->unpicked_partners($id);
-            return response()->json(['partners' => $partners]);
+            return response()->json([
+                'partners' => $partners,
+                'failed' => false
+            ]);
         }
         return response()->json(['failed' => true]);
     }
@@ -55,16 +84,21 @@ class ManageYearlyPartnerController extends Controller
             $yearly_partner->academic_year_id = session('create_yearly_partner')['academic_year'];
             $yearly_partner->partner_id = session('create_yearly_partner')['partner'];
             $yearly_partner->save();
-            session()->forget(['latest_yearly_partner_year_id', 'create_yearly_partner']);
+            session()->forget('create_yearly_partner');
         }
         return redirect(route('staff.yearly-partner.create-page'));
     }
 
-    public function confirm_delete($yearly_partner_id){
-        $yearly_partner = Yearly_Partner::where('id', $yearly_partner_id)->first();
+    public function confirm_delete($academic_year_id, $partner_id){
+        $yearly_partner = null;
+        
+        if(is_numeric($academic_year_id) && is_numeric($partner_id)){
+            $yearly_partner = Yearly_Partner::where('academic_year_id', $academic_year_id)->where('partner_id', $partner_id)->first();
+        }
+
         if($yearly_partner != null){
             $academic_year = $yearly_partner->academic_year->starting_year . '/' . $yearly_partner->academic_year->ending_year . ' - ' . ($yearly_partner->academic_year->odd_semester ? 'Odd' : 'Even');
-            session()->put('yearly_partner_id_to_delete', $yearly_partner_id);
+            session()->put('yearly_partner_id_to_delete', $yearly_partner->id);
             return response()->json([
                 'yearly_partner_name' => $yearly_partner->partner->name,
                 'academic_year' => $academic_year
@@ -81,6 +115,6 @@ class ManageYearlyPartnerController extends Controller
         if($yearly_partner != null){
             $yearly_partner->delete();
         }
-        return redirect(route('staff.home'));
+        return redirect(route('staff.yearly-partner.details', ['academic_year_id' => session('latest_yearly_partner_year_id')]));
     }
 }

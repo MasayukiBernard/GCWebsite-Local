@@ -50,22 +50,28 @@ class ManageStudentController extends Controller
         return view('staff_side/master_student/view', ['students' => $students, 'binusian_years' => DB::table('students')->select('binusian_year')->distinct()->orderBy('binusian_year', 'desc')->get()]);
     }
 
-    public function show_StudentsByYear($year){
-        $majors = DB::table('majors')->select('id', 'name')->get();
-        $students_byYear = DB::table('students')->select('nim', 'user_id', 'major_id', 'nationality', 'binusian_year')->where('binusian_year', $year)->orderBy('nim')->get();
-        $student_byYearIDs = Arr::pluck($students_byYear, 'user_id');
-        $usersName = DB::table('users')->select('id', 'name')->whereIn('id', $student_byYearIDs)->get();
-        if($students_byYear->first() != null){
-            return response()->json([
-                'usersName' => $usersName,
-                'majors' => $majors,
-                'students' => $students_byYear,
-                'failed' => false
-            ]);
+    public function show_StudentsByYear($year, $field, $sort_type){
+        $available_fields = array('nim', 'name', 'major_name', 'nationality');
+        $sort_types = array('a' => 'asc', 'd' => 'desc');
+
+        if(is_numeric($year) && in_array($field, $available_fields) && Arr::exists($sort_types, $sort_type)){
+            $students = DB::table('students')
+                    ->join('users', 'students.user_id', '=', 'users.id')
+                    ->join('majors', 'students.major_id', '=', 'majors.id')
+                    ->select('students.user_id as user_id', 'students.nim as nim', 'users.name as name', 'majors.name as major_name', 'students.nationality as nationality')
+                    ->where('binusian_year', $year)
+                    ->orderBy($field, $sort_types[$sort_type])
+                    ->get();
+            
+            if($students->first() != null){
+                return response()->json([
+                    'students' => $students,
+                    'failed' => false
+                ]);
+            }
         }
-        else{   
-            return response()->json(['failed' => true]);
-        }
+
+        return response()->json(['failed' => true]);
     }
 
     public function show_createPage(){

@@ -11,28 +11,45 @@
                 <div class="card">
                     <div class="card-header h2">{{$academic_year->starting_year}}/{{$academic_year->ending_year}} - {{$academic_year->odd_semester ? "Odd" : "Even"}} Semester Partners List</div>
                     <div class="card-body">
+                        List of yearly partners for students majoring in:<br>
+                        <div class="btn-group">
+                            <button type="button" id="major_name_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @if ($all_majors->count() > 0)
+                                    Major Name
+                                @else
+                                    No major data yet!!
+                                @endif
+                            </button>
+                            <div class="dropdown-menu">
+                                @foreach($all_majors as $major)
+                                    <a id="major_{{$major->id}}" class="dropdown-item" style="cursor: pointer"
+                                        onclick="set_major({{$major->id}});">
+                                        {{$major->name}}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
                         <a class="btn btn-success" href="{{route('staff.yearly-partner.create-page')}}" role="button">Add New Yearly Partner</a>
                         <table class="table table-bordered table-hover table-striped">
                             <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">University Name</th>
-                                    <th scope="col">Location</th>
-                                    <th scope="col">Major Name</th>
-                                    <th scope="col">Delete</th>
+                                <tr class="d-flex">
+                                    <th class="col-1 text-center" scope="col">#</th>
+                                    <th class="col-4 border-right-0" scope="col">University Name</th>
+                                    <th class="col-1 p-0 border-left-0 text-center" scope="col">
+                                        <div class="d-flex flex-row-reverse">
+                                            <div class="col-6 py-2 m-1 bg-info rounded-circle" style="cursor: pointer;" id="name_state" onclick="get_partners('name');">&#8597</div>
+                                        </div>
+                                    </th>
+                                    <th class="col-4 border-right-0" scope="col">Location</th>
+                                    <th class="col-1 p-0 border-left-0 text-center" scope="col">
+                                        <div class="d-flex flex-row-reverse">
+                                            <div class="col-6 py-2 my-1 mx-1 bg-info rounded-circle" style="cursor: pointer;" id="location_state" onclick="get_partners('location');">&#8597</div>
+                                        </div>
+                                    </th>
+                                    <th class="col-1 text-center" scope="col">Action</th>
                                 </tr>
                               </thead>
-                            <tbody>
-                                <?php $i=0;?>
-                                @foreach ($yearly_partners as $yearly_partner)
-                                    <tr>
-                                        <th style="cursor: pointer;" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')" scope="row">{{++$i}}</th>
-                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->name}}</td>
-                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->location}}</td>
-                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->major->name}}</td>
-                                        <td><button type="button" class="btn btn-danger position-relative" onclick="deleteYearlyPartner({{$yearly_partner->id}})">Delete</button></td>
-                                    </tr>
-                                @endforeach
+                            <tbody id="yearly_partner_data">
                             </tbody>
                         </table>
                     </div>
@@ -66,9 +83,10 @@
 
 @push('scripts')
     <script>
-        function deleteYearlyPartner(yearly_partner_id){
+        const academic_year_id = {{$academic_year->id}};
+        function deleteYearlyPartner(partner_id){
             var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            var targetURL = '/staff/yearly-partner/delete/confirm/' + yearly_partner_id;
+            var targetURL = '/staff/yearly-partner/delete/confirm/academic-year/' + academic_year_id + '/partner/' + partner_id;
             $.ajax({
                 type: 'POST',
                 url: targetURL,
@@ -90,6 +108,95 @@
                     $('#confirmDeleteModal').modal();
                 }
             });
+        }
+
+        var major_id = 0;
+
+        var sort_states ={
+            name: 'n',
+            location: 'n',
+            major: 'n'
+        };
+
+        function set_major(id){
+            major_id = id;
+            sort_states.name = 'n';
+            sort_states.location = 'n';
+            sort_states.min_gpa = 'n';
+            sort_states.eng_requirement = 'n';
+            sort_states.short_detail = 'n';
+            get_partners('name');
+        }
+
+        function set_state(column, state){
+            var properties = ['name', 'location'];
+            var states = ['a', 'd'];
+            if(properties.includes(column) && states.includes(state)){
+                for(var i = 0; i < 5; ++i){
+                    if(column == properties[i]){
+                        sort_states[column] = state;
+                        if(state == 'a'){
+                            $('#' + properties[i] + '_state').html('&#8593');
+                        }
+                        else if(state == 'd'){
+                            $('#' + properties[i] + '_state').html('&#8595');
+                        }
+                        $('#' + properties[i] + '_state').addClass('bg-info');
+                        continue;
+                    }
+                    sort_states[properties[i]] = 'n';
+                    $('#' + properties[i] + '_state').removeClass('bg-info');
+                    $('#' + properties[i] + '_state').html('&#8597');
+                }
+            }
+        }
+        
+        function go_to(id){
+            window.location.assign('/staff/partner/details/' + id);
+        }
+
+        function get_partners(sort_by){
+            if(major_id > 0){
+                var sort_type = 'a';
+                if(sort_states[sort_by] != 'n'){
+                    if(sort_states[sort_by] == 'a'){
+                        sort_type = 'd';
+                        set_state(sort_by, 'd');   
+                    }
+                    else if(sort_states[sort_by] == 'd'){
+                        set_state(sort_by, 'a');
+                    }
+                }
+                else{
+                    set_state(sort_by, 'a');
+                }
+
+                $("#yearly_partner_data").empty();
+                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                var targetURL = "/staff/yearly-partner/list/"+ academic_year_id + "/major/" + major_id + "/sort-by/" + sort_by + "/" + sort_type;
+                $.ajax({
+                    type: 'POST',
+                    url: targetURL,
+                    data: {_token: CSRF_TOKEN},
+                    dataType: 'JSON',
+                    success: function(response_data){
+                        if(response_data['failed'] === false){
+                            var data = response_data['yearly-partners'];
+                            $.each(data, function(index, value){
+                                $("#yearly_partner_data").append(
+                                    "<tr class=\"d-flex\">" + 
+                                    "<th class=\"col-1\" scope=row onclick=\"go_to(" + data[index].id + ");\">" + (index+1) + "</th>" +
+                                    "<td class=\"col-5\" colspan=\"2\" style=\"cursor: pointer;\" onclick=\"go_to(" + data[index].id + ");\">"   + data[index].name + "</td>" + 
+                                    "<td class=\"col-5\" colspan=\"2\" style=\"cursor: pointer;\" onclick=\"go_to(" + data[index].id + ");\">" + data[index].location + "</td>" +
+                                    "<td class=\"col-1\"><button type=\"button\" class=\"btn btn-danger\"  onclick=\"deleteYearlyPartner(" + data[index].id + ");\">Delete</button></td>" +
+                                    "</tr>"
+                                );
+                            });
+                        }
+                        $("#major_name_dropdown").text($("#major_" + major_id).text());
+                    }
+                });
+            }
         }
     </script>
 @endpush

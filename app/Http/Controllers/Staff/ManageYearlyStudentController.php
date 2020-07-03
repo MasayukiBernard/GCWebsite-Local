@@ -39,6 +39,33 @@ class ManageYearlyStudentController extends Controller
         ]);
     }
 
+    public function get_sortedStudentDetails($academic_year_id, $field, $sort_type){
+        $available_fields = array('nim', 'name', 'major_name', 'nominated');
+        $sort_types = array('a' => 'asc', 'd' => 'desc');
+
+        if(is_numeric($academic_year_id) && in_array($field, $available_fields) && Arr::exists($sort_types, $sort_type)){
+            $students = DB::table('yearly_students')
+                            ->join('students', 'yearly_students.nim', '=', 'students.nim')
+                            ->join('users', 'students.user_id', '=', 'users.id')
+                            ->join('majors', 'students.major_id', '=', 'majors.id')
+                            ->select('yearly_students.id as id', 'students.nim as nim', 'users.name as name', 'majors.name as major_name', 'yearly_students.is_nominated as nominated')
+                            ->where('yearly_students.academic_year_id', $academic_year_id)
+                            ->orderBy($field, $sort_types[$sort_type])
+                            ->get();
+                            
+            if($students->first() != null){
+                return response()->json([
+                    'students' => $students,
+                    'failed' => false
+                ]);
+            }
+        }
+        
+        return response()->json([
+            'failed' => true
+        ]);
+    }
+
     public function show_csaFormsPage($yearly_student_id){
         $yearly_student = Yearly_Student::where('id', $yearly_student_id)->first();
         if($yearly_student == null){

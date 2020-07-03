@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PartnerCRUD;
 use App\Major;
 use App\Partner;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -25,10 +26,23 @@ class ManagePartnerController extends Controller
         return view('staff_side\master_partner\view', ['all_majors' => Major::all()]);
     }
     
-    public function show_major_partners($id){
+    public function show_major_partners($id, $field, $sort_type){
         session()->put('last_picked_major_id', $id);
-        $partners = Partner::where('major_id', $id)->get();
-        return response()->json(['major_partners' => $partners->toArray()]);
+        
+        $available_fields = array('name', 'location', 'short_detail', 'min_gpa', 'eng_requirement');
+        $sort_types = array('a' => 'asc', 'd' => 'desc');
+        
+        if(is_numeric($id) && in_array($field, $available_fields) && Arr::exists($sort_types, $sort_type)){
+            $partners = Partner::where('major_id', $id)->orderBy($field, $sort_types[$sort_type])->get();
+            return response()->json([
+                'major_partners' => $partners,
+                'failed' => false
+            ]);
+        }
+        
+        return response()->json([
+            'failed' => true
+        ]);
     }
 
     public function show_partner_details(Partner $partner){
@@ -37,7 +51,7 @@ class ManagePartnerController extends Controller
     }
 
     public function show_createPage(){
-        return view('staff_side\master_partner\create', ['all_majors' => Major::all()]);
+        return view('staff_side\master_partner\create', ['all_majors' => Major::orderBy('name')->get()]);
     }
 
     public function confirm_create(PartnerCRUD $request){

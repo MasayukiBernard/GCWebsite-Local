@@ -36,6 +36,33 @@ class ManageCSAFormController extends Controller
         return redirect(route('staff.csa-forms.page'));
     }
 
+    public function get_sortedCSAForms($academic_year_id, $major_id, $field, $sort_type){
+        $available_fields = array('nim', 'name', 'form_status', 'created_at', 'nomination_status');
+        $sort_types = array('a' => 'asc', 'd' => 'desc');
+
+        if(is_numeric($academic_year_id) && is_numeric($major_id) && in_array($field, $available_fields) && Arr::exists($sort_types, $sort_type)){
+            $csa_forms = DB::table('csa_forms')
+                            ->join('yearly_students', 'csa_forms.yearly_student_id', '=', 'yearly_students.id')
+                            ->join('students', 'yearly_students.nim', '=', 'students.nim') 
+                            ->join('users', 'students.user_id', '=', 'users.id')
+                            ->select('csa_forms.id as id', 'students.nim as nim', 'users.name as name', 'csa_forms.is_submitted as form_status', 'csa_forms.created_at as created_at', 'yearly_students.is_nominated as nomination_status')
+                            ->where('yearly_students.academic_year_id', $academic_year_id)->where('students.major_id', $major_id)
+                            ->orderBy($field, $sort_types[$sort_type])
+                            ->get();
+            
+            if($csa_forms->first() != null){
+                return response()->json([
+                    'csa_forms' => $csa_forms,
+                    'failed' => false
+                ]);
+            }
+        }
+
+        return response()->json([
+            'failed' => true
+        ]);
+    }
+
     public function show_detailsPage($csa_form_id){
         $csa_form = CSA_Form::where('id', $csa_form_id)->first();
         if($csa_form != null){
@@ -51,10 +78,10 @@ class ManageCSAFormController extends Controller
             if($choice != null){
                 session()->put('nomination_details', ['csa_form_id' => $csa_form_id, 'choice_id' => $choice_id]);
                 return response()->json([
-                    'failed' => false,
                     'nim_name' => $csa_form->yearly_student->student->nim . ' - ' . $csa_form->yearly_student->student->user->name,
                     'academic_year' => $csa_form->yearly_student->academic_year->starting_year . '/' . $csa_form->yearly_student->academic_year->ending_year . ' - ' . ($csa_form->yearly_student->academic_year->odd_semester ? "Odd" : "Even"),
-                    'partner_name' => $choice->yearly_partner->partner->name
+                    'partner_name' => $choice->yearly_partner->partner->name,
+                    'failed' => false,
                 ]);
             }
         }
