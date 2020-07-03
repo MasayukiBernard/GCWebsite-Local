@@ -18,7 +18,7 @@ class ManageMajorController extends Controller{
     }
 
     public function show_majorpage(){
-        $major = Major::All();
+        $major = Major::orderBy('name')->get();
         $data =[
             'majors' => $major
         ];
@@ -82,8 +82,11 @@ class ManageMajorController extends Controller{
         $major = Major::where('id', $major_id)->first();
         if($major != null){
             session()->put('referred_major_id', $major->id);
-            return response()->json(['referred_major' => $major]);
-        }
+            return response()->json([
+                'referred_major' => $major,
+                'failed' => false
+            ]);
+        } 
         else{
             return response()->json(['failed' => true]);
         }
