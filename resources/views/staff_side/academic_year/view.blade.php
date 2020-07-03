@@ -14,26 +14,26 @@
                         <a class="btn btn-success text-light" role="button" href="{{route('staff.academic-year.create-page')}}">Add New Academic Year</a>
 
                         <?php $i = 0;?>
-                        <table class="table table-striped table-bordered table-hover">
+                        <table class="table table-striped table-bordered table-hover text-center table-sm">
                             <thead>
-                                <tr>
-                                    <th scope="col">No.</th>
-                                    <th scope="col">Starting Year</th>
-                                    <th scope="col">/</th>
-                                    <th scope="col">Ending Year</th>
-                                    <th scope="col">Semester Type</th>
-                                    <th scope="col">Delete</th>
+                                <tr class="d-flex">
+                                    <th class="col-1" scope="col">No.</th>
+                                    <th class="col-3" scope="col">Starting Year</th>
+                                    <th class="col-1" scope="col">/</th>
+                                    <th class="col-3" scope="col">Ending Year</th>
+                                    <th class="col-3" scope="col">Semester Type</th>
+                                    <th class="col-1" scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($academic_years as $year)
-                                    <tr>
-                                        <th scope="row">{{++$i}}</th>
-                                        <td>{{$year->starting_year}}</td>
-                                        <td></td>
-                                        <td>{{$year->ending_year}}</td>
-                                        <td>{{$year->odd_semester ? "Odd" : "Even"}}</td>
-                                        <td><button type="button" class="btn btn-danger" onclick="deleteAcademicYear({{$year->id}});">Delete</button></td>
+                                    <tr class="d-flex">
+                                        <th class="col-1 d-flex align-items-center justify-content-center" scope="row">{{++$i}}</th>
+                                        <td class="col-3 d-flex align-items-center justify-content-center"><div>{{$year->starting_year}}</div></td>
+                                        <td class="col-1 d-flex align-items-center justify-content-center"><div>/</div></td>
+                                        <td class="col-3 d-flex align-items-center justify-content-center"><div>{{$year->ending_year}}</div></td>
+                                        <td class="col-3 d-flex align-items-center justify-content-center"><div>{{$year->odd_semester ? "Odd" : "Even"}}</div></td>
+                                        <td class="col-1"><button type="button" class="btn btn-danger" onclick="deleteAcademicYear({{$year->id}});">Delete</button></td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -78,7 +78,7 @@
                 data: {_token: CSRF_TOKEN},
                 dataType: 'JSON',
                 success: function(response_data){
-                    if(response_data['failed'] == null){
+                    if(response_data['failed'] === false){
                         var data = response_data['reffered_academic_year'];
                         $('#deleteLabel').text('Confirm delete');
                         $('#popup_body').text('Confirm the deletion of "' + data.starting_year + '/' + data.ending_year + ' - ' + (data.odd_semester ? 'Odd' : 'Even') + '"');
