@@ -29,7 +29,7 @@ class ManageStudentController extends Controller
         $student = new Student();
         $student->nim = $nim;
         $student->user_id = $user->id;
-        $student->major_id = 1;
+        $student->major_id = session('first_major_id');
         $student->place_birth = '-';
         $student->date_birth = date('Y-m-d', 0);
         $student->nationality = '-';
@@ -107,6 +107,12 @@ class ManageStudentController extends Controller
     }
 
     public function confirm_create_single(Request $request){
+        $first_major_id = DB::table('majors')->select('id')->first();
+        if($first_major_id == null){
+            session()->put('failed_notif', 'Cannot make new student record(s) yet, please make at least 1 major record!');
+            return redirect(route('staff.student.page'));
+        }
+
         $request->flash();
         $validatedData = $request->validate([
             'nim' => ['required', 'string', 'digits:10'],
@@ -115,10 +121,17 @@ class ManageStudentController extends Controller
         $request->session()->put('validatedData', $validatedData);
         $validatedData['password'] = Str::substr($validatedData['password'], 0, 5) . '.......';
 
+        $request->session()->put('first_major_id', $first_major_id->id);
         return view ('staff_side/master_student/confirm-create-single', ['validatedData' => $validatedData, 'first_major' => Major::find($first_major_id->id)]);
     }
 
     public function create_single(){
+        $selected_major = Major::where('id', session('first_major_id'))->first();
+        if($selected_major == null){
+            session()->put('failed_notif', 'Failed to create student record! Missing referred major record!');
+            return redirect(route('staff.student.page'));
+        }
+
         $input = session('validatedData');
         $this->create_new_student($input['nim'], $input['password']);
         session()->forget('validatedData');
@@ -138,6 +151,12 @@ class ManageStudentController extends Controller
     }
 
     public function confirm_create_batch(Request $request){
+        $first_major_id = DB::table('majors')->select('id')->first();
+        if($first_major_id == null){
+            session()->put('failed_notif', 'Cannot make new student record(s) yet, please make at least 1 major record!');
+            return redirect(route('staff.student.page'));
+        }
+
         $validator = Validator::make($request->all(),[
             'batch-students' => ['required', 'mimes:txt', 'mimetypes:text/plain']
         ],[],
@@ -181,6 +200,7 @@ class ManageStudentController extends Controller
             }
         }
 
+        $request->session()->put('first_major_id', $first_major_id->id);
         return view('staff_side/master_student/confirm-create-batch', [
             'enrolling_students' => $enrolling_students, 
             'first_major' => Major::find($first_major_id->id)
@@ -189,6 +209,12 @@ class ManageStudentController extends Controller
 
     public function create_batch(){
         if(session('uploaded_temp_file_path') != null){
+            $selected_major = Major::where('id', session('first_major_id'))->first();
+            if($selected_major == null){
+                session()->put('failed_notif', 'Failed to create student record(s)! Missing major record!');
+                return redirect(route('staff.student.page'));
+            }
+
             $temp_file_path = session('uploaded_temp_file_path');
             session()->forget('uploaded_temp_file_path');
             $file_data = Storage::disk('private')->get($temp_file_path);
@@ -208,6 +234,7 @@ class ManageStudentController extends Controller
                 $next = Str::after($next, "\r\n");
                 ++$total;
             }
+
             session()->put('success_notif', 'You have successfuly CREATED ' . $total . ' new student record!');
         }
 

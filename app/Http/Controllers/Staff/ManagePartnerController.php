@@ -83,6 +83,11 @@ class ManagePartnerController extends Controller
 
     public function create(){
         $inputted_partner = session('inputted_partner');
+        if(Major::where('id', $inputted_partner['major'])->get()->first() == null){
+            session()->put('failed_notif', 'Failed to create a new partner record! Missing referred major!');
+            return redirect(route('staff.partner.page'));
+        }
+
         $partner = new Partner;
         $this->model_assignment($partner, $inputted_partner);
         session()->forget(['last_picked_major_id', 'inputted_partner']);
@@ -114,7 +119,7 @@ class ManagePartnerController extends Controller
             session()->put('success_notif', 'You have successfuly UPDATED 1 new partner record!');
         }
         else{
-            session()->put('failed_notif', 'System failed to update partner record!');   
+            session()->put('failed_notif', 'System failed to update partner record!');
         }
 
         return redirect(route('staff.partner.page'));

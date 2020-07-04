@@ -48,7 +48,7 @@ class ManageCSAFormController extends Controller
                 $failed = session('failed_notif');
             }
             session()->forget(['success_notif', 'failed_notif']);
-
+        
             if($yearly_students->first() != null){
                 return view('staff_side\csa_application_forms\view', [
                     'yearly_students' => $yearly_students,
@@ -58,6 +58,8 @@ class ManageCSAFormController extends Controller
                     'failed' => $failed
                 ]);
             }
+
+            session()->put('failed_notif', 'There is no CSA Application Form data yet in the selected academic year and major!');
         }
         else{
             session()->put('failed_notif', 'CSA Application Form feature is not yet available, please create at least 1 record of major and academic year!');
