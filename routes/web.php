@@ -165,7 +165,7 @@ Route::middleware('auth')->group(function(){
                         $csa_form_controller = 'Staff\ManageCSAFormController@';
 
                         Route::get('/', $csa_form_controller . 'show_page')->name('page');
-                        Route::get('/academic-year/{academic_year_id}/major/{major_id}', $csa_form_controller . 'get_CSAForms');
+                        Route::get('/academic-year/{academic_year_id}/major/{major_id}', $csa_form_controller . 'show_CSAForms');
                         Route::post('/academic-year/{academic_year_id}/major/{major_id}/sort-by/{field}/{sort_type}', $csa_form_controller . 'get_sortedCSAForms');
 
                         Route::get('/details/{csa_form_id}', $csa_form_controller . 'show_detailsPage')->name('details');
