@@ -28,7 +28,6 @@
                             @endif
                         @endif
                             
-
                         <table class="table table-bordered table-sm">
                             <thead>
                                 <th class="h4 bg-info" colspan="2">Status</th>
