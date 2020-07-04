@@ -8,6 +8,32 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md">
+                <div id="notification_bar" class="row justify-content-center m-0 mb-2 text-light">
+                    @isset($success)
+                        <div id="success_notif" class="col-md-12 bg-success rounded py-2 font-weight-bold h4 m-0">
+                            <div class="row">
+                                <div class="col-11">
+                                    {{$success}}
+                                </div>
+                                <div class="col-1 text-right">
+                                    <span id="close_notif" style="cursor: pointer;" onclick="close_notif();">X</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endisset
+                    @isset($failed)
+                        <div id="failed_notif" class="col-md-12 bg-danger rounded py-2 font-weight-bold h4 m-0">
+                            <div class="row">
+                                <div class="col-11">
+                                    {{$failed}}
+                                </div>
+                                <div class="col-1 text-right">
+                                    <span id="close_notif" style="cursor: pointer;" onclick="close_notif();">X</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endisset
+                </div>
                 <div class="card">
                     <div class="card-header h2">{{$academic_year->starting_year}}/{{$academic_year->ending_year}} - {{$academic_year->odd_semester ? "Odd" : "Even"}} Semester Partners List</div>
                     <div class="card-body">
@@ -98,7 +124,12 @@
             $('#loading_bar_container').fadeOut(0);
         };
 
+        function close_notif(){
+            $('#notification_bar').fadeOut(500);
+        }
+
         const academic_year_id = {{$academic_year->id}};
+        
         function deleteYearlyPartner(partner_id){
             var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             var targetURL = '/staff/yearly-partner/delete/confirm/academic-year/' + academic_year_id + '/partner/' + partner_id;
@@ -203,10 +234,10 @@
                             $.each(data, function(index, value){
                                 $("#yearly_partner_data").append(
                                     "<tr class=\"d-flex\">" + 
-                                    "<th class=\"col-1\" scope=row onclick=\"go_to(" + data[index].id + ");\">" + (index+1) + "</th>" +
+                                    "<th class=\"col-1 text-center\" scope=row onclick=\"go_to(" + data[index].id + ");\">" + (index+1) + "</th>" +
                                     "<td class=\"col-5\" colspan=\"2\" style=\"cursor: pointer;\" onclick=\"go_to(" + data[index].id + ");\">"   + data[index].name + "</td>" + 
                                     "<td class=\"col-5\" colspan=\"2\" style=\"cursor: pointer;\" onclick=\"go_to(" + data[index].id + ");\">" + data[index].location + "</td>" +
-                                    "<td class=\"col-1\"><button type=\"button\" class=\"btn btn-danger\"  onclick=\"deleteYearlyPartner(" + data[index].id + ");\">Delete</button></td>" +
+                                    "<td class=\"col-1 text-center\"><button type=\"button\" class=\"btn btn-danger\"  onclick=\"deleteYearlyPartner(" + data[index].id + ");\">Delete</button></td>" +
                                     "</tr>"
                                 );
                             });

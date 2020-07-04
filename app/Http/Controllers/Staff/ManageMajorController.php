@@ -18,9 +18,16 @@ class ManageMajorController extends Controller{
     }
 
     public function show_majorpage(){
+        $success = null;
+        if(session('success_notif') != null){
+            $success = session('success_notif');
+        }
+        session()->forget('success_notif');
+
         $major = Major::orderBy('name')->get();
         $data =[
-            'majors' => $major
+            'majors' => $major,
+            'success' => $success,
         ];
 
         return view('staff_side\master_major\view', $data );
@@ -45,7 +52,7 @@ class ManageMajorController extends Controller{
         $this->model_assignment($major, $inputted_major);
         session()->forget(['inputted_major']);
 
-        // Feedback
+        session()->put('success_notif', 'You have successfuly CREATED 1 new major record!');
         return redirect(route('staff.major.page'));
     }
 
@@ -62,6 +69,7 @@ class ManageMajorController extends Controller{
         session()->forget(['inputted_major']);
         $request->session()->put('inputted_major', $validatedData);
 
+        session()->put('success_notif', 'You have successfuly UPDATED 1 new major record!');
         return view('staff_side/master_major/update-confirm', ['referred_major' => Major::find(session('referred_major_id')), 'inputted_major' => $validatedData]);
     }
 
@@ -97,7 +105,7 @@ class ManageMajorController extends Controller{
         $major->delete();
         session()->forget('referred_major_id');
         
-        // Feedback
+        session()->put('success_notif', 'You have successfuly DELETED 1 major record!');
         return redirect(route('staff.major.page'));
     }
 

@@ -16,7 +16,11 @@ class ManageYearlyPartnerController extends Controller
 {
     private function unpicked_partners($id){
         $partner_ids = DB::table('yearly_partners')->select('partner_id')->where('academic_year_id', $id)->get();
-        return DB::table('partners')->select('id', 'name', 'location')->whereNotIn('id', Arr::pluck($partner_ids, 'partner_id'))->get();
+        return DB::table('partners')
+                    ->join('majors', 'partners.major_id', '=', 'majors.id')
+                    ->select('partners.id as id', 'partners.name as name', 'partners.location', 'majors.name as major_name')
+                    ->whereNotIn('partners.id', Arr::pluck($partner_ids, 'partner_id'))
+                    ->get();
     }
 
     public function show_yearlyPartnerPage(){
@@ -26,7 +30,22 @@ class ManageYearlyPartnerController extends Controller
     public function show_yearlyPartnerDetailsPage($academic_year_id){
         session()->forget('latest_yearly_partner_year_id');
         session()->put('latest_yearly_partner_year_id', $academic_year_id);
-        return view('staff_side/yearly_partner/details', ['academic_year' => Academic_Year::where('id', $academic_year_id)->first(), 'all_majors' => Major::orderBy('name')->get()]);
+
+        $success = $failed = null;
+        if(session('success_notif') != null){
+            $success = session('success_notif');
+        }
+        else if (session('failed_notif') != null){
+            $failed = session('failed_notif');
+        }
+        session()->forget(['success_notif', 'failed_notif']);
+        
+        return view('staff_side/yearly_partner/details', [
+            'academic_year' => Academic_Year::where('id', $academic_year_id)->first(),
+            'all_majors' => Major::orderBy('name')->get(),
+            'success' => $success,
+            'failed' => $failed
+        ]);
     }
 
     public function get_yearlyPartnerDetails($academic_year_id, $major_id, $field, $sort_type){
@@ -85,8 +104,10 @@ class ManageYearlyPartnerController extends Controller
             $yearly_partner->partner_id = session('create_yearly_partner')['partner'];
             $yearly_partner->save();
             session()->forget('create_yearly_partner');
+            session()->put('success_notif', 'You have successfuly CREATED 1 new yearly partner record!');
         }
-        return redirect(route('staff.yearly-partner.create-page'));
+
+        return redirect(route('staff.yearly-partner.details', ['academic_year_id' => session('latest_yearly_partner_year_id')]));
     }
 
     public function confirm_delete($academic_year_id, $partner_id){
@@ -99,6 +120,7 @@ class ManageYearlyPartnerController extends Controller
         if($yearly_partner != null){
             $academic_year = $yearly_partner->academic_year->starting_year . '/' . $yearly_partner->academic_year->ending_year . ' - ' . ($yearly_partner->academic_year->odd_semester ? 'Odd' : 'Even');
             session()->put('yearly_partner_id_to_delete', $yearly_partner->id);
+
             return response()->json([
                 'yearly_partner_name' => $yearly_partner->partner->name,
                 'academic_year' => $academic_year
@@ -114,7 +136,12 @@ class ManageYearlyPartnerController extends Controller
         session()->forget('yearly_partner_id_to_delete');
         if($yearly_partner != null){
             $yearly_partner->delete();
+            session()->put('success_notif', 'You have successfuly DELETED 1 new partner record!');
         }
+        else{
+            session()->put('failed_notif', 'System failed to delete yearly partner record!');   
+        }
+
         return redirect(route('staff.yearly-partner.details', ['academic_year_id' => session('latest_yearly_partner_year_id')]));
     }
 }

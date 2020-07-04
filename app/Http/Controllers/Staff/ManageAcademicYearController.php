@@ -9,7 +9,16 @@ use App\Http\Requests\AcademicYearCRUD;
 class ManageAcademicYearController extends Controller
 {
     public function show_academicYearPage(){
-        return view('staff_side/academic_year/view', ['academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester', 'desc')->get()]);
+        $success = null;
+        if(session('success_notif') != null){
+            $success = session('success_notif');
+        }
+        session()->forget('success_notif');
+
+        return view('staff_side/academic_year/view', [
+            'academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get(),
+            'success' => $success,
+        ]);
     }
     
     public function show_createPage(){
@@ -65,6 +74,8 @@ class ManageAcademicYearController extends Controller
         $academic_year->odd_semester = session('inputted_academic_year')['smt-type'];
         $academic_year->save();
         session()->forget('inputted_academic_year');
+
+        session()->put('success_notif', 'You have successfuly CREATED 1 new academic year record!');
         return redirect(route('staff.academic-year.page'));
     }
 
@@ -77,15 +88,16 @@ class ManageAcademicYearController extends Controller
                 'failed' => false
             ]);
         }
-        else{
-            return response()->json(['failed' => true]);
-        }
+
+        return response()->json(['failed' => true]);
     }
 
     public function delete(){
         $academic_year = Academic_Year::find(session('reffered_academic_year_id'));
         $academic_year->delete();
         session()->forget('reffered_academic_year_id');
+
+        session()->put('success_notif', 'You have successfuly DELETED 1 new academic year record!');
         return redirect(route('staff.academic-year.page'));
     }
 }

@@ -8,6 +8,32 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md">
+                <div id="notification_bar" class="row justify-content-center m-0 mb-2 text-light">
+                    @isset($success)
+                        <div id="success_notif" class="col-md-12 bg-success rounded py-2 font-weight-bold h4 m-0">
+                            <div class="row">
+                                <div class="col-11">
+                                    {{$success}}
+                                </div>
+                                <div class="col-1 text-right">
+                                    <span id="close_notif" style="cursor: pointer;" onclick="close_notif();">X</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endisset
+                    @isset($failed)
+                        <div id="failed_notif" class="col-md-12 bg-danger rounded py-2 font-weight-bold h4 m-0">
+                            <div class="row">
+                                <div class="col-11">
+                                    {{$failed}}
+                                </div>
+                                <div class="col-1 text-right">
+                                    <span id="close_notif" style="cursor: pointer;" onclick="close_notif();">X</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endisset
+                </div>
                 <div class="card">
                     <div class="card-header">
                         <h2>CSA Application Forms</h2>
@@ -109,6 +135,10 @@
             $('#loading_bar_container').fadeOut(0);
         };
 
+        function close_notif(){
+            $('#notification_bar').fadeOut(500);
+        }
+        
         const academic_year_id = {{$academic_year->id}};
         const major_id = {{$major->id}};
 

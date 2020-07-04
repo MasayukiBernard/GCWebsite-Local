@@ -42,12 +42,27 @@ class ManageStudentController extends Controller
     }
 
     public function show_studentPage(){
+        $success = $failed = null;
+        if(session('success_notif') != null){
+            $success = session('success_notif');
+        }
+        else if (session('failed_notif') != null){
+            $failed = session('failed_notif');
+        }
+        session()->forget(['success_notif', 'failed_notif']);
+
         $binusian_year = DB::table('students')->select('binusian_year')->orderByDesc('binusian_year')->first();
         $students = null;
         if($binusian_year != null){
             $students = Student::where('binusian_year', $binusian_year->binusian_year)->orderBy('nim')->get();
         }
-        return view('staff_side/master_student/view', ['students' => $students, 'binusian_years' => DB::table('students')->select('binusian_year')->distinct()->orderBy('binusian_year', 'desc')->get()]);
+
+        return view('staff_side/master_student/view', [
+            'students' => $students,
+            'binusian_years' => DB::table('students')->select('binusian_year')->distinct()->orderBy('binusian_year', 'desc')->get(),
+            'success' => $success,
+            'failed' => $failed
+        ]);
     }
 
     public function show_StudentsByYear($year, $field, $sort_type){
@@ -75,6 +90,11 @@ class ManageStudentController extends Controller
     }
 
     public function show_createPage(){
+        $first_major_id = DB::table('majors')->select('id')->first();
+        if($first_major_id == null){
+            session()->put('failed_notif', 'Cannot make new student record(s) yet, please make at least 1 major record!');
+            return redirect(route('staff.student.page'));
+        }
         return view('staff_side/master_student/create-type');
     }
 
@@ -87,12 +107,6 @@ class ManageStudentController extends Controller
     }
 
     public function confirm_create_single(Request $request){
-        $first_major_id = DB::table('majors')->select('id')->first();
-        if($first_major_id == null){
-            // Failed, notice to make a major first
-            return redirect(route('staff.student.create-page'));
-        }
-
         $request->flash();
         $validatedData = $request->validate([
             'nim' => ['required', 'string', 'digits:10'],
@@ -109,6 +123,7 @@ class ManageStudentController extends Controller
         $this->create_new_student($input['nim'], $input['password']);
         session()->forget('validatedData');
 
+        session()->put('success_notif', 'You have successfuly CREATED 1 new student record!');
         return redirect(route('staff.student.page'));
     }
 
@@ -118,16 +133,11 @@ class ManageStudentController extends Controller
             $view_data = ['error' => true];
             session()->forget('template_error');
         }
+
         return view('staff_side/master_student/create-batch', $view_data);
     }
 
     public function confirm_create_batch(Request $request){
-        $first_major_id = DB::table('majors')->select('id')->first();
-        if($first_major_id == null){
-            // Failed, notice to make a major first
-            return redirect(route('staff.student.create-page'));
-        }
-        
         $validator = Validator::make($request->all(),[
             'batch-students' => ['required', 'mimes:txt', 'mimetypes:text/plain']
         ],[],
@@ -165,13 +175,16 @@ class ManageStudentController extends Controller
                     session()->put('template_error', true);
                     return redirect(route('staff.student.create-page-batch'));
                 }
-                $enrolling_students[] = array("nim" => $nim, "password" => $pass);
+                $enrolling_students[] = array("nim" => $nim, "password" => Str::substr($pass, 0, 5) . '......');
                 $current = Str::before($next, "\r\n");
                 $next = Str::after($next, "\r\n");
             }
         }
 
-        return view('staff_side/master_student/confirm-create-batch', ['enrolling_students' => $enrolling_students, 'first_major' => Major::find($first_major_id->id)]);
+        return view('staff_side/master_student/confirm-create-batch', [
+            'enrolling_students' => $enrolling_students, 
+            'first_major' => Major::find($first_major_id->id)
+        ]);
     }
 
     public function create_batch(){
@@ -184,6 +197,7 @@ class ManageStudentController extends Controller
             $current = Str::before($trimmed_data, "\r\n");
             $next = Str::after($trimmed_data, "\r\n");
 
+            $total = 0;
             while(!empty($current) && strcmp($current, "\t") != 0){
                 $nim = Str::before($current, "\t");
                 $pass = Str::between($current, "\t", "\r");
@@ -192,8 +206,11 @@ class ManageStudentController extends Controller
 
                 $current = Str::before($next, "\r\n");
                 $next = Str::after($next, "\r\n");
+                ++$total;
             }
+            session()->put('success_notif', 'You have successfuly CREATED ' . $total . ' new student record!');
         }
+
         return redirect(route('staff.student.page'));
     }
 
@@ -207,7 +224,12 @@ class ManageStudentController extends Controller
         if($user != null){
             session()->forget('latest_requested_student_uid');
             $user->delete();
+            session()->put('success_notif', 'You have successfuly DELETED 1 student record!');
         }
+        else{
+            session()->put('failed_notif', 'System failed to delete student record!');
+        }
+
         return redirect(route('staff.student.page'));
     }
 }

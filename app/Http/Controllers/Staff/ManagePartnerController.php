@@ -8,7 +8,6 @@ use App\Major;
 use App\Partner;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class ManagePartnerController extends Controller
 {
@@ -23,7 +22,20 @@ class ManagePartnerController extends Controller
     }
 
     public function show_partnerPage(){
-        return view('staff_side\master_partner\view', ['all_majors' => Major::orderBy('name')->get()]);
+        $success = $failed = null;
+        if(session('success_notif') != null){
+            $success = session('success_notif');
+        }
+        else if (session('failed_notif') != null){
+            $failed = session('failed_notif');
+        }
+        session()->forget(['success_notif', 'failed_notif']);
+
+        return view('staff_side\master_partner\view', [
+            'all_majors' => Major::orderBy('name')->get(),
+            'success' => $success,
+            'failed' => $failed
+        ]);
     }
     
     public function show_major_partners($id, $field, $sort_type){
@@ -51,6 +63,12 @@ class ManagePartnerController extends Controller
     }
 
     public function show_createPage(){
+        $first_major = DB::table('majors')->select('id')->get()->first();
+        if($first_major == null){
+            session()->put('failed_notif', 'Cannot make a new partner yet, please create at least 1 record of major!');
+            return redirect(route('staff.partner.page'));
+        }
+        
         return view('staff_side\master_partner\create', ['all_majors' => Major::orderBy('name')->get()]);
     }
 
@@ -59,6 +77,7 @@ class ManagePartnerController extends Controller
         $validatedData = $request->validated();
         $request->session()->put('inputted_partner', $validatedData);
         $validatedData['major'] = Major::find($validatedData['major'])->name;
+
         return view('staff_side/master_partner/create-confirm', ['inputted_partner' => $validatedData]);
     }
 
@@ -67,7 +86,9 @@ class ManagePartnerController extends Controller
         $partner = new Partner;
         $this->model_assignment($partner, $inputted_partner);
         session()->forget(['last_picked_major_id', 'inputted_partner']);
-        return redirect(route('staff.home'));
+
+        session()->put('success_notif', 'You have successfuly CREATED 1 new partner record!');
+        return redirect(route('staff.partner.page'));
     }
 
     public function show_editPage(Partner $partner){
@@ -79,16 +100,23 @@ class ManagePartnerController extends Controller
         $validatedData = $request->validated();
         $request->session()->put('inputted_partner', $validatedData);
         $validatedData['major'] = Major::find($validatedData['major'])->name;
+
         return view('staff_side/master_partner/update-confirm', ['referred_partner' => Partner::find(session('referred_partner_id')), 'inputted_partner' => $validatedData]);
     }
 
     public function update(){
         $inputted_partner = session('inputted_partner');
         $partner = Partner::where('id', session('referred_partner_id'))->first();
+        
         if($partner != null){
             $this->model_assignment($partner, $inputted_partner);
             session()->forget(['inputted_partner', 'referred_partner_id']);
+            session()->put('success_notif', 'You have successfuly UPDATED 1 new partner record!');
         }
+        else{
+            session()->put('failed_notif', 'System failed to update partner record!');   
+        }
+
         return redirect(route('staff.partner.page'));
     }
 
@@ -97,7 +125,12 @@ class ManagePartnerController extends Controller
         if($partner != null){
             $partner->delete();
             session()->forget('referred_partner_id');
+            session()->put('success_notif', 'You have successfuly DELETED 1 new partner record!');
         }
+        else{
+            session()->put('failed_notif', 'System failed to delete partner record!');   
+        }
+
         return redirect(route('staff.partner.page'));
     }
 }

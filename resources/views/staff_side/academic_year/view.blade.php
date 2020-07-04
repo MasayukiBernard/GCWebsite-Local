@@ -8,6 +8,20 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md">
+                <div id="notification_bar" class="row justify-content-center m-0 mb-2 text-light">
+                    @isset($success)
+                        <div id="success_notif" class="col-md-12 bg-success rounded py-2 font-weight-bold h4 m-0">
+                            <div class="row">
+                                <div class="col-11">
+                                    {{$success}}
+                                </div>
+                                <div class="col-1 text-right">
+                                    <span id="close_notif" style="cursor: pointer;" onclick="close_notif();">X</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endisset
+                </div>
                 <div class="card">
                     <div class="card-header h2">Academic Year</div>
                     <div class="card-body">
@@ -69,6 +83,10 @@
 
 @push('scripts')
     <script>
+        function close_notif(){
+            $('#notification_bar').fadeOut(500);
+        }
+        
         function deleteAcademicYear(academic_year_id){
             var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             var targetURL = '/staff/academic-year/delete/confirm/' + academic_year_id;
