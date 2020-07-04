@@ -41,9 +41,9 @@
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
-                                    <th scope="row">Academic Year</th>
+                                    <th class="align-middle" scope="row">Academic Year</th>
                                     <td>
-                                    <div class="dropdown">
+                                        <div class="dropdown">
                                             <button class="btn btn-primary dropdown-toggle" type="button" id="academicYearDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 @if ($academic_years->count() > 0)
                                                     Academic Year
@@ -60,7 +60,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">Major Name</th>
+                                    <th scope="row" class="align-middle">Major Name</th>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle xml-3" type="button" id="majorDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
