@@ -18,14 +18,14 @@
                         @endif
 
                         <h5 class="card-title"><u>You are logged in as a Staff!</u></h5>
-                        <table class="table table-bordered table-sm">
+                        <table class="table table-bordered table-sm w-100">
                             <tbody>
                                 <tr>
                                     <td class="text-center h3" colspan="3">Yearly Students' Data Overview</td>
                                 </tr>
                                 <tr>
-                                    <td class="align-middle col-2">Major</td>
-                                    <td class="align-middle col-2">
+                                    <td class="align-middle">Major</td>
+                                    <td class="align-middle">
                                         <div class="btn-group">
                                             <button type="button" id="major_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 @if (isset($majors))
@@ -50,7 +50,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td rowspan="2" class="align-middle pl-3 col-8">
+                                    <td rowspan="2" class="align-middle pl-3">
                                         <table class="table table-borderless table-sm mb-0 w-auto">
                                             @isset($initial_percentages)
                                                 <tr>
@@ -202,7 +202,6 @@
                                 show_submission_chart(response_data['submitted_csa_forms'], response_data['total_yearly_students']-response_data['submitted_csa_forms']);
                                 show_nomination_chart(response_data['nominated_students'], response_data['total_yearly_students']-response_data['nominated_students']);
                             }
-                            console.log("SUCCEED");
                             $("#csa_percentage").text(submission_percentage);
                             $('#nominated_percentage').text(nominated_percentage);
                             $("#major_dropdown").text($("#major_"+major_id).text());
