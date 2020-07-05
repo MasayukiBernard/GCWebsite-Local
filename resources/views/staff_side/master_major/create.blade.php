@@ -9,12 +9,12 @@
 @endsection
 
 @section('form-inputs')
-
-<label>Major Name</label><br>
+    <label>Major Name</label><br>
     <input type="text" name="major-name" class="@error('major-name') is-invalid @enderror"><br>
     @error('major-name')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
+    <br>
 @endsection
 
 @section('confirm-value')

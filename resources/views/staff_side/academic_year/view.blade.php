@@ -8,32 +8,46 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md">
+                <div id="notification_bar" class="row justify-content-center m-0 mb-2 text-light">
+                    @isset($success)
+                        <div id="success_notif" class="col-md-12 bg-success rounded py-2 font-weight-bold h4 m-0">
+                            <div class="row">
+                                <div class="col-11">
+                                    {{$success}}
+                                </div>
+                                <div class="col-1 text-right">
+                                    <span id="close_notif" style="cursor: pointer;" onclick="close_notif();">X</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endisset
+                </div>
                 <div class="card">
                     <div class="card-header h2">Academic Year</div>
                     <div class="card-body">
                         <a class="btn btn-success text-light" role="button" href="{{route('staff.academic-year.create-page')}}">Add New Academic Year</a>
 
                         <?php $i = 0;?>
-                        <table class="table table-striped table-bordered table-hover">
+                        <table class="table table-striped table-bordered table-hover text-center table-sm">
                             <thead>
-                                <tr>
-                                    <th scope="col">No.</th>
-                                    <th scope="col">Starting Year</th>
-                                    <th scope="col">/</th>
-                                    <th scope="col">Ending Year</th>
-                                    <th scope="col">Semester Type</th>
-                                    <th scope="col">Delete</th>
+                                <tr class="d-flex">
+                                    <th class="col-1" scope="col">No.</th>
+                                    <th class="col-3" scope="col">Starting Year</th>
+                                    <th class="col-1" scope="col">/</th>
+                                    <th class="col-3" scope="col">Ending Year</th>
+                                    <th class="col-3" scope="col">Semester Type</th>
+                                    <th class="col-1" scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($academic_years as $year)
-                                    <tr>
-                                        <th scope="row">{{++$i}}</th>
-                                        <td>{{$year->starting_year}}</td>
-                                        <td></td>
-                                        <td>{{$year->ending_year}}</td>
-                                        <td>{{$year->odd_semester ? "Odd" : "Even"}}</td>
-                                        <td><button type="button" class="btn btn-danger" onclick="deleteAcademicYear({{$year->id}});">Delete</button></td>
+                                    <tr class="d-flex">
+                                        <th class="col-1 d-flex align-items-center justify-content-center" scope="row">{{++$i}}</th>
+                                        <td class="col-3 d-flex align-items-center justify-content-center"><div>{{$year->starting_year}}</div></td>
+                                        <td class="col-1 d-flex align-items-center justify-content-center"><div>/</div></td>
+                                        <td class="col-3 d-flex align-items-center justify-content-center"><div>{{$year->ending_year}}</div></td>
+                                        <td class="col-3 d-flex align-items-center justify-content-center"><div>{{$year->odd_semester ? "Odd" : "Even"}}</div></td>
+                                        <td class="col-1"><button type="button" class="btn btn-danger" onclick="deleteAcademicYear({{$year->id}});">Delete</button></td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -69,6 +83,10 @@
 
 @push('scripts')
     <script>
+        function close_notif(){
+            $('#notification_bar').fadeOut(500);
+        }
+        
         function deleteAcademicYear(academic_year_id){
             var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             var targetURL = '/staff/academic-year/delete/confirm/' + academic_year_id;
@@ -78,7 +96,7 @@
                 data: {_token: CSRF_TOKEN},
                 dataType: 'JSON',
                 success: function(response_data){
-                    if(response_data['failed'] == null){
+                    if(response_data['failed'] === false){
                         var data = response_data['reffered_academic_year'];
                         $('#deleteLabel').text('Confirm delete');
                         $('#popup_body').text('Confirm the deletion of "' + data.starting_year + '/' + data.ending_year + ' - ' + (data.odd_semester ? 'Odd' : 'Even') + '"');

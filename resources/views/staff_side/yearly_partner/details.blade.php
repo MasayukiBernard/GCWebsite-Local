@@ -8,33 +8,87 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md">
+                <div id="notification_bar" class="row justify-content-center m-0 mb-2 text-light">
+                    @isset($success)
+                        <div id="success_notif" class="col-md-12 bg-success rounded py-2 font-weight-bold h4 m-0">
+                            <div class="row">
+                                <div class="col-11">
+                                    {{$success}}
+                                </div>
+                                <div class="col-1 text-right">
+                                    <span id="close_notif" style="cursor: pointer;" onclick="close_notif();">X</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endisset
+                    @isset($failed)
+                        <div id="failed_notif" class="col-md-12 bg-danger rounded py-2 font-weight-bold h4 m-0">
+                            <div class="row">
+                                <div class="col-11">
+                                    {{$failed}}
+                                </div>
+                                <div class="col-1 text-right">
+                                    <span id="close_notif" style="cursor: pointer;" onclick="close_notif();">X</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endisset
+                </div>
                 <div class="card">
                     <div class="card-header h2">{{$academic_year->starting_year}}/{{$academic_year->ending_year}} - {{$academic_year->odd_semester ? "Odd" : "Even"}} Semester Partners List</div>
                     <div class="card-body">
+                        List of yearly partners for students majoring in:<br>
+                        <div class="btn-group">
+                            <button type="button" id="major_name_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @if ($all_majors->count() > 0)
+                                    Major Name
+                                @else
+                                    No major data yet!!
+                                @endif
+                            </button>
+                            <div class="dropdown-menu">
+                                @foreach($all_majors as $major)
+                                    <a id="major_{{$major->id}}" class="dropdown-item" style="cursor: pointer"
+                                        onclick="set_major({{$major->id}});">
+                                        {{$major->name}}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
                         <a class="btn btn-success" href="{{route('staff.yearly-partner.create-page')}}" role="button">Add New Yearly Partner</a>
-                        <table class="table table-bordered table-hover table-striped">
+                        <table class="table table-bordered table-hover table-striped m-0">
                             <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">University Name</th>
-                                    <th scope="col">Location</th>
-                                    <th scope="col">Major Name</th>
-                                    <th scope="col">Delete</th>
+                                <tr class="d-flex">
+                                    <th class="col-1 text-center" scope="col">#</th>
+                                    <th class="col-4 border-right-0" scope="col">University Name</th>
+                                    <th class="col-1 p-0 border-left-0 text-center" scope="col">
+                                        <div class="d-flex flex-row-reverse">
+                                            <div class="col-6 py-2 m-1 bg-info rounded-circle" style="cursor: pointer;" id="name_state" onclick="get_partners('name');">&#8597</div>
+                                        </div>
+                                    </th>
+                                    <th class="col-4 border-right-0" scope="col">Location</th>
+                                    <th class="col-1 p-0 border-left-0 text-center" scope="col">
+                                        <div class="d-flex flex-row-reverse">
+                                            <div class="col-6 py-2 my-1 mx-1 bg-info rounded-circle" style="cursor: pointer;" id="location_state" onclick="get_partners('location');">&#8597</div>
+                                        </div>
+                                    </th>
+                                    <th class="col-1 text-center" scope="col">Action</th>
                                 </tr>
                               </thead>
-                            <tbody>
-                                <?php $i=0;?>
-                                @foreach ($yearly_partners as $yearly_partner)
-                                    <tr>
-                                        <th style="cursor: pointer;" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')" scope="row">{{++$i}}</th>
-                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->name}}</td>
-                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->location}}</td>
-                                        <td style="cursor: pointer;" onclick="window.location.assign('/staff/partner/details/{{$yearly_partner->partner_id}}')">{{$yearly_partner->partner->major->name}}</td>
-                                        <td><button type="button" class="btn btn-danger position-relative" onclick="deleteYearlyPartner({{$yearly_partner->id}})">Delete</button></td>
-                                    </tr>
-                                @endforeach
+                            <tbody id="yearly_partner_data">
                             </tbody>
                         </table>
+                        <div class="row" id="loading_bar_container">
+                            <div class="col-12">
+                                <div class="row" style="position: relative;">
+                                    <div class="col-6 p-0 text-right">Loading</div>
+                                    <div id="dots" class="col-6 p-0"></div>
+                                </div>
+                                <div class="progress mt-n4" style="height: 25px;">
+                                    <div id="loading_bar1" class="progress-bar progress-bar-striped progress-bar-animated bg-success rounded" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%; margin-left: -50%;"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -66,9 +120,19 @@
 
 @push('scripts')
     <script>
-        function deleteYearlyPartner(yearly_partner_id){
+        window.onload = function(){
+            $('#loading_bar_container').fadeOut(0);
+        };
+
+        function close_notif(){
+            $('#notification_bar').fadeOut(500);
+        }
+
+        const academic_year_id = {{$academic_year->id}};
+        
+        function deleteYearlyPartner(partner_id){
             var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            var targetURL = '/staff/yearly-partner/delete/confirm/' + yearly_partner_id;
+            var targetURL = '/staff/yearly-partner/delete/confirm/academic-year/' + academic_year_id + '/partner/' + partner_id;
             $.ajax({
                 type: 'POST',
                 url: targetURL,
@@ -90,6 +154,124 @@
                     $('#confirmDeleteModal').modal();
                 }
             });
+        }
+
+        var major_id = 0;
+
+        var sort_states ={
+            name: 'n',
+            location: 'n',
+            major: 'n'
+        };
+
+        function set_major(id){
+            major_id = id;
+            sort_states.name = 'n';
+            sort_states.location = 'n';
+            sort_states.min_gpa = 'n';
+            sort_states.eng_requirement = 'n';
+            sort_states.short_detail = 'n';
+            get_partners('name');
+        }
+
+        function set_state(column, state){
+            var properties = ['name', 'location'];
+            var states = ['a', 'd'];
+            if(properties.includes(column) && states.includes(state)){
+                for(var i = 0; i < 5; ++i){
+                    if(column == properties[i]){
+                        sort_states[column] = state;
+                        if(state == 'a'){
+                            $('#' + properties[i] + '_state').html('&#8593');
+                        }
+                        else if(state == 'd'){
+                            $('#' + properties[i] + '_state').html('&#8595');
+                        }
+                        $('#' + properties[i] + '_state').addClass('bg-info');
+                        continue;
+                    }
+                    sort_states[properties[i]] = 'n';
+                    $('#' + properties[i] + '_state').removeClass('bg-info');
+                    $('#' + properties[i] + '_state').html('&#8597');
+                }
+            }
+        }
+        
+        function go_to(id){
+            window.location.assign('/staff/partner/details/' + id);
+        }
+
+        function get_partners(sort_by){
+            if(major_id > 0){
+                var sort_type = 'a';
+                if(sort_states[sort_by] != 'n'){
+                    if(sort_states[sort_by] == 'a'){
+                        sort_type = 'd';
+                        set_state(sort_by, 'd');   
+                    }
+                    else if(sort_states[sort_by] == 'd'){
+                        set_state(sort_by, 'a');
+                    }
+                }
+                else{
+                    set_state(sort_by, 'a');
+                }
+
+                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                var targetURL = "/staff/yearly-partner/list/"+ academic_year_id + "/major/" + major_id + "/sort-by/" + sort_by + "/" + sort_type;
+                $.ajax({
+                    type: 'POST',
+                    url: targetURL,
+                    data: {_token: CSRF_TOKEN},
+                    dataType: 'JSON',
+                    beforeSend: function(){
+                        animate_loading();
+                    },
+                    success: function(response_data){
+                        if(response_data['failed'] === false){
+                            $("#yearly_partner_data").empty();
+                            var data = response_data['yearly-partners'];
+                            $.each(data, function(index, value){
+                                $("#yearly_partner_data").append(
+                                    "<tr class=\"d-flex\">" + 
+                                    "<th class=\"col-1 text-center\" scope=row onclick=\"go_to(" + data[index].id + ");\">" + (index+1) + "</th>" +
+                                    "<td class=\"col-5\" colspan=\"2\" style=\"cursor: pointer;\" onclick=\"go_to(" + data[index].id + ");\">"   + data[index].name + "</td>" + 
+                                    "<td class=\"col-5\" colspan=\"2\" style=\"cursor: pointer;\" onclick=\"go_to(" + data[index].id + ");\">" + data[index].location + "</td>" +
+                                    "<td class=\"col-1 text-center\"><button type=\"button\" class=\"btn btn-danger\"  onclick=\"deleteYearlyPartner(" + data[index].id + ");\">Delete</button></td>" +
+                                    "</tr>"
+                                );
+                            });
+                        }
+                        $("#major_name_dropdown").text($("#major_" + major_id).text());
+                    },
+                    complete: function(){
+                        clearInterval(bar_interval);
+                        clearInterval(dots_interval);
+                        $('#loading_bar_container').fadeOut(750);
+                    }
+                });
+            }
+        }
+
+        var bar_interval, dots_interval, freq = 0;
+        function animate_loading(){
+            $('#loading_bar_container').fadeIn(0);
+            ++freq;
+            if(freq == 1){
+                $('#loading_bar1').animate({'margin-left': '+=125%'}, 2500);
+                $('#loading_bar1').animate({'margin-left': '-=100%'}, 2000);
+            }
+            run_1();
+            dots_interval = setInterval(run_2, 1300);
+            bar_interval = setInterval(run_1, 4000);
+            function run_1(){
+                $('#loading_bar1').animate({'margin-left': '+=100%'}, 2000);
+                $('#loading_bar1').animate({'margin-left': '-=100%'}, 2000);
+                $('#dots').empty();
+            }
+            function run_2(){
+                $('#dots').append(' .');
+            }
         }
     </script>
 @endpush

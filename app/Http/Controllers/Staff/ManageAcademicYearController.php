@@ -9,16 +9,41 @@ use App\Http\Requests\AcademicYearCRUD;
 class ManageAcademicYearController extends Controller
 {
     public function show_academicYearPage(){
-        return view('staff_side/academic_year/view', ['academic_years' => Academic_Year::orderBy('starting_year')->orderBy('odd_semester', 'desc')->get()]);
+        $success = null;
+        if(session('success_notif') != null){
+            $success = session('success_notif');
+        }
+        session()->forget('success_notif');
+
+        return view('staff_side/academic_year/view', [
+            'academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get(),
+            'success' => $success,
+        ]);
     }
     
     public function show_createPage(){
         $latest_year = Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->first();
         $temp_year = new Academic_Year();
         if($latest_year == null){
-            $temp_year->starting_year = date('Y', time());
-            $temp_year->ending_year = $temp_year->starting_year + 1;
-            $temp_year->odd_semester = true;
+            $curr_month = intval(date('m', time()));
+            if($curr_month >= 2 && $curr_month <= 12){
+                $temp_year->starting_year = date('Y', time());
+                $temp_year->ending_year = $temp_year->starting_year + 1;
+                if($curr_month >= 2 && $curr_month <= 8){
+                    // Odd semester
+                    $temp_year->odd_semester = true;
+                }
+                else if($curr_month > 8 && $curr_month <= 12){
+                    // Even semester starting current year
+                    $temp_year->odd_semester = false;
+                }
+            }
+            else if($curr_month == 1){
+                // Even semester starting prev year
+                $temp_year->starting_year = intval(date('Y', time()))-1;
+                $temp_year->ending_year = $temp_year->starting_year + 1;
+                $temp_year->odd_semester = false;
+            }
         }
         else{
             if($latest_year->odd_semester){
@@ -49,6 +74,8 @@ class ManageAcademicYearController extends Controller
         $academic_year->odd_semester = session('inputted_academic_year')['smt-type'];
         $academic_year->save();
         session()->forget('inputted_academic_year');
+
+        session()->put('success_notif', 'You have successfuly CREATED 1 new academic year record!');
         return redirect(route('staff.academic-year.page'));
     }
 
@@ -56,17 +83,21 @@ class ManageAcademicYearController extends Controller
         $academic_year = Academic_Year::where('id', $academic_year_id)->first();
         if($academic_year != null){
             session()->put('reffered_academic_year_id', $academic_year->id);
-            return response()->json(['reffered_academic_year' => $academic_year]);
+            return response()->json([
+                'reffered_academic_year' => $academic_year,
+                'failed' => false
+            ]);
         }
-        else{
-            return response()->json(['failed' => true]);
-        }
+
+        return response()->json(['failed' => true]);
     }
 
     public function delete(){
         $academic_year = Academic_Year::find(session('reffered_academic_year_id'));
         $academic_year->delete();
         session()->forget('reffered_academic_year_id');
+
+        session()->put('success_notif', 'You have successfuly DELETED 1 new academic year record!');
         return redirect(route('staff.academic-year.page'));
     }
 }

@@ -35,7 +35,9 @@ Route::middleware('auth')->group(function(){
     });
     // -> Staff Users
     Route::middleware('staff')->group(function(){
-
+        Route::get('/image/{table_name}/{id}/{column_name}', 'Staff\ShowPhotoController')->name('see-image');
+        
+        // Prevent this route to be accessed directly from GET requests
         Route::resource('photos', 'Staff\PhotoController');
 
         Route::name('staff.')->group(function(){
@@ -43,7 +45,7 @@ Route::middleware('auth')->group(function(){
                 Route::prefix('home')->group(function(){
                     $home_controller = 'HomeController@';
                     Route::get('/', $home_controller . 'staff_index')->name('home');
-                    Route::post('/academic-year/{id}', $home_controller . 'get_percentages');
+                    Route::post('/major/{major_id}/academic-year/{academic_year_id}', $home_controller . 'get_percentages');
                 });
                 
                 Route::name('academic-year.')->group(function(){
@@ -85,7 +87,7 @@ Route::middleware('auth')->group(function(){
                         $partner_controller = 'Staff\ManagePartnerController@';
 
                         Route::get('/', $partner_controller . 'show_partnerPage')->name('page');
-                        Route::post('/major/{id}', $partner_controller . 'show_major_partners');
+                        Route::post('/major/{id}/sort-by/{field}/{sort_type}', $partner_controller . 'show_major_partners');
     
                         Route::get('/create', $partner_controller . 'show_createPage')->name('create-page');
                         Route::post('/create/confirm', $partner_controller . 'confirm_create')->name('create-confirm');
@@ -109,8 +111,10 @@ Route::middleware('auth')->group(function(){
                         Route::post('/create/confirm', $yPartner_controller . 'confirm_create')->name('create-confirm');
                         Route::post('/create/yearly-partner', $yPartner_controller . 'create')->name('create');
 
-                        Route::get('/list/{academic_year_id}', $yPartner_controller . 'show_yearlyPartnerDetails')->name('details');
-                        Route::post('/delete/confirm/{yearly_partner_id}', $yPartner_controller . 'confirm_delete');
+                        Route::get('/list/{academic_year_id}', $yPartner_controller . 'show_yearlyPartnerDetailsPage')->name('details');
+                        Route::post('/list/{academic_year_id}/major/{major_id}/sort-by/{field}/{sort_type}', $yPartner_controller . 'get_yearlyPartnerDetails');
+
+                        Route::post('/delete/confirm/academic-year/{academic_year_id}/partner/{partner_id}', $yPartner_controller . 'confirm_delete');
                         Route::post('/delete/yearly-partner/', $yPartner_controller . 'delete')->name('delete');
                     });
                 });
@@ -119,7 +123,7 @@ Route::middleware('auth')->group(function(){
                     Route::prefix('student')->group(function(){
                         $student_controller = 'Staff\ManageStudentController@';
                         Route::get('/', $student_controller . 'show_studentPage')->name('page');
-                        Route::post('/binusian-year/{year}', $student_controller . 'show_StudentsByYear');
+                        Route::post('/binusian-year/{year}/sort-by/{field}/{sort_type}', $student_controller . 'show_StudentsByYear');
                         
                         Route::get('/create', $student_controller . 'show_createPage')->name('create-page');
                         Route::post('/download/batch-template', $student_controller . 'download_template')->name('download-batch-template');
@@ -148,6 +152,7 @@ Route::middleware('auth')->group(function(){
                         Route::post('/create/yearly-student', $yStudent_controller . 'create')->name('create');
 
                         Route::get('/list/{academic_year_id}', $yStudent_controller . 'show_yearlyStudentDetails')->name('details');
+                        Route::post('/academic-year/{academic_year_id}/sort-by/{field}/{sort_type}', $yStudent_controller . 'get_sortedStudentDetails');
                         Route::get('/csa-forms/{yearly_student_id}', $yStudent_controller . 'show_csaFormsPage');
 
                         Route::post('/delete/confirm/{yearly_student_id}', $yStudent_controller . 'confirm_delete');
@@ -160,7 +165,8 @@ Route::middleware('auth')->group(function(){
                         $csa_form_controller = 'Staff\ManageCSAFormController@';
 
                         Route::get('/', $csa_form_controller . 'show_page')->name('page');
-                        Route::get('/academic-year/{academic_year_id}/major/{major_id}', $csa_form_controller . 'get_CSAForms');
+                        Route::get('/academic-year/{academic_year_id}/major/{major_id}', $csa_form_controller . 'show_CSAForms');
+                        Route::post('/academic-year/{academic_year_id}/major/{major_id}/sort-by/{field}/{sort_type}', $csa_form_controller . 'get_sortedCSAForms');
 
                         Route::get('/details/{csa_form_id}', $csa_form_controller . 'show_detailsPage')->name('details');
                         Route::post('/{csa_form_id}/choice/{choice_id}/confirm-nomination', $csa_form_controller . 'confirm_nomination');

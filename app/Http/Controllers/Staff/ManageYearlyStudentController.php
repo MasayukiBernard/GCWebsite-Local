@@ -32,10 +32,49 @@ class ManageYearlyStudentController extends Controller
             abort(404);
         }
     
+        session()->forget('latest_yearly_student_year_id');
         session()->put('latest_yearly_student_year_id', $academic_year_id);
+        $success = $failed = null;
+        if(session('success_notif') != null){
+            $success = session('success_notif');
+        }
+        if (session('failed_notif') != null){
+            $failed = session('failed_notif');
+        }
+        session()->forget(['success_notif', 'failed_notif']);
+
         return view('staff_side\yearly_student\details', [
             'yearly_students' => Yearly_Student::where('academic_year_id', $academic_year_id)->orderBy('nim')->get(), 
-            'academic_year' => $academic_year
+            'academic_year' => $academic_year,
+            'success' => $success,
+            'failed' => $failed
+        ]);
+    }
+
+    public function get_sortedStudentDetails($academic_year_id, $field, $sort_type){
+        $available_fields = array('nim', 'name', 'major_name', 'nominated');
+        $sort_types = array('a' => 'asc', 'd' => 'desc');
+
+        if(is_numeric($academic_year_id) && in_array($field, $available_fields) && Arr::exists($sort_types, $sort_type)){
+            $students = DB::table('yearly_students')
+                            ->join('students', 'yearly_students.nim', '=', 'students.nim')
+                            ->join('users', 'students.user_id', '=', 'users.id')
+                            ->join('majors', 'students.major_id', '=', 'majors.id')
+                            ->select('yearly_students.id as id', 'students.nim as nim', 'users.name as name', 'majors.name as major_name', 'yearly_students.is_nominated as nominated')
+                            ->where('yearly_students.academic_year_id', $academic_year_id)
+                            ->orderBy($field, $sort_types[$sort_type])
+                            ->get();
+                            
+            if($students->first() != null){
+                return response()->json([
+                    'students' => $students,
+                    'failed' => false
+                ]);
+            }
+        }
+        
+        return response()->json([
+            'failed' => true
         ]);
     }
 
@@ -97,15 +136,32 @@ class ManageYearlyStudentController extends Controller
         if(session('create_yearly_students') != null){
             $academic_year_id = session('create_yearly_students')['academic_year_id'];
             $enrolling_students = session('create_yearly_students')['students'];
-            foreach($enrolling_students as $enrolling_student){
-                $yearly_student = new Yearly_Student();
-                $yearly_student->nim = $enrolling_student;
-                $yearly_student->academic_year_id = $academic_year_id;
-                $yearly_student->save(); 
+            if($academic_year_id != null){
+                $missing_students = 0;
+                foreach($enrolling_students as $enrolling_student){
+                    if(Student::where('nim', $enrolling_student)->first() != null){
+                        $yearly_student = new Yearly_Student();
+                        $yearly_student->nim = $enrolling_student;
+                        $yearly_student->academic_year_id = $academic_year_id;
+                        $yearly_student->save();
+                        continue;
+                    }
+                    ++$missing_students;
+                }
+
+                if($missing_students > 0){
+                    session()->put('failed_notif', 'Failed to add ' . $missing_students . ' student(s) to yearly students record!');
+                }
+
+                session()->put('success_notif', 'You have successfuly CREATED ' . (sizeof($enrolling_students) - $missing_students). ' new record(s) of yearly student!');
+                session()->forget('create_yearly_students');
             }
-            session()->forget(['latest_yearly_student_year_id', 'create_yearly_students']);
+            else{
+                session()->put('failed_notif', 'Failed to add ' . sizeof($enrolling_students) . ' record(s) of yearly student! Missing academic year.');
+            }
         }
-        return redirect(route('staff.yearly-student.page'));
+
+        return redirect(route('staff.yearly-student.details', ['academic_year_id' => session('latest_yearly_student_year_id')]));
     }
 
     public function confirm_delete($yearly_student_id){
@@ -128,7 +184,12 @@ class ManageYearlyStudentController extends Controller
         if($yearly_student != null){
             session()->forget('yearly_student_id_to_delete');
             $yearly_student->delete();
+            session()->put('success_notif', 'You have successfuly DELETED 1 new yearly student record!');
         }
-        return redirect(route('staff.yearly-student.page'));
+        else{
+            session()->put('failed_notif', 'System failed to delete yearly student record!');
+        }
+        
+        return redirect(route('staff.yearly-student.details', ['academic_year_id' => session('latest_yearly_student_year_id')]));
     }
 }

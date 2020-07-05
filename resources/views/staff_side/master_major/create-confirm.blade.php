@@ -16,9 +16,9 @@
 @endsection
 
 @section('form-action')
-    {{route('staff.major.create')}}
+{{route('staff.major.create')}}
 @endsection
 
 @section('return-route')
-    {{route('staff.major.create-page')}}
+{{route('staff.major.create-page')}}
 @endsection

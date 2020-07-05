@@ -16,6 +16,10 @@
                 <td>{{$referred_partner->name}}</td>
             </tr>
             <tr>
+                <th scope="row">Major</th>
+                <td>{{$referred_partner->major->name}}</td>
+            </tr>
+            <tr>
                 <th scope="row">Location</th>
                 <td>{{$referred_partner->location}}</td>
             </tr>

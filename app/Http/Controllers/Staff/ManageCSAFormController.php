@@ -10,15 +10,28 @@ use App\Major;
 use App\Yearly_Student;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class ManageCSAFormController extends Controller
 {
     public function show_page(){
-        return view('staff_side\csa_application_forms\initial-view', ['academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get(), 'majors' => Major::all()]);
+        $success = $failed = null;
+        if(session('success_notif') != null){
+            $success = session('success_notif');
+        }
+        else if (session('failed_notif') != null){
+            $failed = session('failed_notif');
+        }
+        session()->forget(['success_notif', 'failed_notif']);
+
+        return view('staff_side\csa_application_forms\initial-view', [
+            'academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get(),
+            'majors' => Major::orderBy('name')->get(),
+            'success' => $success,
+            'failed' => $failed
+        ]);
     }
     
-    public function get_CSAForms($academic_year_id, $major_id){
+    public function show_CSAForms($academic_year_id, $major_id){
         $academic_year = Academic_Year::where('id', $academic_year_id)->first();
         $major = Major::where('id', $major_id)->first();
 
@@ -27,9 +40,58 @@ class ManageCSAFormController extends Controller
             session()->put('last_viewed_csa_forms_list', ['academic_year_id' => $academic_year->id, 'major_id' => $major->id]);
             $students_nim_by_major = DB::table('students')->select('nim')->where('major_id', $major_id)->get();
             $yearly_students = Yearly_Student::where('academic_year_id', $academic_year_id)->whereIn('nim', Arr::pluck($students_nim_by_major,'nim'))->orderBy('is_nominated')->get();
+            $success = $failed = null;
+            if(session('success_notif') != null){
+                $success = session('success_notif');
+            }
+            else if (session('failed_notif') != null){
+                $failed = session('failed_notif');
+            }
+            session()->forget(['success_notif', 'failed_notif']);
+        
+            if($yearly_students->first() != null){
+                return view('staff_side\csa_application_forms\view', [
+                    'yearly_students' => $yearly_students,
+                    'academic_year' => $academic_year,
+                    'major' => $major,
+                    'success' => $success,
+                    'failed' => $failed
+                ]);
+            }
 
-            return view('staff_side\csa_application_forms\view', ['yearly_students' => $yearly_students, 'academic_year' => $academic_year, 'major' => $major]);
+            session()->put('failed_notif', 'There is no CSA Application Form data yet in the selected academic year and major!');
         }
+        else{
+            session()->put('failed_notif', 'CSA Application Form feature is not yet available, please create at least 1 record of major and academic year!');
+        }
+        return redirect(route('staff.csa-forms.page'));
+    }
+
+    public function get_sortedCSAForms($academic_year_id, $major_id, $field, $sort_type){
+        $available_fields = array('nim', 'name', 'form_status', 'created_at', 'nomination_status');
+        $sort_types = array('a' => 'asc', 'd' => 'desc');
+
+        if(is_numeric($academic_year_id) && is_numeric($major_id) && in_array($field, $available_fields) && Arr::exists($sort_types, $sort_type)){
+            $csa_forms = DB::table('csa_forms')
+                            ->join('yearly_students', 'csa_forms.yearly_student_id', '=', 'yearly_students.id')
+                            ->join('students', 'yearly_students.nim', '=', 'students.nim') 
+                            ->join('users', 'students.user_id', '=', 'users.id')
+                            ->select('csa_forms.id as id', 'students.nim as nim', 'users.name as name', 'csa_forms.is_submitted as form_status', 'csa_forms.created_at as created_at', 'yearly_students.is_nominated as nomination_status')
+                            ->where('yearly_students.academic_year_id', $academic_year_id)->where('students.major_id', $major_id)
+                            ->orderBy($field, $sort_types[$sort_type])
+                            ->get();
+            
+            if($csa_forms->first() != null){
+                return response()->json([
+                    'csa_forms' => $csa_forms,
+                    'failed' => false
+                ]);
+            }
+        }
+
+        return response()->json([
+            'failed' => true
+        ]);
     }
 
     public function show_detailsPage($csa_form_id){
@@ -47,10 +109,10 @@ class ManageCSAFormController extends Controller
             if($choice != null){
                 session()->put('nomination_details', ['csa_form_id' => $csa_form_id, 'choice_id' => $choice_id]);
                 return response()->json([
-                    'failed' => false,
                     'nim_name' => $csa_form->yearly_student->student->nim . ' - ' . $csa_form->yearly_student->student->user->name,
                     'academic_year' => $csa_form->yearly_student->academic_year->starting_year . '/' . $csa_form->yearly_student->academic_year->ending_year . ' - ' . ($csa_form->yearly_student->academic_year->odd_semester ? "Odd" : "Even"),
-                    'partner_name' => $choice->yearly_partner->partner->name
+                    'partner_name' => $choice->yearly_partner->partner->name,
+                    'failed' => false,
                 ]);
             }
         }
@@ -60,17 +122,20 @@ class ManageCSAFormController extends Controller
     public function nominate(){
         $nomination_details = session('nomination_details');
         $csa_form = CSA_Form::where('id', $nomination_details['csa_form_id'])->first();
-        if($csa_form != null){
-            $choice = Choice::where('id', $nomination_details['choice_id'])->first();
-            if($choice != null){
-                $choice->nominated_to_this = true;
-                $choice->save();
-                $csa_form->yearly_student->is_nominated = true;
-                $csa_form->yearly_student->save();
-            }
+        $choice = Choice::where('id', $nomination_details['choice_id'])->first();
+        if($csa_form != null && $choice != null){
+            $choice->nominated_to_this = true;
+            $choice->save();
+            $csa_form->yearly_student->is_nominated = true;
+            $csa_form->yearly_student->save();
+            session()->put('success_notif', 'You have successfuly NOMINATED 1 student!');
+        }
+        else{
+            session()->put('failed_notif', 'Failed to nominate 1 student!');
         }
         session()->forget('nomination_details');
         $last_list = session('last_viewed_csa_forms_list');
+
         if($last_list['academic_year_id'] == null || $last_list['major_id'] == null){
             return redirect(route('staff.csa_forms.page'));
         }
@@ -79,19 +144,22 @@ class ManageCSAFormController extends Controller
 
     public function cancel_nomination($csa_form_id){
         $csa_form = CSA_Form::where('id', $csa_form_id)->first();
-        if($csa_form != null){
-            $choices = Choice::where('csa_form_id', $csa_form_id)->get();
-            $yearly_student = Yearly_Student::where('id', $csa_form->yearly_student_id)->first();
-            if($choices != null && $yearly_student != null){
-                foreach($choices as $choice){
-                    $choice->nominated_to_this = false;
-                    $choice->save();
-                }
-                $yearly_student->is_nominated = false;
-                $yearly_student->save();
+        $choices = Choice::where('csa_form_id', $csa_form_id)->get();
+        $yearly_student = Yearly_Student::where('id', $csa_form->yearly_student_id)->first();
+        if($csa_form != null && $choices != null && $yearly_student != null){
+            foreach($choices as $choice){
+                $choice->nominated_to_this = false;
+                $choice->save();
             }
+            $yearly_student->is_nominated = false;
+            $yearly_student->save();
+            session()->put('success_notif', 'You have successfuly CANCELED the nomination of 1 student!');
+        }
+        else{
+            session()->put('failed_notif', 'Failed to cancel the nonination of 1 student!');
         }
         $last_list = session('last_viewed_csa_forms_list');
+
         if($last_list['academic_year_id'] == null || $last_list['major_id'] == null){
             return redirect(route('staff.csa_forms.page'));
         }
