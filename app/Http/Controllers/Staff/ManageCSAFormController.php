@@ -59,7 +59,7 @@ class ManageCSAFormController extends Controller
                 ]);
             }
 
-            session()->put('failed_notif', 'There is no CSA Application Form data yet in the selected academic year and major!');
+            session()->put('failed_notif', 'Cannot access CSA Application Form page yet, please create at least 1 yearly student in the selected academic year and major!');
         }
         else{
             session()->put('failed_notif', 'CSA Application Form feature is not yet available, please create at least 1 record of major and academic year!');
