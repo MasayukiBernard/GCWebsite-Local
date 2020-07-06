@@ -26,6 +26,9 @@ class LoginController extends Controller
 
     use AuthenticatesUsers;
 
+    private $maxAttempts = 3;
+    private $decayMinutes = 15;
+
     /**
      * Where to redirect users after login.
      *
@@ -58,22 +61,35 @@ class LoginController extends Controller
         $inputID = $request->email;
         $pass = $request->password;
 
-        // User logged in using email
+        $this->validateLogin($request);
+
+        if (method_exists($this, 'hasTooManyLoginAttempts') &&
+            $this->hasTooManyLoginAttempts($request)) {
+            $this->fireLockoutEvent($request);
+
+            return $this->sendLockoutResponse($request);
+        }
+
         if(filter_var($inputID, FILTER_VALIDATE_EMAIL)){
+            // User logged in using email
             if ($this->attemptLogin($request)) {
                 return $this->sendLoginResponse($request);
             }
         }
-        // User logged in using NIM
         else{
-            $studentExist = \App\Student::where('nim', $inputID)->first();
-            if($studentExist != null){
-            $loggingUser = \App\User::find($studentExist->user_id);
+            // User logged in using NIM
+            $student = \App\Student::where('nim', $inputID)->first();
+            if($student != null){
+                $loggingUser = \App\User::find($student->user_id);
                 if(Hash::check($pass, $loggingUser->password)){
-                    Auth::login($loggingUser);
+                    Auth::login($loggingUser, $request->filled('remember'));
                     return $this->sendLoginResponse($request);
                 }
             }
         }
+
+        $this->incrementLoginAttempts($request);
+
+        return $this->sendFailedLoginResponse($request);
     }
 }
