@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 Use Illuminate\Support\Str;
 
@@ -73,8 +72,6 @@ class PhotoController extends Controller
         if(Arr::exists($id_col_name, $table) && DB::table($table)->where($id_col_name[$table], $id)->first() != null){
             $actual_path = DB::table($table)->select($column)->where($id_col_name[$table], $id)->first()->$column;
         }
-
-        Log::info($table . ' ' . $id . ' ' . $column);
 
         if($actual_path != null){
             if(Storage::disk('private')->exists($actual_path)){
