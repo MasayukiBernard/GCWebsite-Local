@@ -26,7 +26,9 @@ class CreateUsersTable extends Migration
             $table->char('telp_num', 14);
 
             $table->rememberToken();
-            $table->timestamps();
+            $table->timestamp('latest_created_at')->nullable();
+            $table->timestamp('latest_updated_at')->nullable();
+            $table->softDeletes('latest_deleted_at')->nullable();
         });
     }
 

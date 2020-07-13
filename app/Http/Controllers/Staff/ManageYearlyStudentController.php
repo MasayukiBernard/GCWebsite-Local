@@ -14,12 +14,23 @@ use Illuminate\Support\Facades\Validator;
 class ManageYearlyStudentController extends Controller
 {
     private function unpicked_students($id, $year){
-        $student_at_year_nims = DB::table('yearly_students')->select('nim')->where('academic_year_id', $id)->get();
-        return DB::table('students')->select('nim', 'user_id')->whereNotIn('nim', Arr::pluck($student_at_year_nims, 'nim'))->where('binusian_year', $year)->orderBy('nim')->get();
+        $student_at_year_nims = DB::table('yearly_students')
+                                    ->select('nim')
+                                    ->where('latest_deleted_at', null)->where('academic_year_id', $id)
+                                    ->get();
+        return DB::table('students')
+                ->select('nim', 'user_id')
+                ->where('latest_deleted_at', null)->where('binusian_year', $year)
+                ->whereNotIn('nim', Arr::pluck($student_at_year_nims, 'nim'))
+                ->orderBy('nim')
+                ->get();
     }
 
     private function students_users($students){
-        return DB::table('users')->select('id', 'name')->whereIn('id', Arr::pluck($students, 'user_id'))->get();
+        return DB::table('users')
+                ->select('id', 'name')
+                ->where('latest_deleted_at', null)->whereIn('id', Arr::pluck($students, 'user_id'))
+                ->get();
     }
 
     public function show_yearlyStudentPage(){
@@ -61,6 +72,7 @@ class ManageYearlyStudentController extends Controller
                             ->join('users', 'students.user_id', '=', 'users.id')
                             ->join('majors', 'students.major_id', '=', 'majors.id')
                             ->select('yearly_students.id as id', 'students.nim as nim', 'users.name as name', 'majors.name as major_name', 'yearly_students.is_nominated as nominated')
+                            ->where('students.latest_deleted_at', null)->where('users.latest_deleted_at', null)->where('majors.latest_deleted_at', null)
                             ->where('yearly_students.academic_year_id', $academic_year_id)
                             ->orderBy($field, $sort_types[$sort_type])
                             ->get();
@@ -90,7 +102,11 @@ class ManageYearlyStudentController extends Controller
     public function show_createPage(){
         return view('staff_side\yearly_student\create', [
             'academic_years' => Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get(),
-            'binusian_years' => DB::table('students')->select('binusian_year')->orderBy('binusian_year', 'desc')->distinct()->get(),
+            'binusian_years' => DB::table('students')
+                                ->select('binusian_year')->distinct()
+                                ->where('latest_deleted_at', null)
+                                ->orderBy('binusian_year', 'desc')
+                                ->get(),
         ]);
     }
 

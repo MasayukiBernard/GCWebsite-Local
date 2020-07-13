@@ -31,7 +31,9 @@ class CreateAcademicInfosTable extends Migration
             $table->integer('semester');
             $table->decimal('gpa', 3, 2, true);
             $table->string('gpa_proof_path', 100);
-            $table->timestamps();
+            $table->timestamp('latest_created_at')->nullable();
+            $table->timestamp('latest_updated_at')->nullable();
+            $table->softDeletes('latest_deleted_at')->nullable();
         });
     }
 

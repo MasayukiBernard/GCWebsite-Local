@@ -45,7 +45,12 @@ class ManagePartnerController extends Controller
         $sort_types = array('a' => 'asc', 'd' => 'desc');
         
         if(is_numeric($id) && in_array($field, $available_fields) && Arr::exists($sort_types, $sort_type)){
-            $partners = Partner::where('major_id', $id)->orderBy($field, $sort_types[$sort_type])->get();
+            $partners = DB::table('partners')
+                            ->select('id', 'name', 'location', 'min_gpa', 'eng_requirement')
+                            ->where('latest_deleted_at', null)->where('major_id', $id)
+                            ->orderBy($field, $sort_types[$sort_type])
+                            ->get();
+
             return response()->json([
                 'major_partners' => $partners,
                 'failed' => false
@@ -63,13 +68,13 @@ class ManagePartnerController extends Controller
     }
 
     public function show_createPage(){
-        $first_major = DB::table('majors')->select('id')->get()->first();
-        if($first_major == null){
+        $all_majors = Major::orderBy('name')->get();
+        if($all_majors->first() == null){
             session()->put('failed_notif', 'Cannot make a new partner yet, please create at least 1 record of major!');
             return redirect(route('staff.partner.page'));
         }
         
-        return view('staff_side\master_partner\create', ['all_majors' => Major::orderBy('name')->get()]);
+        return view('staff_side\master_partner\create', ['all_majors' => $all_majors]);
     }
 
     public function confirm_create(PartnerCRUD $request){
@@ -83,7 +88,7 @@ class ManagePartnerController extends Controller
 
     public function create(){
         $inputted_partner = session('inputted_partner');
-        if(Major::where('id', $inputted_partner['major'])->get()->first() == null){
+        if(Major::where('id', $inputted_partner['major'])->first() == null){
             session()->put('failed_notif', 'Failed to create a new partner record! Missing referred major!');
             return redirect(route('staff.partner.page'));
         }

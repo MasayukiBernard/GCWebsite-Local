@@ -38,7 +38,10 @@ class ManageCSAFormController extends Controller
         if($academic_year != null && $major != null){
             session()->forget('last_viewed_csa_forms_list');
             session()->put('last_viewed_csa_forms_list', ['academic_year_id' => $academic_year->id, 'major_id' => $major->id]);
-            $students_nim_by_major = DB::table('students')->select('nim')->where('major_id', $major_id)->get();
+            $students_nim_by_major = DB::table('students')
+                                        ->select('nim')
+                                        ->where('latest_deleted_at', null)->where('major_id', $major_id)
+                                        ->get();
             $yearly_students = Yearly_Student::where('academic_year_id', $academic_year_id)->whereIn('nim', Arr::pluck($students_nim_by_major,'nim'))->orderBy('is_nominated')->get();
             $success = $failed = null;
             if(session('success_notif') != null){
@@ -76,8 +79,8 @@ class ManageCSAFormController extends Controller
                             ->join('yearly_students', 'csa_forms.yearly_student_id', '=', 'yearly_students.id')
                             ->join('students', 'yearly_students.nim', '=', 'students.nim') 
                             ->join('users', 'students.user_id', '=', 'users.id')
-                            ->select('csa_forms.id as id', 'students.nim as nim', 'users.name as name', 'csa_forms.is_submitted as form_status', 'csa_forms.created_at as created_at', 'yearly_students.is_nominated as nomination_status')
-                            ->where('yearly_students.academic_year_id', $academic_year_id)->where('students.major_id', $major_id)
+                            ->select('csa_forms.id as id', 'students.nim as nim', 'users.name as name', 'csa_forms.is_submitted as form_status', 'csa_forms.latest_created_at as created_at', 'yearly_students.is_nominated as nomination_status')
+                            ->where('yearly_students.latest_deleted_at', null)->where('students.latest_deleted_at', null)->where('users.latest_deleted_at', null)->where('yearly_students.academic_year_id', $academic_year_id)->where('students.major_id', $major_id)
                             ->orderBy($field, $sort_types[$sort_type])
                             ->get();
             

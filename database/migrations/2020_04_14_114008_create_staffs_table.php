@@ -20,7 +20,9 @@ class CreateStaffsTable extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->string('position', 50);
-            $table->timestamps();
+            $table->timestamp('latest_created_at')->nullable();
+            $table->timestamp('latest_updated_at')->nullable();
+            $table->softDeletes('latest_deleted_at')->nullable();
         });
     }
 

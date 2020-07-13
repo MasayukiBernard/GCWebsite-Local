@@ -15,10 +15,14 @@ use Illuminate\Validation\Rule;
 class ManageYearlyPartnerController extends Controller
 {
     private function unpicked_partners($id){
-        $partner_ids = DB::table('yearly_partners')->select('partner_id')->where('academic_year_id', $id)->get();
+        $partner_ids = DB::table('yearly_partners')
+                            ->select('partner_id')
+                            ->where('latest_deleted_at', null)->where('academic_year_id', $id)
+                            ->get();
         return DB::table('partners')
                     ->join('majors', 'partners.major_id', '=', 'majors.id')
                     ->select('partners.id as id', 'partners.name as name', 'partners.location', 'majors.name as major_name')
+                    ->where('partners.latest_deleted_at', null)->where('majors.latest_deleted_at', null)
                     ->whereNotIn('partners.id', Arr::pluck($partner_ids, 'partner_id'))
                     ->get();
     }
@@ -66,7 +70,10 @@ class ManageYearlyPartnerController extends Controller
         $sort_types = array('a' => 'asc', 'd' => 'desc');
 
         if(is_numeric($academic_year_id) && in_array($field, $available_fields) && Arr::exists($sort_types, $sort_type)){
-            $yearly_partners = DB::table('yearly_partners')->select('partner_id')->where('academic_year_id', $academic_year_id)->get();
+            $yearly_partners = DB::table('yearly_partners')
+                                    ->select('partner_id')
+                                    ->where('latest_deleted_at', null)->where('academic_year_id', $academic_year_id)
+                                    ->get();
             $partners = Partner::whereIn('id', Arr::pluck($yearly_partners, 'partner_id'))->where('major_id', $major_id)->orderBy($field, $sort_types[$sort_type])->get();
 
             if($partners->first() != null){
@@ -104,9 +111,14 @@ class ManageYearlyPartnerController extends Controller
     public function confirm_create(Request $request){
         $validatedData = $request->validate([
             'academic_year' => ['required', 'integer', 'exists:academic_years,id'],
-            'partner' => ['required', 'integer', 'exists:partners,id', Rule::notIn(Arr::pluck(DB::table('yearly_partners')->select('partner_id')->where('academic_year_id', $request['academic_year'])->get(), 'partner_id'))]
+            'partner' => ['required', 'integer', 'exists:partners,id', Rule::notIn(Arr::pluck(
+                DB::table('yearly_partners')
+                    ->select('partner_id')
+                    ->where('latest_deleted_at', null)->where('academic_year_id', $request['academic_year'])
+                    ->get(), 'partner_id'
+            ))]
         ]);
-        $request->session()->put('create_yearly_partner', ['academic_year' => $request['academic_year'],'partner' => $request['partner']]);
+        $request->session()->put('create_yearly_partner', ['academic_year' => $request['academic_year'], 'partner' => $request['partner']]);
         return view('staff_side/yearly_partner/confirm-create', ['referred_partner' => Partner::find($request['partner']), 'referred_year' => Academic_Year::find($request['academic_year'])]);
     }
 
@@ -133,10 +145,20 @@ class ManageYearlyPartnerController extends Controller
                 }
             }
 
-            $yearly_partner = new Yearly_Partner;
-            $yearly_partner->academic_year_id = session('create_yearly_partner')['academic_year'];
-            $yearly_partner->partner_id = session('create_yearly_partner')['partner'];
-            $yearly_partner->save();
+            $existing_yearly_partner = DB::table('yearly_partners')
+                                        ->select('id')
+                                        ->where('partner_id', $create_data['partner'])->where('academic_year_id', $create_data['academic_year'])
+                                        ->first();
+
+            if($existing_yearly_partner != null){
+                Yearly_Partner::onlyTrashed()->where('id', $existing_yearly_partner->id)->restore();
+            }
+            else{
+                $yearly_partner = new Yearly_Partner;
+                $yearly_partner->academic_year_id = session('create_yearly_partner')['academic_year'];
+                $yearly_partner->partner_id = session('create_yearly_partner')['partner'];
+                $yearly_partner->save();
+            }
             session()->forget('create_yearly_partner');
             session()->put('success_notif', 'You have successfuly CREATED 1 new yearly partner record!');
         }

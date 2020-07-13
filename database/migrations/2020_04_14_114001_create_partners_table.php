@@ -26,7 +26,9 @@ class CreatePartnersTable extends Migration
             $table->string('short_detail', 100);
             $table->decimal('min_gpa', 3, 2, true);
             $table->string('eng_requirement', 30);
-            $table->timestamps();
+            $table->timestamp('latest_created_at')->nullable();
+            $table->timestamp('latest_updated_at')->nullable();
+            $table->softDeletes('latest_deleted_at')->nullable();
         });
     }
 
