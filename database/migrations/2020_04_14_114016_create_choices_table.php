@@ -27,7 +27,9 @@ class CreateChoicesTable extends Migration
                 ->onUpdate('cascade'); 
             $table->text('motivation');
             $table->boolean('nominated_to_this');
-            $table->timestamps();
+            $table->timestamp('latest_created_at')->nullable();
+            $table->timestamp('latest_updated_at')->nullable();
+            $table->softDeletes('latest_deleted_at')->nullable();
         });
     }
 

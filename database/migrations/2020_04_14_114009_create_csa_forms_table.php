@@ -22,7 +22,9 @@ class CreateCsaFormsTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->boolean('is_submitted');
-            $table->timestamps();
+            $table->timestamp('latest_created_at')->nullable();
+            $table->timestamp('latest_updated_at')->nullable();
+            $table->softDeletes('latest_deleted_at')->nullable();
         });
     }
 

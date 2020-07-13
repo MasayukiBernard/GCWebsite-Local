@@ -26,7 +26,9 @@ class CreateAchievementsTable extends Migration
             $table->string('institution', 50);
             $table->string('other_details', 100);
             $table->string('proof_path', 100);
-            $table->timestamps();
+            $table->timestamp('latest_created_at')->nullable();
+            $table->timestamp('latest_updated_at')->nullable();
+            $table->softDeletes('latest_deleted_at')->nullable();
         });
     }
 
