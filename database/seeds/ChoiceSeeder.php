@@ -18,11 +18,12 @@ class ChoiceSeeder extends Seeder
                 'csa_form_id' => $i,
                 'yearly_partner_id' => $j,
                 'motivation' => 'because, I feel like it.',
-                'nominated_to_this' => $j == 6 ? true : false,
+                'nominated_to_this' => $j == 7 ? true : false,
             ]);
             $j++;
-            if($j%4 == 0 || $j%7 == 0){
+            if($j == 4 || $j == 10){
                 $i++;
+                $j = 7;
             }
         }
     }
