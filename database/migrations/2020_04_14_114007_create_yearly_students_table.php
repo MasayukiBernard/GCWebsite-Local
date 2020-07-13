@@ -18,7 +18,9 @@ class CreateYearlyStudentsTable extends Migration
             $table->char('nim', 10);
             $table->integer('academic_year_id');
             $table->boolean('is_nominated');
-            $table->timestamps();
+            $table->timestamp('latest_created_at')->nullable();
+            $table->timestamp('latest_updated_at')->nullable();
+            $table->softDeletes('latest_deleted_at')->nullable();
 
             $table->foreign('nim')
                 ->references('nim')

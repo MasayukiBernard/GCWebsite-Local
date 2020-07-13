@@ -51,15 +51,19 @@ class ManageStudentController extends Controller
         }
         session()->forget(['success_notif', 'failed_notif']);
 
-        $binusian_year = DB::table('students')->select('binusian_year')->orderByDesc('binusian_year')->first();
+        $binusian_years = DB::table('students')
+                            ->select('binusian_year')->distinct()
+                            ->where('latest_deleted_at', null)
+                            ->orderByDesc('binusian_year')
+                            ->get();
         $students = null;
-        if($binusian_year != null){
-            $students = Student::where('binusian_year', $binusian_year->binusian_year)->orderBy('nim')->get();
+        if($binusian_years->first() != null){
+            $students = Student::where('binusian_year', $binusian_years->first()->binusian_year)->orderBy('nim')->get();
         }
 
         return view('staff_side/master_student/view', [
             'students' => $students,
-            'binusian_years' => DB::table('students')->select('binusian_year')->distinct()->orderBy('binusian_year', 'desc')->get(),
+            'binusian_years' => $binusian_years,
             'success' => $success,
             'failed' => $failed
         ]);
@@ -71,12 +75,12 @@ class ManageStudentController extends Controller
 
         if(is_numeric($year) && in_array($field, $available_fields) && Arr::exists($sort_types, $sort_type)){
             $students = DB::table('students')
-                    ->join('users', 'students.user_id', '=', 'users.id')
-                    ->join('majors', 'students.major_id', '=', 'majors.id')
-                    ->select('students.user_id as user_id', 'students.nim as nim', 'users.name as name', 'majors.name as major_name', 'students.nationality as nationality')
-                    ->where('binusian_year', $year)
-                    ->orderBy($field, $sort_types[$sort_type])
-                    ->get();
+                        ->join('users', 'students.user_id', '=', 'users.id')
+                        ->join('majors', 'students.major_id', '=', 'majors.id')
+                        ->select('students.user_id as user_id', 'students.nim as nim', 'users.name as name', 'majors.name as major_name', 'students.nationality as nationality')
+                        ->where('users.latest_deleted_at', null)->where('majors.latest_deleted_at', null)->where('binusian_year', $year)
+                        ->orderBy($field, $sort_types[$sort_type])
+                        ->get();    
             
             if($students->first() != null){
                 return response()->json([
@@ -90,7 +94,7 @@ class ManageStudentController extends Controller
     }
 
     public function show_createPage(){
-        $first_major_id = DB::table('majors')->select('id')->first();
+        $first_major_id = Major::first();
         if($first_major_id == null){
             session()->put('failed_notif', 'Cannot make new student record(s) yet, please make at least 1 major record!');
             return redirect(route('staff.student.page'));
@@ -107,7 +111,7 @@ class ManageStudentController extends Controller
     }
 
     public function confirm_create_single(Request $request){
-        $first_major_id = DB::table('majors')->select('id')->first();
+        $first_major_id = Major::first();
         if($first_major_id == null){
             session()->put('failed_notif', 'Cannot make new student record(s) yet, please make at least 1 major record!');
             return redirect(route('staff.student.page'));
@@ -151,7 +155,7 @@ class ManageStudentController extends Controller
     }
 
     public function confirm_create_batch(Request $request){
-        $first_major_id = DB::table('majors')->select('id')->first();
+        $first_major_id = Major::first();
         if($first_major_id == null){
             session()->put('failed_notif', 'Cannot make new student record(s) yet, please make at least 1 major record!');
             return redirect(route('staff.student.page'));

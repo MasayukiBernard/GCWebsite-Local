@@ -25,7 +25,9 @@ class CreateEnglishTestsTable extends Migration
             $table->decimal('score', 8, 1, true);
             $table->date('test_date');
             $table->string('proof_path', 100);
-            $table->timestamps();
+            $table->timestamp('latest_created_at')->nullable();
+            $table->timestamp('latest_updated_at')->nullable();
+            $table->softDeletes('latest_deleted_at')->nullable();
         });
     }
 

@@ -28,7 +28,9 @@ class CreateEmergenciesTable extends Migration
             $table->char('mobile', 13);
             $table->char('telp_num', 14);
             $table->string('email', 50);
-            $table->timestamps();
+            $table->timestamp('latest_created_at')->nullable();
+            $table->timestamp('latest_updated_at')->nullable();
+            $table->softDeletes('latest_deleted_at')->nullable();
         });
     }
 
