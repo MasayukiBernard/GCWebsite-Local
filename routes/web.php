@@ -17,20 +17,20 @@ use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->middleware('throttle:30,1');
 
 Route::fallback(function () {
     // if user accessed any route that is not listed below
     return response()
     ->view('warnings.lost', [], 404);
-});
+})->middleware('throttle:5,1');
 
 // Auth route, with register feature turned off
-Auth::routes(['register' => false]);
+Auth::routes(['register' => false, 'verify' => true]);
 
 // Routes that can be accessed only by
 // -> Authenticated users
-Route::middleware('auth')->group(function(){
+Route::middleware('auth', 'throttle:60,15', 'verified')->group(function(){
     Route::get('/test', function(){
     });
     // -> Staff Users
