@@ -20,7 +20,7 @@ class StudentSeeder extends Seeder
                 $j = 1;
             }
             DB::table('students')->insert([
-                'nim' => '210100000' . $i-3,
+                'nim' => '210100000' . ($i-3),
                 'user_id' => $i,
                 'major_id' => $j++,
                 'place_birth' => 'somewhere over the rainbow',
