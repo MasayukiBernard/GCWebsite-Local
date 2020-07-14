@@ -188,12 +188,18 @@ Route::middleware('auth')->group(function(){
             Route::prefix('student')->group(function(){
                 Route::get('home', 'HomeController@student_index')->name('home');
                 Route::prefix('profile')->group(function(){
-                    $profile_controller = 'User\ManageProfileController@';
+                    $profile_controller = 'ManageProfileController@';
                     Route::get('/', $profile_controller . 'show_studentProfile')->name('profile');
                     Route::get('change-pass', $profile_controller . 'show_changePass')->middleware('password.confirm')->name('change-pass-page');
                 });
-                Route::prefix('csaform')->group(function(){
-                    Route::get('/', 'User\ManageCSAFormController@show_csaFormPage')->name('csaform');
+                Route::name('csa_form.')->group(function(){
+                    Route::prefix('csaform')->group(function(){
+                        $csa_controller = 'Student\ManageCSAFormController@';
+                        Route::get('/', $csa_controller . 'insertPage1')->name('csa-page1');
+                        Route::post('/', $csa_controller . 'postInsertPage1');
+                        Route::get('/csa-page2', $csa_controller . 'insertPage2')->name('csa-page2');
+                    
+                    });
                 });
             });
         });

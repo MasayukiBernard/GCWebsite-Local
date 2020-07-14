@@ -41,4 +41,7 @@ class CSA_Form extends Model
     public function choices(){
         return $this->hasMany('App\Choice', 'csa_form_id');
     }
+    public function personal_info(){
+        return $this->hasMany('App\Personal_Info', 'csa_form_id');
+    }
 }

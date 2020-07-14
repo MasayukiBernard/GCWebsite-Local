@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             EmergencySeeder::class,
             ConditionSeeder::class,
             ChoiceSeeder::class,
+            Personal_InformationSeeder::class,
         ]);
     }
 }
