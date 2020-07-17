@@ -102,7 +102,9 @@ class HomeController extends Controller
     }
     
     public function student_index(){
-        return view('student_side\home');
+        $user_status = session('user-success-status');
+        session()->forget('user-success-status');
+        return view('student_side\home', ['user_status' => $user_status]);
     }
 
     public function get_percentages($major_id, $academic_year_id){
