@@ -7,6 +7,7 @@ use App\Choice;
 use App\CSA_Form;
 use App\Http\Controllers\Controller;
 use App\Major;
+use App\Notifications\CSAFormNominated;
 use App\Yearly_Student;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -131,7 +132,11 @@ class ManageCSAFormController extends Controller
             $choice->save();
             $csa_form->yearly_student->is_nominated = true;
             $csa_form->yearly_student->save();
-            session()->put('success_notif', 'You have successfuly NOMINATED 1 student!');
+
+            $yearly_student = $csa_form->yearly_student;
+            // Email notification
+            $yearly_student->student->user->notify(new CSAFormNominated($yearly_student->academic_year, $choice->yearly_partner->partner));
+            session()->put('success_notif', 'You have successfuly NOMINATED 1 student! An email has also been sent to the student.');
         }
         else{
             session()->put('failed_notif', 'Failed to nominate 1 student!');
