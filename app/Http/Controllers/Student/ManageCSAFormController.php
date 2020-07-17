@@ -45,7 +45,7 @@ class ManageCSAFormController extends Controller
         // $csa_form = new CSA_Form();
         // $csa_form->yearly_student_id = xxxx;
         // $csa_form->save();
-
+        // Notify student by email 
 
         $user = Auth::user();
         $student = $user->student;
