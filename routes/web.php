@@ -195,8 +195,8 @@ Route::middleware('auth')->group(function(){
                 Route::name('csa_form.')->group(function(){
                     Route::prefix('csaform')->group(function(){
                         $csa_controller = 'Student\ManageCSAFormController@';
-                        Route::get('/', $csa_controller . 'insertPage1')->name('csa-page1');
-                        Route::post('/', $csa_controller . 'postInsertPage1');
+                        Route::get('/', $csa_controller . 'show_insertPage1')->name('csa-page1');
+                        Route::post('/', $csa_controller . 'page1_insert');
                         Route::get('/csa-page2', $csa_controller . 'insertPage2')->name('csa-page2');
                     
                     });

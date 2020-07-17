@@ -11,45 +11,51 @@ use App\Condition;
 use App\CSA_Form;
 use App\Emergency;
 use App\English_Test;
+use App\Http\Requests\StudentCSAFormCreate;
 use App\User;
 use App\Student;
 use App\Personal_Information;
+use Illuminate\Support\Facades\Auth;
 
 class ManageCSAFormController extends Controller
 {
+    /*
+        Rules for Profile Page:
+        'name' => ['required'],
+        'nim' => ['required'],
+        'picture_path' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+        'gender' => ['required'],
+        'place_birth' => ['required'],
+        'date_birth' => ['required'],
+        'nationality' => ['required'],
+        'email' => ['required'],
+        'mobile' => ['required'],
+        'telp_num' => ['required'],
+        'address' => ['required'],
+        'flazz_card_picture_path' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+        'id_card_picture_path' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+    */
+
     // public function show_csaFormPage(){
     //     return view('student_side\csa_form\csa-page1');
     // }
 
-    public function insertPage1(Request $request){
-        $personal_information = $request->session()->get('personal_information');
-        return view('student_side\csa_form\csa-page1', compact('personal_information'));
-    }
-    public function postInsertPage1(Request $request){
-        $validatedData = $request->validate([
-            'name' => 'required',
-            'nim' => 'required',
-            'picture_path' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'gender' => 'required',
-            'place_birth' => 'required',
-            'date_birth' => 'required',
-            'nationality' => 'required',
-            'email' => 'required',
-            'mobile' => 'required',
-            'telp_num' => 'required',
-            'address' => 'required',
-            'flazz_card_picture_path' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'id_card_picture_path' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
+    public function show_insertPage1(){
+        // Entry point to CSA Form
+        // $csa_form = new CSA_Form();
+        // $csa_form->yearly_student_id = xxxx;
+        // $csa_form->save();
+
+
+        $user = Auth::user();
+        $student = $user->student;
+        return view('student_side\csa_form\csa-page1',[
+            'user' => $user,
+            'user_student' => $student
         ]);
-        if(empty($request->session()->get('personal_information'))){
-            $personal_information = new \App\Personal_Information();
-            $personal_information->fill($validatedData);
-            $personal_information->session()->put('personal_information', $personal_information);
-        }else{
-            $personal_information = $request->session()->get('personal_information');
-            $personal_information->fill($validatedData);
-            $personal_information->session()->put('personal_information', $personal_information);
-        }
+    }
+
+    public function page1_insert(){
         return redirect('student_side\csa_form\csa-page2');
     }
 
