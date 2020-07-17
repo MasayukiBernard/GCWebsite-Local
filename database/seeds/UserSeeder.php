@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
                 'name' => $i < 3 ? $names[0] . ' ' .  ($i+1) : $names[1] . ' ' .  ($i-2),
                 'gender' => $genderChoice[$i == 3 ? 0 : 1],
                 'email' => $names[$i < 3 ? 0 : 1]. ($i < 3 ? $i+1 : $i-2) .'@mail.com',
-                'email_verified_at' => date('Y-m-d H:i:s', time()),
+                'email_verified_at' => $i < 3 ? date('Y-m-d H:i:s', time()) : null,
                 'mobile' => '8'.mt_rand(0,9).mt_rand(0,9).'9999999999',
                 'telp_num' => mt_rand(0,9).mt_rand(0,9).'123123123123',
             ]);

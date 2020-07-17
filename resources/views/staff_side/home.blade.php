@@ -11,12 +11,6 @@
                 <div class="card">
                     <div class="card-header">Dashboard</div>
                     <div class="card-body">
-                        @if (session('status'))
-                            <div class="alert alert-success" role="alert">
-                                {{ session('status') }}
-                            </div>
-                        @endif
-
                         <h5 class="card-title"><u>You are logged in as a Staff!</u></h5>
                         <table class="table table-bordered table-sm w-100">
                             <tbody>
