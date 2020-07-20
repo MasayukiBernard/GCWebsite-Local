@@ -1,11 +1,15 @@
-@extends('student_side.csa_template.csa-template')
+@extends('student_side.csa_template.csa-template2')
 
 @section('entity')
-    CSA Form
+    Academic Information
 @endsection
 
 @section('form-action')
-{{route('student.csa_form.csa-page2')}}
+{{route('student.csa_form.csa-page3')}}
+@endsection
+
+@section('return-route')
+    {{route('student.csa_form.csa-page1')}}
 @endsection
 
 @section('form-inputs')
@@ -176,3 +180,6 @@
 
 @endsection
 
+@section('confirm-value')
+Next
+@endsection

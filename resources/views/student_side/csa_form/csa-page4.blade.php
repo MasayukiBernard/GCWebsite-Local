@@ -1,11 +1,21 @@
-@extends('layouts.app3')
+@extends('student_side.csa_template.csa-template3')
 
-@section('content')
+@section('entity')
+    Application Detail
+@endsection
+
+@section('form-action')
+{{route('student.csa_form.csa-page5')}}
+@endsection
+
+@section('return-route')
+    {{route('student.csa_form.csa-page3')}}
+@endsection
+
+@section('form-inputs')
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-12">
-         <h3 class="font-weight-bold">Study Abroad Destinations</h3>
-         <form method="post" action="/tempdestination" id="form3" enctype="multipart/form-data">
           @csrf
            @for($i = 0; $i < 3; $i++)
           
@@ -43,17 +53,6 @@
             </div>
            @endfor
             
-         </form>
-           <div class="form-group row">
-            	<div class="col-md-4 offset-md-4">
-		           <div class="btn-group px-2" role="group" aria-label="Basic example">
-		             <button onclick=location.href='/tempachievements' type="button px-2" class="btn btn-primary previous">&laquo; Previous</button>
-		           </div>
-                   <div class="btn-group px-2" role="group" aria-label="Basic example">
-		             <button onclick=location.href='/tempemergency' type="button px-2" class="btn btn-primary next">Next &raquo;</button>
-		           </div>
-	            </div>
-           </div>
         </div>
     </div>
 </div>

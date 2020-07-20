@@ -71,7 +71,7 @@ Route::middleware('auth')->group(function(){
                         Route::post('/create/master-major', $major_controller . 'create')->name('create');
 
                         Route::get('/edit/{major}' , $major_controller . 'show_editPage')->name('edit-page');
-                        Route::post('update/confirm', $major_controller . 'confirm_update')->name('update-confirm');
+                        Route::post('/update/confirm', $major_controller . 'confirm_update')->name('update-confirm');
                         Route::post('/update/master-major', $major_controller . 'update')->name('update');
 
                         Route::post('/delete/confirm/{major_id}', $major_controller . 'confirm_delete');
@@ -196,8 +196,24 @@ Route::middleware('auth')->group(function(){
                     Route::prefix('csaform')->group(function(){
                         $csa_controller = 'Student\ManageCSAFormController@';
                         Route::get('/', $csa_controller . 'show_insertPage1')->name('csa-page1');
-                        Route::post('/', $csa_controller . 'page1_insert');
-                        Route::get('/csa-page2', $csa_controller . 'insertPage2')->name('csa-page2');
+                        Route::get('/csapage2', $csa_controller . 'page1_insert');
+                        Route::post('/csapage2', $csa_controller . 'insertPage2')->name('csa-page2');
+                        Route::get('/csapage2', $csa_controller . 'insertPage2')->name('csa-page2');
+                        Route::get('/csapage3', $csa_controller . 'postInsertPage2');
+                        Route::post('/csapage3', $csa_controller . 'insertPage3')->name('csa-page3');
+                        Route::get('/csapage3', $csa_controller . 'insertPage3')->name('csa-page3');
+                        Route::get('/csapage4', $csa_controller . 'postInsertPage3');
+                        Route::post('/csapage4', $csa_controller . 'insertPage4')->name('csa-page4');
+                        Route::get('/csapage4', $csa_controller . 'insertPage4')->name('csa-page4');
+                        Route::get('/csapage5', $csa_controller . 'postInsertPage4');
+                        Route::post('/csapage5', $csa_controller . 'insertPage5')->name('csa-page5');
+                        Route::get('/csapage5', $csa_controller . 'insertPage5')->name('csa-page5');
+                        Route::get('/csapage6', $csa_controller . 'postInsertPage5');
+                        Route::post('/csapage6', $csa_controller . 'insertPage6')->name('csa-page6');
+                        Route::get('/csapage6', $csa_controller . 'insertPage6')->name('csa-page6');
+                        Route::get('/csapage7', $csa_controller . 'postInsertPage7');
+                        Route::post('/csapage7', $csa_controller . 'insertPage7')->name('csa-page7');
+
                     
                     });
                 });

@@ -1,11 +1,11 @@
 @extends('student_side.csa_template.csa-template')
 
 @section('entity')
-    Personal Infromation
+    Personal Information
 @endsection
 
 @section('form-action')
-{{route('student.csa_form.csa-page1')}}
+{{route('student.csa_form.csa-page2')}}
 @endsection
 
 @section('form-inputs')
@@ -123,15 +123,8 @@
         </div>
     </div>
 
-    <div class="form-group row">
-        <div class="col-md-4 offset-md-4">
-            <!-- <div class="btn-group px-2" role="group" aria-label="Basic example">
-                <button type="button px-2" class="btn btn-primary">Back</button>
-            </div> -->
-            <div class="btn-group px-2" role="group" aria-label="Basic example">
-                <button type="button px-2" class="btn btn-primary" href="{{route('student.csa_form.csa-page1')}}">Next</button>
-            </div>
-            <!-- ganti jadi submit-->
-        </div>
-    </div>
+@endsection
+
+@section('confirm-value')
+Next
 @endsection

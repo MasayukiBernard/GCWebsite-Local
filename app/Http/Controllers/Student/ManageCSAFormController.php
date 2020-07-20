@@ -56,49 +56,48 @@ class ManageCSAFormController extends Controller
     }
 
     public function page1_insert(){
-        return redirect('student_side\csa_form\csa-page2');
+        return redirect(route('student_side\csa_form\csa-page2'));
     }
 
     public function insertPage2(){
-
+        return view('student_side\csa_form\csa-page2');
     }
     public function postInsertPage2(){
-        
+        return redirect(route('student_side\csa_form\csa-page3'));
     }
 
     public function insertPage3(){
-
+        return view('student_side\csa_form\csa-page3');
     }
     public function postInsertPage3(){
-        
+        return redirect(route('student_side\csa_form\csa-page4'));
     }
 
     public function insertPage4(){
-
+        return view('student_side\csa_form\csa-page4');
     }
     public function postInsertPage4(){
-        
+        return redirect(route('student_side\csa_form\csa-page5'));
     }
 
     public function insertPage5(){
-
+        return view('student_side\csa_form\csa-page5');
     }
     public function postInsertPage5(){
-        
+        return redirect(route('student_side\csa_form\csa-page6'));
     }
 
     public function insertPage6(){
-
+        return view('student_side\csa_form\csa-page6');
     }
     public function postInsertPage6(){
-        
+        return redirect(route('student_side\csa_form\csa-page7'));
     }
 
     public function insertPage7(){
-
+        return view('student_side\csa_form\csa-page7');
     }
     public function postInsertPage7(){
-        
     }
 
 }

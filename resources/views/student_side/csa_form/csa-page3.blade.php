@@ -1,14 +1,21 @@
+@extends('student_side.csa_template.csa-template3')
 
+@section('entity')
+    Your Achievement
+@endsection
 
-@extends('layouts.app3')
+@section('form-action')
+{{route('student.csa_form.csa-page4')}}
+@endsection
 
-@section('content')
+@section('return-route')
+    {{route('student.csa_form.csa-page2')}}
+@endsection
 
-
+@section('form-inputs')
 <div class="container-fluid">
     <div class="row justify-content-center">
       <div class="col-md-12 w-auto">
-        <h3 class="font-weight-bold">Your Achievements</h3>
          <div class="row pt-4">
           <div class="col-md-1">
           <a class="font-weight-bold">No</a>
@@ -29,7 +36,6 @@
           <a class="font-weight-bold">Proof Document</a>
           </div>
          </div>
-         <form method="post" action="/tempachievements" id="form2" enctype="multipart/form-data">
            @csrf
            @for($i = 0; $i < 5; $i++)
            
@@ -78,32 +84,15 @@
                      </span>
                </div>
             </div>
-            
-           
-
            @endfor
            <div class="form-group row">
                 <span class="col-md-9" style="color:black">
                         Note: Only if applicable and available during university period. Please attach the copy of proof for the achievement(certificate/etc)
                 </span>
            </div>
-         </form>
-           <div class="form-group row">
-            	<div class="col-md-4 offset-md-4">
-		           <div class="btn-group px-2" role="group" aria-label="Basic example">
-		             <button onclick=location.href='/tempacademic' type="button px-2" class="btn btn-primary previous">&laquo; Previous</button>
-		           </div>
-                   <div class="btn-group px-2" role="group" aria-label="Basic example">
-		             <button onclick=location.href='/tempdestination' type="button px-2" class="btn btn-primary next">Next &raquo;</button>
-		           </div>
-	            </div>
-           </div>
       </div>
     </div>
 </div>
-
-
-
 @endsection
 
 

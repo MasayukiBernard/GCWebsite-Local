@@ -17,6 +17,7 @@
                             @yield('form-inputs')
                             <div class="form-group row">
                                 <div class="col-md-4 offset-md-4">
+                                    <a class="btn btn-secondary" href=@yield('return-route') role="button">Prev</a>
                                     <input type="submit" class="btn btn-primary" value="@yield('confirm-value')">
                                 </div>
                             </div>

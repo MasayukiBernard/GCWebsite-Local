@@ -1,4 +1,4 @@
-@extends('student_side.csa_template.csa-template')
+@extends('student_side.csa_template.csa-template2')
 
 @section('entity')
     Medical, Dietary, and Other Information
@@ -7,6 +7,11 @@
 @section('form-action')
 {{route('student.csa_form.csa-page6')}}
 @endsection
+
+@section('return-route')
+    {{route('student.csa_form.csa-page4')}}
+@endsection
+
 
 @section('form-inputs')
 
@@ -79,3 +84,6 @@
 
 @endsection
 
+@section('confirm-value')
+Next
+@endsection

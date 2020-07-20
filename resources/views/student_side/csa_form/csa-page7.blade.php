@@ -1,4 +1,4 @@
-@extends('student_side.csa_template.csa-template')
+@extends('student_side.csa_template.csa-template2')
 
 @section('entity')
     Applicant's Declaration
@@ -6,6 +6,10 @@
 
 @section('form-action')
 {{route('student.csa_form.csa-page7')}}
+@endsection
+
+@section('return-route')
+    {{route('student.csa_form.csa-page6')}}
 @endsection
 
 @section('form-inputs')
@@ -21,8 +25,9 @@
          7. Be placed in anywhere whose quota is still available if submit this application form over the given deadline;<br>
          I am also aware of any medical condition (disability, illness, or pregnancy) which might want to completing my study program within the time allowed for the program;<br></a>
          <input type="checkbox" name="checkbox" value="check" id="agree" /> I agree to the Applicant Declaration<br>
-         <button type="submit" class="btn btn-primary" name="submit">Submit</button>
-
 
 @endsection
 
+@section('confirm-value')
+Submit
+@endsection
