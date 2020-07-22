@@ -11,6 +11,7 @@ use App\Condition;
 use App\CSA_Form;
 use App\Emergency;
 use App\English_Test;
+use App\Major;
 use App\Http\Requests\StudentCSAFormCreate;
 use App\User;
 use App\Student;
@@ -60,7 +61,12 @@ class ManageCSAFormController extends Controller
     }
 
     public function insertPage2(){
-        return view('student_side\csa_form\csa-page2');
+        $major = Major::All();
+        $test = English_Test::All();
+        return view('student_side\csa_form\csa-page2', [
+            'majors' => $major,
+            'testtype' => $test
+        ]);
     }
     public function postInsertPage2(){
         return redirect(route('student_side\csa_form\csa-page3'));

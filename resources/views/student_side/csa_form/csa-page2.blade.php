@@ -54,16 +54,14 @@
                     <option value="" selected='selected'> - Select Major - </option>
                          @if(isset($majors))
                          @foreach($majors as $major)
-                         <option value={{$ft->name}}> {{$ft->name}} </option>
+                         <option value={{$major->name}}> {{$major->name}} </option>
                          @endforeach
                          @endif
 
                          </select>
-                         <span class="col-md-9" style="color:red; font-weight:bold">
-                         @if($errors->has('major'))
-                              {{       $errors->first('major')}}
-                         @endif
-                         </span>
+                         @error('major')
+                              <div class="alert alert-danger">{{ $message }}</div>
+                         @enderror
                </div>
            </div>
 
@@ -103,8 +101,8 @@
                     <select class="col-md-6 form-control @error('test_type') is-invalid @enderror" name="test_type">
                     <option value="" selected='selected'> - Select Test Type - </option>
                          @if(isset($testtype))
-                         @foreach($testtype as $ft)
-                         <option value={{$ft->test_type}}> {{$ft->test_type}} </option>
+                         @foreach($testtype as $test)
+                         <option value={{$test->test_type}}> {{$test->test_type}} </option>
                          @endforeach
                          @endif
 
