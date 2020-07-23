@@ -5,7 +5,7 @@
 @endsection
 
 @section('form-action')
-{{route('student.csa_form.csa-page3')}}
+{{route('student.csa_form.csa-page3', ['csa_id' => 1])}}
 @endsection
 
 @section('return-route')
@@ -18,7 +18,7 @@
                <label for="campus" class="col-md-4 col-form-label text-md-left">Campus</label>
 
                <div class="col-md-8">
-                   <input id="campus" class="col-md-6 form-control @error('campus') is-invalid @enderror" type="text" name="campus" >
+                   <input id="campus" class="col-md-6 form-control @error('campus') is-invalid @enderror" type="text" name="campus" value="{{$academic_info->campus}}">
                     @error('campus')
                      <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
@@ -50,7 +50,7 @@
                <label for="major" class="col-md-4 col-form-label text-md-left">Major</label>
 
                <div class="col-md-8">
-                    <select class="col-md-6 form-control @error('major') is-invalid @enderror" name="major">
+                    <select class="col-md-6 form-control @error('major') is-invalid @enderror" name="major" value="">
                     <option value="" selected='selected'> - Select Major - </option>
                          @if(isset($majors))
                          @foreach($majors as $major)
@@ -69,7 +69,7 @@
                <label for="semester" class="col-md-4 col-form-label text-md-left">Semester</label>
 
                <div class="col-md-8">
-                   <input id="semester" class="col-md-6 form-control @error('semester') is-invalid @enderror" type="number" name="semester" min="0" max="20" autofocus>
+                   <input id="semester" class="col-md-6 form-control @error('semester') is-invalid @enderror" type="number" name="semester" min="0" max="20" autofocus >
                     @error('semester')
                      <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
@@ -80,7 +80,7 @@
                <label for="gpa" class="col-md-4 col-form-label text-md-left">GPA</label>
 
                <div class="col-md-8">
-                   <input id="gpa" class="col-md-6 form-control @error('gpa') is-invalid @enderror" type="number" name="gpa" placeholder="1.0" step="0.01" min="0.00" max="4.00" autofocus>
+                   <input id="gpa" class="col-md-6 form-control @error('gpa') is-invalid @enderror" type="number" name="gpa" placeholder="1.0" step="0.01" min="0.00" max="4.00" value="" autofocus>
                     @error('gpa')
                      <div class="alert alert-danger">{{ $message }}</div>
                     @enderror

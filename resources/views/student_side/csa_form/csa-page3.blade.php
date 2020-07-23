@@ -5,11 +5,11 @@
 @endsection
 
 @section('form-action')
-{{route('student.csa_form.csa-page4')}}
+{{route('student.csa_form.csa-page4', ['csa_id' => 1])}}
 @endsection
 
 @section('return-route')
-    {{route('student.csa_form.csa-page2')}}
+    {{route('student.csa_form.csa-page2', ['csa_id' => 1])}}
 @endsection
 
 @section('form-inputs')
