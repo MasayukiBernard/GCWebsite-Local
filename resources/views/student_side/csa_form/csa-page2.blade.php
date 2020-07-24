@@ -5,7 +5,7 @@
 @endsection
 
 @section('form-action')
-{{route('student.csa_form.csa-page3', ['csa_id' => 1])}}
+{{route('student.csa_form.csa-page3')}}
 @endsection
 
 @section('return-route')
@@ -18,7 +18,7 @@
                <label for="campus" class="col-md-4 col-form-label text-md-left">Campus</label>
 
                <div class="col-md-8">
-                   <input id="campus" class="col-md-6 form-control @error('campus') is-invalid @enderror" type="text" name="campus" value="{{$academic_info->campus}}">
+                   <input id="campus" class="col-md-6 form-control @error('campus') is-invalid @enderror" type="text" name="campus"  >
                     @error('campus')
                      <div class="alert alert-danger">{{ $message }}</div>
                     @enderror

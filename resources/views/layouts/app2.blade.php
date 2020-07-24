@@ -75,7 +75,7 @@
                             </li>
                             @else
                             <li class='nav-item'>
-                                <a class="nav-link" href="{{ route('student.csa_form.csa-page1') }}">
+                                <a class="nav-link" href="{{ route('student.csa_form.csa-mainpage') }}">
                                     CSA Form
                                 </a>
                             </li>

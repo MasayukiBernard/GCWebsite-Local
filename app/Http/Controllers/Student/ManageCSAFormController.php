@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Achievement;
 use App\Academic_Info;
+use App\Academic_Year;
 use App\Choice;
 use App\Condition;
 use App\CSA_Form;
@@ -16,7 +17,9 @@ use App\Http\Requests\StudentCSAFormCreate;
 use App\User;
 use App\Student;
 use App\Personal_Information;
+use App\Yearly_Student;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 class ManageCSAFormController extends Controller
@@ -42,6 +45,21 @@ class ManageCSAFormController extends Controller
     //     return view('student_side\csa_form\csa-page1');
     // }
 
+    public function initial_view(){
+        $user = Auth::user();
+        $student = $user->student;
+        $nim = $student->nim;
+        $academic_year_id = Yearly_Student::where('nim', $nim)->get();
+        session()->forget('csa_form_yearly_student_id');
+        return view('student_side\csa_form\csa-mainpage', ['academic_years' =>Academic_Year::whereIn('id', Arr::pluck($academic_year_id, 'academic_year_id'))->orderBy('ending_year', 'desc')->orderBy('odd_semester')->get()]);
+    }
+
+    public function postInitial_view($academic_year_id){
+        $yearly_student_id = Yearly_Student::select('id')->where('academic_year_id', $academic_year_id)->get();
+        session()->put('csa_form_yearly_student_id', $yearly_student_id);
+        return redirect(route('student_side\csa_form\csa-page1'));
+    }
+
     public function show_insertPage1(){
         // Entry point to CSA Form
         // $csa_form = new CSA_Form();
@@ -52,10 +70,8 @@ class ManageCSAFormController extends Controller
         $user = Auth::user();
         $student = $user->student;
         $nim = $student->nim;
-        $yearly_student_id = DB::table('yearly_students')->select('id')->where('nim', $nim);
-        $csa_id = DB::table('csa_forms')->select('id')->where('yearly_student_id', $yearly_student_id);
+
         return view('student_side\csa_form\csa-page1',[
-            'csa_id' =>$csa_id,
             'user' => $user,
             'user_student' => $student
         ]);
@@ -65,18 +81,12 @@ class ManageCSAFormController extends Controller
         return redirect(route('student_side\csa_form\csa-page2', $csa_id));
     }
 
-    public function insertPage2($csa_id){
+    public function insertPage2(){
         $major = Major::All();
         $test = English_Test::All();
-        $academic_info = Academic_Info::where('csa_form_id', $csa_id)->first();
-        $english_test = English_Test::where('csa_form_id', $csa_id)->first();
-        $major_id = $academic_info->major_id;
-        $major_name = DB::table('majors')->select('name')->where('id', $major_id);
-        return view('student_side\csa_form\csa-page2', [
-            'csa_id' =>$csa_id,
-            'english_test' =>$english_test,
-            'major_name' => $major_name,
-            'academic_info' => $academic_info,
+        
+        return view('student_side\csa_form\csa-page2', [   
+         
             'majors' => $major,
             'testtype' => $test
         ]);
