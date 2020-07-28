@@ -9,7 +9,7 @@ class CSA_Form extends Model
     // not to use the convention table 'CSA_Forms'
     protected $table = 'csa_forms';
 
-    protected $guarded = ['yearly_student_id', 'is_submitted'];
+    protected $guarded = ['id','yearly_student_id', 'is_submitted'];
 
     protected $attributes = ['is_submitted' => false];
     

@@ -196,7 +196,7 @@ Route::middleware('auth')->group(function(){
                     Route::prefix('csaform')->group(function(){
                         $csa_controller = 'Student\ManageCSAFormController@';
                         Route::get('/', $csa_controller . 'initial_view')->name('csa-mainpage');
-                        Route::get('/csapage1', $csa_controller . 'postInitial_view');
+                        Route::get('/csapage1/{$academic_year_id}', $csa_controller . 'afterInitial_view');
                         Route::get('/csapage1', $csa_controller . 'show_insertPage1')->name('csa-page1');
                         Route::get('/csapage2', $csa_controller . 'page1_insert');
                         Route::post('/csapage2', $csa_controller . 'insertPage2')->name('csa-page2');
