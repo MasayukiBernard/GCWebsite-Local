@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Academic_Year;
 use App\Major;
+use App\Student_Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -84,6 +86,8 @@ class HomeController extends Controller
         
         $majors = Major::orderBy('name')->get();
         $academic_years = Academic_Year::orderBy('ending_year', 'desc')->orderBy('odd_semester')->get();
+        
+        $student_requests = Student_Request::where('is_approved', null)->orderBy('latest_created_at', 'asc')->count();
 
         if($academic_years->count() > 0){
             $initial_percentages = $this->count_percentages(0, $academic_years->first()->id, "HTML5");
@@ -93,18 +97,18 @@ class HomeController extends Controller
                     'academic_years' => $academic_years,
                     'majors' => $majors,
                     'initial_percentages' => $initial_percentages,
+                    'student_requests' => $student_requests
                 ]);
             }
         }
         return view('staff_side\home', [
             'failed' => true,
+            'student_requests' => $student_requests
         ]);
     }
     
     public function student_index(){
-        $user_status = session('user-success-status');
-        session()->forget('user-success-status');
-        return view('student_side\home', ['user_status' => $user_status]);
+        return view('student_side\home', ['user_verified' => is_null(Auth::user()->email_verified_at) ? false : true]);
     }
 
     public function get_percentages($major_id, $academic_year_id){
