@@ -159,6 +159,7 @@ class ManageYearlyStudentController extends Controller
                         $yearly_student = new Yearly_Student();
                         $yearly_student->nim = $enrolling_student;
                         $yearly_student->academic_year_id = $academic_year_id;
+                        $yearly_student->latest_updated_at = null;
                         $yearly_student->save();
                         continue;
                     }

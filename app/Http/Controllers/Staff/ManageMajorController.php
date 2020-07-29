@@ -47,6 +47,7 @@ class ManageMajorController extends Controller{
     public function create(){
         $inputted_major = session('inputted_major');
         $major = new Major;
+        $major->latest_updated_at = null;
         $this->model_assignment($major, $inputted_major);
         session()->forget(['inputted_major']);
 

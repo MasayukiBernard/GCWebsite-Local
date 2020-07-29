@@ -72,6 +72,7 @@ class ManageAcademicYearController extends Controller
         $academic_year->starting_year = session('inputted_academic_year')['start-year'];
         $academic_year->ending_year = session('inputted_academic_year')['end-year'];
         $academic_year->odd_semester = session('inputted_academic_year')['smt-type'];
+        $academic_year->latest_updated_at = null;
         $academic_year->save();
         session()->forget('inputted_academic_year');
 

@@ -157,6 +157,7 @@ class ManageYearlyPartnerController extends Controller
                 $yearly_partner = new Yearly_Partner;
                 $yearly_partner->academic_year_id = session('create_yearly_partner')['academic_year'];
                 $yearly_partner->partner_id = session('create_yearly_partner')['partner'];
+                $yearly_partner->latest_updated_at = null;
                 $yearly_partner->save();
             }
             session()->forget('create_yearly_partner');

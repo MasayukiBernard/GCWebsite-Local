@@ -94,6 +94,7 @@ class ManagePartnerController extends Controller
         }
 
         $partner = new Partner;
+        $partner->latest_updated_at = null;
         $this->model_assignment($partner, $inputted_partner);
         session()->forget(['last_picked_major_id', 'inputted_partner']);
 
