@@ -24,6 +24,7 @@ class ManageStudentController extends Controller
         $user->email = Str::random(10) . '@binus.ac.id';
         $user->mobile = '-';
         $user->telp_num = '-';
+        $user->latest_updated_at = null;
         $user->save();
 
         $student = new Student();
@@ -34,10 +35,11 @@ class ManageStudentController extends Controller
         $student->date_birth = date('Y-m-d', 0);
         $student->nationality = '-';
         $student->address = '-';
-        $student->picture_path = 'students\pictures\Dummy_PP.png';
+        $student->picture_path = '-';
         $student->id_card_picture_path = '-';
         $student->flazz_card_picture_path = '-';
         $student->binusian_year = 2000 + (int) Str::substr($nim, 0, 2);
+        $student->latest_updated_at = null;
         $student->save();
     }
 
