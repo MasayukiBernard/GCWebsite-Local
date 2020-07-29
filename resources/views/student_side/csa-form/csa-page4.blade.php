@@ -5,11 +5,11 @@
 @endsection
 
 @section('form-action')
-{{route('student.csa_form.csa-page5')}}
+{{route('student.csa-form.after-page4')}}
 @endsection
 
 @section('return-route')
-    {{route('student.csa_form.csa-page3')}}
+    {{route('student.csa-form.csa-page3')}}
 @endsection
 
 @section('form-inputs')
@@ -24,9 +24,9 @@
                 <div class="col-md-8">
                     <select class="col-md-6 form-control @error('location[]') is-invalid @enderror" name="location[]">
                     <option value="" selected='selected'> - Select Destination - </option>
-                         @if(isset($loc))
-                         @foreach($loc as $ft)
-                         <option value={{$ft->location}}> {{$ft->location}} </option>
+                         @if(isset($partner))
+                         @foreach($partner as $ft)
+                         <option value={{$ft->name}}> {{$ft->name}} </option>
                          @endforeach
                          @endif
 

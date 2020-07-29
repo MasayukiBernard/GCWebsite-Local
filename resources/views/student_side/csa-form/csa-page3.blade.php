@@ -5,11 +5,11 @@
 @endsection
 
 @section('form-action')
-{{route('student.csa_form.csa-page4')}}
+{{route('student.csa-form.after-page3')}}
 @endsection
 
 @section('return-route')
-    {{route('student.csa_form.csa-page2')}}
+    {{route('student.csa-form.csa-page2')}}
 @endsection
 
 @section('form-inputs')
@@ -44,7 +44,7 @@
                 <label for="achievement[]">{{ __($i + 1) }}</label>
                </div>
                <div class="col-md-3">
-                    <textarea class="col-md-11 form-control @error('achievement[]') is-invalid @enderror" rows="8" name="achievement[]"></textarea>
+                    <textarea class="col-md-11 form-control @error('achievement[]') is-invalid @enderror" rows="8" name="achievement[]" value="{{old('achievement[]', $achievement_name)}}"></textarea>
                     <span class="col-md-1" style="color:red; font-weight:bold">
                         @if($errors->has('achievement[]'))
                            {{       $errors->first('achievement[]')}}

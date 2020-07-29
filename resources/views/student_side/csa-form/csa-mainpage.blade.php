@@ -28,7 +28,7 @@
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                         @if ($academic_years->count() > 0)
                                             @foreach ($academic_years as $year)
-                                                <a class="dropdown-item" href="{{route('student.csa_form.csa-page1', ['academic_year_id' => $year->id])}}">{{$year->starting_year}}/{{$year->ending_year}} - {{$year->odd_semester ? "Odd" : "Even    "}}</a>
+                                                <a class="dropdown-item" href="{{route('student.csa-form.after-mainpage', ['academic_year_id' => $year->id])}}">{{$year->starting_year}}/{{$year->ending_year}} - {{$year->odd_semester ? "Odd" : "Even    "}}</a>
                                             @endforeach
                                         @endif
                                     </div>

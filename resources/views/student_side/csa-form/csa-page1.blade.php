@@ -5,7 +5,7 @@
 @endsection
 
 @section('form-action')
-{{route('student.csa_form.csa-page2')}}
+{{route('student.csa-form.after-page1')}}
 @endsection
 
 @section('form-inputs')

@@ -1,16 +1,13 @@
-@extends('student_side.csa_template.csa-template2')
+@extends('student_side.csa_template.csa-template4')
 
 @section('entity')
     Applicant's Declaration
 @endsection
 
 @section('form-action')
-{{route('student.csa_form.csa-page7')}}
+{{route('student.csa-form.csa-page7')}}
 @endsection
 
-@section('return-route')
-    {{route('student.csa_form.csa-page6')}}
-@endsection
 
 @section('form-inputs')
         <a style="font-size:20px">
@@ -24,10 +21,25 @@
          6. That Binus University is not responsible for any aspects of my action during the period of programs;<br>
          7. Be placed in anywhere whose quota is still available if submit this application form over the given deadline;<br>
          I am also aware of any medical condition (disability, illness, or pregnancy) which might want to completing my study program within the time allowed for the program;<br></a>
-         <input type="checkbox" name="checkbox" value="check" id="agree" /> I agree to the Applicant Declaration<br>
+         <input type="checkbox" name="checkbox" value="1" id="agree" onclick="terms_changed(this)"> I agree to the Applicant Declaration<br>
 
+         <div class="form-group row">
+            <div class="col-md-4 offset-md-4">
+                <a class="btn btn-secondary" href={{route('student.csa-form.csa-page6')}} role="button">Prev</a>
+                <button type="submit" class="btn btn-primary" id="submit_button" href="{{route('student.csa-form.after-page7')}}" disabled>Submit</button>
+            </div>
+        </div>
 @endsection
 
-@section('confirm-value')
-Submit
-@endsection
+@push('scripts')
+<script>
+    function terms_changed(termsCheckBox){
+    if(termsCheckBox.checked){
+        document.getElementById("submit_button").disabled = false;
+    } else{
+        document.getElementById("submit_button").disabled = true;
+    }
+}
+</script>
+@endpush
+
