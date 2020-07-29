@@ -46,4 +46,9 @@ class Staff extends Model
     public function user(){
         return $this->belongsTo('App\User');
     }
+
+    // Inverse has many relationship
+    public function student_requests(){
+        return $this->hasMany('App\Student_Request');
+    }
 }
