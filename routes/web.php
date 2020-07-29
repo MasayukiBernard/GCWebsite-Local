@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', function () {
     return view('welcome');
-})->middleware('throttle:30,1');
+})->middleware('throttle:120,1');
 
 Route::fallback(function () {
     // if user accessed any route that is not listed below
@@ -23,22 +23,23 @@ Route::fallback(function () {
     ->view('warnings.lost', [], 404);
 })->middleware('throttle:5,1');
 
-// Auth route, with register feature turned off
+// Auth route, with register feature turned off and default account email verification
 Auth::routes(['register' => false, 'verify' => true]);
 
 // Routes that can be accessed only by
 // -> Authenticated users
-Route::middleware('auth', 'throttle:60,15', 'verified')->group(function(){
+Route::middleware('auth', 'throttle:150,15')->group(function(){
     Route::get('/test', function(){
-    });
-    // -> Staff Users
-    Route::middleware('staff')->group(function(){
-        Route::get('/image/{table_name}/{id}/{column_name}', 'Staff\ShowPhotoController')->name('see-image');
         
-        // Prevent this route to be accessed directly from GET requests
-        Route::resource('photos', 'Staff\PhotoController');
+    });
 
+    // Prevent this route to be accessed directly from GET requests
+    Route::resource('photos', 'PhotoController');
+
+    // -> Staff Users
+    Route::middleware('staff', 'verified')->group(function(){
         Route::name('staff.')->group(function(){
+            Route::get('/image/{table_name}/{id}/{column_name}', 'ShowPhotoController@show_staff')->name('see-image');
             Route::prefix('staff')->group(function(){
                 Route::prefix('home')->group(function(){
                     $home_controller = 'HomeController@';
@@ -46,6 +47,16 @@ Route::middleware('auth', 'throttle:60,15', 'verified')->group(function(){
                     Route::post('/major/{major_id}/academic-year/{academic_year_id}', $home_controller . 'get_percentages');
                 });
                 
+                Route::name('student-request.')->group(function(){
+                    Route::prefix('student-request')->group(function(){
+                        $student_req_controller = 'Staff\ManageStudentRequestController@';
+                        Route::get('/', $student_req_controller . 'show_approvalPage')->name('page');
+                        Route::post('/notify/{student_request_id}', $student_req_controller . 'notify_request');
+                        Route::post('/deny', $student_req_controller . 'deny_request')->name('deny-request');
+                        Route::post('/approve', $student_req_controller . 'approve_request')->name('approve-request');
+                    });
+                });
+
                 Route::name('academic-year.')->group(function(){
                     Route::prefix('academic-year')->group(function(){
                         $year_controller = "Staff\ManageAcademicYearController@";
@@ -179,25 +190,46 @@ Route::middleware('auth', 'throttle:60,15', 'verified')->group(function(){
 
                     Route::get('/change-pass', $profile_controller . 'show_changePass')->middleware('password.confirm')->name('change-pass-page');
 
-                    Route::get('/edit', $profile_controller . 'show_editPage')->name('profile-edit-page');
-                    Route::post('/edit/confirm', $profile_controller . 'confirm_edit')->name('profile-edit-confirm');
-                    Route::post('/edit/user', $profile_controller . 'update')->name('profile-edit');
+                    Route::get('/edit', $profile_controller . 'show_staffEditPage')->name('profile-edit-page');
+                    Route::post('/edit/confirm', $profile_controller . 'confirm_staffEdit')->name('profile-edit-confirm');
+                    Route::post('/edit/user', $profile_controller . 'update_staff')->name('profile-edit');
                 });
             });
         });
     });
+
     // -> Student Users
     Route::middleware('student')->group(function(){
         Route::name('student.')->group(function(){
             Route::prefix('student')->group(function(){
-                Route::get('home', 'HomeController@student_index')->name('home');
-                Route::prefix('profile')->group(function(){
-                    $profile_controller = 'User\ManageProfileController@';
-                    Route::get('/', $profile_controller . 'show_studentProfile')->name('profile');
-                    Route::get('change-pass', $profile_controller . 'show_changePass')->middleware('password.confirm')->name('change-pass-page');
+                Route::middleware('profile-updated', 'verified', 'profile-finalized')->group(function(){
+                    Route::get('/{yearly_student_id}/image/{requested_image}/{optional_id?}', 'ShowPhotoController@show_student')->name('see-image');
+                    Route::get('home', 'HomeController@student_index')->name('home');
+                    Route::prefix('csaform')->group(function(){
+                        Route::get('/', 'User\ManageCSAFormController@show_csaFormPage')->name('csaform');
+                    });
                 });
-                Route::prefix('csaform')->group(function(){
-                    Route::get('/', 'User\ManageCSAFormController@show_csaFormPage')->name('csaform');
+
+                Route::prefix('profile')->group(function(){
+                    $profile_controller = 'ManageProfileController@';
+                    Route::get('/', $profile_controller . 'show_studentProfile')->name('profile');
+
+                    Route::middleware('profile-prevent-update')->group(function(){
+                        $profile_controller = 'ManageProfileController@';
+                        Route::get('/edit', $profile_controller . 'show_studentEditPage')->name('profile-edit-page');
+                        Route::post('/edit/confirm', $profile_controller . 'confirm_studentEdit')->name('profile-edit-confirm');
+                        Route::post('/edit/user', $profile_controller . 'update_student')->name('profile-edit'); 
+                    });
+
+                    Route::post('/finalize', $profile_controller . 'finalize_profile')->name('profile-finalize');
+
+                    Route::middleware('profile-edit-request-none', 'profile-finalized')->group(function(){
+                        $profile_controller = 'ManageProfileController@';
+                        Route::get('/request-edit', $profile_controller . 'show_requestProfileEditPage')->name('profile-request-edit-page');
+                        Route::post('/request-edit/submit', $profile_controller . 'request_profile_edit')->name('profile-request-edit');
+                    });
+
+                    Route::get('change-pass', $profile_controller . 'show_changePass')->middleware(['profile-updated', 'password.confirm'])->name('change-pass-page');
                 });
             });
         });

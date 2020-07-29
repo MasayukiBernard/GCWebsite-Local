@@ -55,7 +55,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
 
     // Log changes only to unguarded attributes
-    protected static $logFillable = true;
+    protected static $logAttributes = ['password', 'name', 'gender', 'email', 'mobile', 'telp_num', 'email_verified_at'];
 
     // Customize log name
     protected static $logName = 'user_log';
@@ -82,12 +82,13 @@ class User extends Authenticatable implements MustVerifyEmail
         // Delete related models
         static::deleting(function($user){
             if($user->is_staff){
+                $user->staff->student_requests()->delete();
                 $user->staff()->delete();
             }
             else{
-                function log($user, $model, $desc){
+                function log($model, $desc){
                     activity()
-                        ->causedBy($user)
+                        ->causedBy(Auth::user())
                         ->performedOn($model)
                         ->tap(function(Activity $activity) {
                             $activity->log_name = 'cascaded_log';
@@ -96,7 +97,6 @@ class User extends Authenticatable implements MustVerifyEmail
                         ->log($desc);
                 }
                 
-                $user = Auth::user();
                 $log = 'deleted';
 
                 $yearly_students = $user->student->yearly_students;
@@ -106,38 +106,38 @@ class User extends Authenticatable implements MustVerifyEmail
                         if($csa_form != null){
                             $test = $csa_form->english_test;
                             if($test != null){
-                                log($user, $test, $log);
+                                log($test, $log);
                                 $csa_form->english_test()->delete();
                             }
                             
                             $info = $csa_form->academic_info;
                             if($info){
-                                log($user, $info, $log);
+                                log($info, $log);
                                 $csa_form->academic_info()->delete();
                             }
                             
                             $passport = $csa_form->passport; 
                             if($passport){
-                                log($user, $passport, $log);
+                                log($passport, $log);
                                 $csa_form->passport()->delete();   
                             }
                             
                             $emergency = $csa_form->emergency; 
                             if($emergency != null){
-                                log($user, $emergency, $log);
+                                log($emergency, $log);
                                 $csa_form->emergency()->delete();
                             }
                             
                             $condition = $csa_form->condition;
                             if($condition != null){
-                                log($user, $condition, $log);
+                                log($condition, $log);
                                 $csa_form->condition()->delete();
                             }
     
                             $achievements = $csa_form->achievements;
                             if($achievements != null){
                                 foreach($achievements as $achievement){
-                                    log($user, $achievement, $log);
+                                    log($achievement, $log);
                                 }
                                 $csa_form->achievements()->delete();
                             }
@@ -145,7 +145,7 @@ class User extends Authenticatable implements MustVerifyEmail
                             $choices = $csa_form->choices;
                             if($choices != null){
                                 foreach($choices as $choice){
-                                    log($user, $choice, $log);
+                                    log($choice, $log);
                                 }
                                 $csa_form->choices()->delete();
                             }
@@ -153,34 +153,36 @@ class User extends Authenticatable implements MustVerifyEmail
     
                         $csa_form = $yearly_student->csa_form;
                         if($csa_form != null){
-                            log($user, $csa_form, $log);
+                            log($csa_form, $log);
                             $yearly_student->csa_form()->delete();
                         }
 
-                        log($user, $yearly_student, $log);
+                        log($yearly_student, $log);
                     }
                     $user->student->yearly_students()->delete();
                 }
+                
+                $student_requests = $user->student->student_requests;
+                if($student_requests != null){
+                    foreach($student_requests as $request){
+                        log($request, $log);
+                    }
+                    $user->student->student_requests()->delete();
+                }
+
+                log($user->student, $log);
+                $user->student()->delete();
             }
-    
         });
     }
 
     // Relationships
     // Has one relationships
     public function student(){
-        if (!($this->is_staff)){
-            return $this->hasOne('App\Student');
-        }
-        else{
-            abort(404);
-        }
+        return $this->hasOne('App\Student');
     }
+
     public function staff(){
-        if($this->is_staff){
-            return $this->hasOne('App\Staff');
-        }else{
-            abort(404);
-        }
+        return $this->hasOne('App\Staff');
     }
 }

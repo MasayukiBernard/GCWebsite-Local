@@ -19,7 +19,7 @@
                 <div class="card">
                     <div class="card-header h2">Edit @yield('entity') data</div>
                     <div class="card-body">
-                        <form method="POST" action="@yield('form-action')">
+                        <form method="POST" action="@yield('form-action')" >
                             @csrf
                             @yield('form-inputs')
                         </form>

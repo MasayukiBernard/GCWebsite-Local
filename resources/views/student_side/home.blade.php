@@ -3,18 +3,14 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="card">
-                <div class="card-header">Dashboard</div>
+                <div class="card-header h3">Dashboard</div>
 
                 <div class="card-body">
-                    @if (isset($user_status))
-                        <div class="alert alert-success" role="alert">
-                            {{$user_status}}
-                        </div>
+                    @if ($user_verified)
+                        <h5 class="m-0">You are logged in as a Student with a <span class="badge badge-pill badge-success">verified email</span> !</h5><br>
                     @endif
-
-                    You are logged in as a Student!
                 </div>
             </div>
         </div>

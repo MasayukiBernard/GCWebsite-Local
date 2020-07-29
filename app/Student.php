@@ -4,7 +4,6 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Log;
 use Spatie\Activitylog\Contracts\Activity;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -22,6 +21,9 @@ class Student extends Model
 
     protected $guarded = ['nim', 'user_id', 'major_id', 'picture_path', 'id_card_picture_path', 'flazz_card_picture_path', 'binusian_year'];
     
+    // Default attribute value
+    protected $attributes = ['is_finalized' => false];
+    
     // Custom timestamps field name
     const CREATED_AT = 'latest_created_at';
     const UPDATED_AT = 'latest_updated_at';
@@ -30,7 +32,7 @@ class Student extends Model
     const DELETED_AT = 'latest_deleted_at';
     
     // Log changes to stated attributes
-    protected static $logAttributes = ['major_id', 'place_birth', 'date_birth', 'nationality', 'address', 'picture_path', 'id_card_picture_path', 'flazz_card_picture_path', 'binusian_year'];
+    protected static $logAttributes = ['major_id', 'place_birth', 'date_birth', 'nationality', 'address', 'picture_path', 'id_card_picture_path', 'flazz_card_picture_path', 'binusian_year', 'is_finalized'];
 
     // Customize log name
     protected static $logName = 'student_log';
@@ -60,5 +62,9 @@ class Student extends Model
     // Has many relations
     public function yearly_students(){
         return $this->hasMany('App\Yearly_Student', 'nim');
+   }
+
+   public function student_requests(){
+       return $this->hasMany('App\Student_Request', 'nim');
    }
 }
