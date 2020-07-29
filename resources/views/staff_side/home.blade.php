@@ -11,14 +11,24 @@
                 <div class="card">
                     <div class="card-header">Dashboard</div>
                     <div class="card-body">
-                        <h5 class="card-title"><u>You are logged in as a Staff!</u></h5>
+                        <div class="row">
+                            <div class="col">
+                                <h5 class="card-title"><u>You are logged in as a Staff!</u></h5>
+                            </div>
+                            <div class="col text-right mt-n3">
+                                <div class="d-inline-block bg-danger rounded-circle text-center font-weight-bold mr-n3 mt-n3 position-relative align-middle" style="width: 2vw; height: 2vw; z-index: 2; cursor: pointer;" onclick="document.getElementById('student_req_link').click();">
+                                    <div style="margin-top: 0.2vw;">{{$student_requests}}</div>
+                                </div>
+                                <a role="button" id="student_req_link" href="{{route('staff.student-request.page')}}" class="btn btn-primary btn-warning font-weight-bold btn-sm mt-3">Student Requests</a>
+                            </div>
+                        </div>
                         <table class="table table-bordered table-sm w-100">
                             <tbody>
                                 <tr>
                                     <td class="text-center h3" colspan="3">Yearly Students' Data Overview</td>
                                 </tr>
                                 <tr>
-                                    <td class="align-middle">Major</td>
+                                    <td class="align-middle pl-3">Major</td>
                                     <td class="align-middle">
                                         <div class="btn-group">
                                             <button type="button" id="major_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -77,7 +87,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="align-middle">Academic Year</td>
+                                    <td class="align-middle pl-3">Academic Year</td>
                                     <td class="align-middle">
                                         <div class="btn-group">
                                             <button type="button" id="academic_year_dropdown" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
