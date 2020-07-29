@@ -19,7 +19,7 @@ class CheckIsStudent
     {
         // if current authenticated user is not a student
         if(Auth::user()->is_staff){
-            abort(403, 'This address is only for students!!');
+            return redirect(route('staff.home'));
         }
 
         return $next($request);
