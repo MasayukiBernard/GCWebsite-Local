@@ -49,12 +49,12 @@ class VerificationController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('signed')->only('verify');
-        $this->middleware('throttle:6,1')->only('verify', 'resend');
+        $this->middleware('throttle:60,1')->only('verify');
+        $this->middleware('throttle:30,1')->only('resend');
     }
 
     // Overrided Functions
     public function resend(Request $request){
-        $request->session()->put('user-success-status', 'Your email has already been verified!');
         if ($request->user()->hasVerifiedEmail()) {
             return $request->wantsJson()
                         ? new Response('', 204)
@@ -63,6 +63,7 @@ class VerificationController extends Controller
 
         $request->user()->sendEmailVerificationNotification();
 
+        session()->put('success_notif', 'A verification link has been sent to your email address');
         return $request->wantsJson()
                     ? new Response('', 202)
                     : back()->with('sent', true);
