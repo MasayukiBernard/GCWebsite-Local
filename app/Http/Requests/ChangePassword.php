@@ -21,7 +21,7 @@ class ChangePassword extends FormRequest
     {
         // Refer to change-pass blade file for the regex explanation
         return [
-            'new-pass' => ['required', 'string', 'min:8', 'max:100', 'regex:/^[^\s]([a-zA-Z0-9_~`\\-!@#\\$%\\^&\\*\\(\\)-\\+=\\{}\\[\\]\\\\\\|:";\'<>,\\.\\?\/])+\\z/'],
+            'new-pass' => ['required', 'string', 'min:8', 'max:100', 'regex:/\\A[a-zA-Z0-9`~!@#\\$%\\^&\\*\\(\\)_\\-\\+=\\[\\{\\]\\}\\\\\\|;:\\\'",<\\.>\\/\\?]+\\z/'],
             'confirm-new-pass' => ['required', 'string', 'max:100', new StrEqualTo('new-pass', 'New Password')]
         ];
     }
