@@ -7,6 +7,10 @@
     <title>{{$title}}</title>
 </head>
 <body style="text-align: center; margin: 0; height: 100%;">
-    <img src="http://localhost:8000/photos/{{$table}}_id={{$id}}&opt={{$column}}" height="100%" style="">
+    @if($is_staff)
+        <img src="http://localhost:8000/photos/{{$table}}_id={{$id}}&opt={{$column}}" height="100%" style="">
+    @else
+        <img src="http://localhost:8000/photos/ys={{$id}}&opt={{$req}}{{$opt_id}}" height="100%" style="">
+    @endif
 </body>
 </html>
