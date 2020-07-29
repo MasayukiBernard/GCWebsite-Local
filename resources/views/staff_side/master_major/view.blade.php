@@ -25,8 +25,8 @@
                 <div class="card">
                     <div class="card-header h2">Master Major</div>
                     <div class="card-body">
-                    <a class="btn btn-success text-light" role="button" href={{route('staff.major.create-page')}}>Add New Major</a>
-                    <table class="table table-striped table-bordered table-hover">
+                        <a class="btn btn-success text-light" role="button" href={{route('staff.major.create-page')}}>Add New Major</a>
+                        <table class="table table-striped table-bordered table-hover">
                             <thead>
                                 <tr class="d-flex">
                                     <th class="col-1 text-center" scope="col">No.</th>
