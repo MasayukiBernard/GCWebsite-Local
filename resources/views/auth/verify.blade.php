@@ -21,6 +21,7 @@
                                 </div>
                             </div>
                         </div>
+                        <?php session()->forget('success_notif');?>
                     @endif
 
                     Before you can proceed any further, please verify your email address by clicking the below link.<br>
