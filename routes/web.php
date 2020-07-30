@@ -39,7 +39,7 @@ Route::middleware('auth', 'throttle:150,15')->group(function(){
     // -> Staff Users
     Route::middleware('staff', 'verified')->group(function(){
         Route::name('staff.')->group(function(){
-            Route::get('/image/{table_name}/{id}/{column_name}', 'ShowPhotoController@show_staff')->name('see-image');
+            Route::get('/image/{last_modified}/{table_name}/{id}/{column_name}', 'ShowPhotoController@show_staff')->name('see-image');
             Route::prefix('staff')->group(function(){
                 Route::prefix('home')->group(function(){
                     $home_controller = 'HomeController@';
@@ -203,7 +203,7 @@ Route::middleware('auth', 'throttle:150,15')->group(function(){
         Route::name('student.')->group(function(){
             Route::prefix('student')->group(function(){
                 Route::middleware('profile-updated', 'verified', 'profile-finalized')->group(function(){
-                    Route::get('/{yearly_student_id}/image/{requested_image}/{optional_id?}', 'ShowPhotoController@show_student')->name('see-image');
+                    Route::get('/{last_modified}/{yearly_student_id}/image/{requested_image}/{optional_id?}', 'ShowPhotoController@show_student')->name('see-image');
                     Route::get('home', 'HomeController@student_index')->name('home');
                     Route::prefix('csaform')->group(function(){
                         Route::get('/', 'User\ManageCSAFormController@show_csaFormPage')->name('csaform');

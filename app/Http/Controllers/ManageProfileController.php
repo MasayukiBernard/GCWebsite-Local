@@ -100,11 +100,21 @@ class ManageProfileController extends Controller
                                 ->where('nim', $user->student->nim)
                                 ->where('request_type', '1')
                                 ->where('is_approved', null)->first();
+
+        $pp_path = Storage::disk('private')->exists($user->student->picture_path);
+        $ic_path = Storage::disk('private')->exists($user->student->id_card_picture_path);
+        $fc_path = Storage::disk('private')->exists($user->student->flazz_card_picture_path);
+
         return view('student_side\profile\view', [
             'user' => $user,
             'profile_finalized' => $user->student->is_finalized,
             'email_verified' => $user->email_verified_at == null ? false : true, 
             'request_edit_permission' => $student_request_id == null ? true : false,
+            'filemtimes' => [
+                'pp' => $pp_path == true ? filemtime(storage_path('app\private\\' . $user->student->picture_path)) : '0',
+                'ic' => $ic_path == true ? filemtime(storage_path('app\private\\' . $user->student->id_card_picture_path)) : '0',
+                'fc' => $fc_path == true ? filemtime(storage_path('app\private\\' . $user->student->flazz_card_picture_path)) : '0'
+            ],
             'success' => $success,
             'warning' => $warning,
             'failed' => $failed
@@ -118,9 +128,19 @@ class ManageProfileController extends Controller
             session()->forget('warning-notif');
         }
 
+        $user = Auth::user();
+        $pp_path = Storage::disk('private')->exists($user->student->picture_path);
+        $ic_path = Storage::disk('private')->exists($user->student->id_card_picture_path);
+        $fc_path = Storage::disk('private')->exists($user->student->flazz_card_picture_path);
+
         return view('student_side\profile\edit', [
             'old_user' => Auth::user(),
             'all_major' => Major::orderBy('name')->get(),
+            'filemtimes' => [
+                'pp' => $pp_path == true ? filemtime(storage_path('app\private\\' . $user->student->picture_path)) : '0',
+                'ic' => $ic_path == true ? filemtime(storage_path('app\private\\' . $user->student->id_card_picture_path)) : '0',
+                'fc' => $fc_path == true ? filemtime(storage_path('app\private\\' . $user->student->flazz_card_picture_path)) : '0'
+            ],
             'warning' => $warning
         ]);
     }
@@ -186,16 +206,31 @@ class ManageProfileController extends Controller
 
         // Moving stored temp image to the actual image folders
         if($file_inputs['pp'] != null){
+            if($user->student->picture_path != '-'){
+                if(Storage::disk('private')->exists($user->student->picture_path)){
+                    Storage::disk('private')->move($user->student->picture_path, 'students/trashed/pictures/' . Str::afterLast($user->student->picture_path, '/'));
+                }
+            }
             if((Storage::disk('private')->move($file_inputs['pp'], $file_names['pp'] . Str::afterLast($file_inputs['pp'], '/'))) == true){
                 $user->student->picture_path = $file_names['pp'] . Str::afterLast($file_inputs['pp'], '/');
             }
         }
         if ($file_inputs['ic'] != null){
+            if($user->student->id_card_picture_path != '-'){
+                if(Storage::disk('private')->exists($user->student->id_card_picture_path)){
+                    Storage::disk('private')->move($user->student->id_card_picture_path, 'students/trashed/national_ids/' . Str::afterLast($user->student->id_card_picture_path, '/'));
+                }
+            }
             if((Storage::disk('private')->move($file_inputs['ic'], $file_names['ic'] . Str::afterLast($file_inputs['ic'], '/'))) == true){
                 $user->student->id_card_picture_path = $file_names['ic'] . Str::afterLast($file_inputs['ic'], '/');
             }
         }
         if ($file_inputs['fc'] != null){
+            if($user->student->flazz_card_picture_path != '-'){
+                if(Storage::disk('private')->exists($user->student->flazz_card_picture_path)){
+                    Storage::disk('private')->move($user->student->flazz_card_picture_path, 'students/trashed/ids/' . Str::afterLast($user->student->flazz_card_picture_path, '/'));
+                }
+            }
             if((Storage::disk('private')->move($file_inputs['fc'], $file_names['fc'] . Str::afterLast($file_inputs['fc'], '/'))) == true){
                 $user->student->flazz_card_picture_path = $file_names['fc'] . Str::afterLast($file_inputs['fc'], '/');
             }

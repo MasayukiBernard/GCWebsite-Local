@@ -30,7 +30,7 @@
                             
                         <table class="table table-bordered table-sm">
                             <thead>
-                                <th class="h4 bg-info" colspan="2">Status</th>
+                                <th class="h4 bg-info p-2" colspan="2">Status</th>
                             </thead>
                             <tbody>
                                 <tr>
@@ -47,12 +47,12 @@
                         @if ($csa_form->is_submitted)
                             <table class="table table-bordered table-sm">
                                 <thead>
-                                    <th class="h4 bg-info" colspan="2">Personal Information</th>
+                                    <th class="h4 bg-info p-2" colspan="2">Personal Information</th>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td class="text-center" colspan="2">
-                                            <img src="/photos/users_id={{$csa_form->yearly_student->student->user_id}}&opt=picture_path" class="img-thumbnail" width="25%">
+                                            <img src="/photos/users_id={{$csa_form->yearly_student->student->user_id}}&opt=picture_path&mt={{$pp_last_modified}}" class="img-thumbnail" width="25%">
                                         </td>
                                     </tr>
                                     <tr>
@@ -90,7 +90,7 @@
                                     <tr>    
                                         <th scope="row">Passport Proof</th>
                                         <td>
-                                            <a target="_blank" href="{{route('see-image', ['table_name' => 'passports', 'id' => $csa_form->id, 'column_name' => 'pass_proof_path'])}}">See Image</a>
+                                            <a target="_blank" href="{{route('staff.see-image', ['last_modified' => $filemtimes['passport'], 'table_name' => 'passports', 'id' => $csa_form->id, 'column_name' => 'pass_proof_path'])}}">See Image</a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -98,7 +98,7 @@
 
                             <table class="table table-bordered table-sm">
                                 <thead>
-                                    <th class="h4 bg-info" colspan="4">Contact Information</th>
+                                    <th class="h4 bg-info p-2" colspan="4">Contact Information</th>
                                 </thead>
                                 <tbody>
                                     <tr>
@@ -120,7 +120,7 @@
 
                             <table class="table table-bordered table-sm" id="application_details">
                                 <thead>
-                                    <th class="h4 bg-info" colspan="4">Application Details</th>
+                                    <th class="h4 bg-info p-2" colspan="4">Application Details</th>
                                 </thead>
                                 <tbody>
                                     <tr>
@@ -181,7 +181,7 @@
 
                             <table class="table table-bordered table-sm">
                                 <thead>
-                                    <th class="h4 bg-info" colspan="2">Academic Information</th>
+                                    <th class="h4 bg-info p-2" colspan="2">Academic Information</th>
                                 </thead>
                                 <tbody>
                                     <tr>
@@ -211,7 +211,7 @@
                                     <tr>
                                         <th scope="row">GPA Transcript Proof</th>
                                         <td>
-                                            <a target="_blank" href="{{route('see-image', ['table_name' => 'academic_infos', 'id' => $csa_form->id, 'column_name' => 'gpa_proof_path'])}}">See Image</a>
+                                            <a target="_blank" href="{{route('staff.see-image', ['last_modified' => $filemtimes['gpa_trans'], 'table_name' => 'academic_infos', 'id' => $csa_form->id, 'column_name' => 'gpa_proof_path'])}}">See Image</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -225,7 +225,7 @@
                                     <tr>
                                         <th scope="row">English Test Result Proof</th>
                                         <td>
-                                            <a target="_blank" href="{{route('see-image', ['table_name' => 'english_tests', 'id' => $csa_form->id, 'column_name' => 'proof_path'])}}">See Image</a>
+                                            <a target="_blank" href="{{route('staff.see-image', ['last_modified' => $filemtimes['english'], 'table_name' => 'english_tests', 'id' => $csa_form->id, 'column_name' => 'proof_path'])}}">See Image</a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -234,7 +234,7 @@
                             <table class="table table-bordered table-sm">
                                 <thead>
                                     <tr>
-                                        <th class="h4 bg-info" colspan="2">Academic Achievements / Awards</th>
+                                        <th class="h4 bg-info p-2" colspan="2">Academic Achievements / Awards</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -262,7 +262,7 @@
                                         <tr>
                                             <th scope="row">Achievement Proof</th>
                                             <td>
-                                                <a target="_blank" href="{{route('see-image', ['table_name' => 'achievements', 'id' => $achievement->id, 'column_name' => 'proof_path'])}}">See Image</a>
+                                                <a target="_blank" href="{{route('staff.see-image', ['last_modified' => $filemtimes['achievements'][$i-1], 'table_name' => 'achievements', 'id' => $achievement->id, 'column_name' => 'proof_path'])}}">See Image</a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -272,7 +272,7 @@
                             <table class="table table-bordered table-sm">
                                 <thead>
                                     <tr>
-                                        <th class="h4 bg-info" colspan="4">Emergency Contact</th>
+                                        <th class="h4 bg-info p-2" colspan="4">Emergency Contact</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -304,7 +304,7 @@
                             <table class="table table-bordered table-sm">
                                 <thead>
                                     <tr>
-                                        <th class="h4 bg-info" colspan="2">Medical, Dietary and Other Information</th>
+                                        <th class="h4 bg-info p-2" colspan="2">Medical, Dietary and Other Information</th>
                                     </tr>
                                 </thead>
                                 <tbody>

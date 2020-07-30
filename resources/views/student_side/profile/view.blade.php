@@ -54,7 +54,7 @@
                             <tr>
                                 <td>
                                     <div class="border border-dark rounded d-flex align-items-center" style="height: 150px; width=150vw;">
-                                        <img src="/photos/ys=0&opt=profile-picture" width="150vw" class="p-2">
+                                        <img src="/photos/mt={{$filemtimes['pp']}}&ys=0&opt=profile-picture" width="150vw" class="p-2">
                                     </div>
                                 </td>
                                 <td class="w-auto">
@@ -145,8 +145,8 @@
                             <th scope="row">Flazz Card Picture</th>
                         </tr>
                         <tr class="text-center">
-                            <td><img src="/photos/ys=0&opt=id-card" width="200px" alt="No Image Data Yet"></td>
-                            <td><img src="/photos/ys=0&opt=flazz-card" width="200px" alt="No Image Data Yet"></td>
+                            <td><img src="/photos/mt={{filemtime(storage_path('app\private\\' . $user->student->id_card_picture_path))}}&ys=0&opt=id-card" width="200px" alt="No Image Data Yet"></td>
+                            <td><img src="/photos/mt={{filemtime(storage_path('app\private\\' . $user->student->flazz_card_picture_path))}}&ys=0&opt=flazz-card" width="200px" alt="No Image Data Yet"></td>
                         </tr>
                     </table>
                 </div>

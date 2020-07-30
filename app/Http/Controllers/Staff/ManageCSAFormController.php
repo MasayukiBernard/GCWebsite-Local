@@ -11,6 +11,7 @@ use App\Notifications\CSAFormNominated;
 use App\Yearly_Student;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ManageCSAFormController extends Controller
 {
@@ -101,7 +102,40 @@ class ManageCSAFormController extends Controller
     public function show_detailsPage($csa_form_id){
         $csa_form = CSA_Form::where('id', $csa_form_id)->first();
         if($csa_form != null){
-            return view('staff_side\csa_application_forms\details', ['csa_form' => $csa_form]);
+            $profile_picture = $passport = $gpa_trans = $english = false;
+
+            $profile_picture = Storage::disk('private')->exists($csa_form->yearly_student->student->picture_path);
+            
+            if($csa_form->passport != null){
+                $passport = Storage::disk('private')->exists($csa_form->passport->pass_proof_path);
+            }
+            if($csa_form->academic_info != null){
+                $gpa_trans = Storage::disk('private')->exists($csa_form->academic_info->gpa_proof_path);
+            }
+            if($csa_form->english_test != null){
+                $english = Storage::disk('private')->exists($csa_form->english_test->proof_path);
+            }
+            $achievements = array('0', '0', '0');
+
+            if($csa_form->achievements != null){
+                $i = 0;
+                foreach($csa_form->achievements as $achievement){
+                    if(Storage::disk('private')->exists($achievement->proof_path)){
+                        $achievements[$i++] = filemtime(storage_path('app\private\\' . $achievement->proof_path));
+                    }
+                }
+            }
+
+            return view('staff_side\csa_application_forms\details', [
+                'csa_form' => $csa_form,
+                'pp_last_modified' => $profile_picture == true ? filemtime(storage_path('app\private\\' . $csa_form->yearly_student->student->picture_path)) : '0',
+                'filemtimes' => [
+                    'passport' => $passport == true ? filemtime(storage_path('app\private\\' . $csa_form->passport->pass_proof_path)) : '0',
+                    'gpa_trans' => $gpa_trans == true ? filemtime(storage_path('app\private\\' . $csa_form->academic_info->gpa_proof_path)) : '0',
+                    'english' => $english == true ? filemtime(storage_path('app\private\\' . $csa_form->english_test->proof_path)) : '0',
+                    'achievements' => $achievements
+                ]
+            ]);
         }
         abort(404);
     }

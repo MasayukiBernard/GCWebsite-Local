@@ -31,7 +31,7 @@ class ShowPhotoController extends Controller
      * @param  int  $id
      * @return View
      */
-    public function show_staff($table_name, $id, $column_name)
+    public function show_staff($last_modified, $table_name, $id, $column_name)
     {
         if(!(Arr::exists($this->title, $table_name))){
             abort(404);
@@ -43,10 +43,11 @@ class ShowPhotoController extends Controller
             'table' => $table_name,
             'id' => $id,
             'column' => $column_name,
+            'last_modified' => $last_modified
         ]);
     }
 
-    public function show_student($yearly_student_id, $requested_image, $optional_id = null){
+    public function show_student($last_modified, $yearly_student_id, $requested_image, $optional_id = null){
         if(!(Arr::exists($this->requested_image_list, $requested_image))){
             abort(404);
         }
@@ -56,7 +57,8 @@ class ShowPhotoController extends Controller
             'title' => 'Student\'s ' . $this->requested_image_list[$requested_image],
             'id' => $yearly_student_id,
             'req' => $requested_image,
-            'opt_id' => ($optional_id != null ? '&id=' . $optional_id : '')
+            'opt_id' => ($optional_id != null ? '&id=' . $optional_id : ''),
+            'last_modified' => $last_modified
         ]);
     }
 }

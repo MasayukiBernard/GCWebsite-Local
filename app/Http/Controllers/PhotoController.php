@@ -57,11 +57,12 @@ class PhotoController extends Controller
 
         if($user->is_staff){
             /*
-                url format = /photos/{table}_id={id}&opt={column}
+                url format = /photos/{table}_id={id}&opt={column}&mt={last_modified}
             */
             $table  = Str::before($path, '_id');
             $id     = Str::between($path, 'id=', '&');
-            $column = Str::after($path, 'opt=');
+            $column = Str::between($path, '&opt=', '&mt');
+            $last_modified = Str::after($path, '&mt=');
 
             $id_col_name = array(
                 'students' => 'user_id',
@@ -79,7 +80,7 @@ class PhotoController extends Controller
                 $actual_path = DB::table($table)->select($column)->where($id_col_name[$table], $id)->first()->$column;
             }
     
-            if($actual_path != null){
+            if($actual_path != null && $last_modified == filemtime(storage_path('app\private\\' . $actual_path))){
                 if(Storage::disk('private')->exists($actual_path)){
                     return response()->file(storage_path('app\private\\' . $actual_path));
                 }
@@ -90,7 +91,7 @@ class PhotoController extends Controller
             // Temporary Images
             /*
                 url format = /photos/type=temp&opt={requested_image}
-                // Check about image caching, this still works on Firefox
+                // Somehow images are not cached in the pages that used this link, hypothesis: post request header cache-control: no-cache
              */
             if(preg_match('/^type=temp&opt=(profile\-picture|id\-card|flazz\-card)$/', $path) == 1){
                 $requested_image = Str::after($path, '&opt=');
@@ -107,11 +108,12 @@ class PhotoController extends Controller
             }
             // Saved Images
             /*
-                url format = /photos/ys={yearly_student_id}&opt={requested_image}&id={optional_id?}
-                // Work on image caching
+                url format = /photos/mt={last_modified}&ys={yearly_student_id}&opt={requested_image}&id={optional_id?}
+                // Prevented images to be cached when the actual resource has been modified
              */
-            else if(preg_match('/^ys=[0-9]+&opt=(profile\-picture|id\-card|flazz\-card|passport|gpa\-transcript\-proof|english\-test\-result|achievement\-proof(&id=[0-9]+))$/', $path) == 1){
-                $yearly_student_id = Str::between($path, 'ys=', '&opt=');
+            else if(preg_match('/^mt=[0-9]+&ys=[0-9]+&opt=(profile\-picture|id\-card|flazz\-card|passport|gpa\-transcript\-proof|english\-test\-result|achievement\-proof(&id=[0-9]+))$/', $path) == 1){
+                $last_modified = Str::between($path, 'mt=', '&ys=');
+                $yearly_student_id = Str::between($path, '&ys=', '&opt=');
                 $yearly_student = Yearly_Student::where('id', $yearly_student_id)->first(); 
                 $requested_image = Str::between($path, 'opt=', '&id=');
                 $optional_id     = 0;
@@ -195,7 +197,7 @@ class PhotoController extends Controller
                                 ->select($field)
                                 ->where($id_col_name[$table], $col_values[$table])
                                 ->first();
-                    if($actual_path != null){
+                    if($actual_path != null && $last_modified == filemtime(storage_path('app\private\\' . $actual_path->$field))){
                         if(Storage::disk('private')->exists($actual_path->$field)){
                             return response()->file(storage_path('app\private\\' . $actual_path->$field));
                         }
