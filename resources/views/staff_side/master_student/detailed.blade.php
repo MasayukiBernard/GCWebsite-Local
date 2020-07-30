@@ -15,7 +15,7 @@
                             <tbody>
                                 <tr>
                                     <td colspan="2" class="text-center">
-                                        <img src="/photos/users_id={{$referred_user->id}}&opt=picture_path" width="200px" alt="{{$referred_user->name}} - Profile Picture" class="img-thumbnail">
+                                        <img src="/photos/users_id={{$referred_user->id}}&opt=picture_path&mt={{$filemtimes['pp']}}" width="200px" alt="{{$referred_user->name}} - Profile Picture" class="img-thumbnail">
                                     </td>
                                 </tr>
                                 <tr>
@@ -68,13 +68,13 @@
                                 <tr>
                                     <th scope="row"s>e-KTP Card</td>
                                     <td class="text-center">
-                                        <img src="/photos/users_id={{$referred_user->id}}&opt=id_card_picture_path" width="200px" alt="{{$referred_user->name}} - Profile Picture" class="img-thumbnail">
+                                        <img src="/photos/users_id={{$referred_user->id}}&opt=id_card_picture_path&mt={{$filemtimes['ic']}}" width="200px" alt="{{$referred_user->name}} - National ID" class="img-thumbnail">
                                     </td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Flazz Card</td>
                                     <td class="text-center">
-                                        <img src="/photos/users_id={{$referred_user->id}}&opt=flazz_card_picture_path" width="200px" alt="{{$referred_user->name}} - Profile Picture" class="img-thumbnail">
+                                        <img src="/photos/users_id={{$referred_user->id}}&opt=flazz_card_picture_path&mt={{$filemtimes['fc']}}" width="200px" alt="{{$referred_user->name}} - Flazz Card" class="img-thumbnail">
                                     </td>
                                 </tr>
                             </tbody>

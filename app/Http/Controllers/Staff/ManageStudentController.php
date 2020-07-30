@@ -249,7 +249,19 @@ class ManageStudentController extends Controller
 
     public function show_studentDetails(User $user){
         session()->put('latest_requested_student_uid', $user->id);
-        return view('staff_side/master_student/detailed', ['referred_user' => $user]);
+
+        $pp_path = Storage::disk('private')->exists($user->student->picture_path);
+        $ic_path = Storage::disk('private')->exists($user->student->id_card_picture_path);
+        $fc_path = Storage::disk('private')->exists($user->student->flazz_card_picture_path);
+
+        return view('staff_side/master_student/detailed', [
+            'referred_user' => $user,
+            'filemtimes' => [
+                'pp' => $pp_path == true ? filemtime(storage_path('app\private\\' . $user->student->picture_path)) : '0',
+                'ic'=> $ic_path == true ? filemtime(storage_path('app\private\\' . $user->student->id_card_picture_path)) : '0',
+                'fc'=> $fc_path == true ? filemtime(storage_path('app\private\\' . $user->student->flazz_card_picture_path)) : '0'
+            ]
+        ]);
     }
 
     public function delete(){
