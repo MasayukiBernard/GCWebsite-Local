@@ -17,7 +17,7 @@ class PassportSeeder extends Seeder
                 'csa_form_id' => $i,
                 'pass_num' => 'X000000',
                 'pass_expiry' => '2016-01-16',
-                'pass_proof_path' => 'students\passports\dummy_passport.jpeg',
+                'pass_proof_path' => 'students/passports/dummy_passport.jpeg',
             ]);
         }
     }

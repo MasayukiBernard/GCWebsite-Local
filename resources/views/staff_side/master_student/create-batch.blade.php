@@ -41,5 +41,4 @@
         document.getElementById('customFileLabel').innerHTML = document.getElementById('customFile').files[0].name;
     }
 </script>
-    
 @endpush

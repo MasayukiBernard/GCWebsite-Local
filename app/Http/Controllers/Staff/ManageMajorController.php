@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Major;
 use App\Http\Requests\MajorCRUD;
 
@@ -12,17 +10,24 @@ class ManageMajorController extends Controller{
 
 
     private function model_assignment($major, $inputted_data){
-
         $major->id = $major->id;
         $major->name = $inputted_data['major-name'];
         $major->save();
     }
 
     public function show_majorpage(){
-        $major = Major::All();
+        $success = null;
+        if(session('success_notif') != null){
+            $success = session('success_notif');
+        }
+        session()->forget('success_notif');
+
+        $major = Major::orderBy('name')->get();
         $data =[
-            'majors' => $major
+            'majors' => $major,
+            'success' => $success,
         ];
+
         return view('staff_side\master_major\view', $data );
     }
 
@@ -33,23 +38,37 @@ class ManageMajorController extends Controller{
     public function confirm_create(MajorCRUD $request){
         $request->flash();
         $validatedData = $request->validated();
+        session()->forget(['inputted_major']);
         $request->session()->put('inputted_major', $validatedData);
+
         return view('staff_side/master_major/create-confirm', ['inputted_major' => $validatedData]);
     }
 
     public function create(){
         $inputted_major = session('inputted_major');
         $major = new Major;
-        $this->model_assignment($major , $inputted_major);
+        $major->latest_updated_at = null;
+        $this->model_assignment($major, $inputted_major);
         session()->forget(['inputted_major']);
-        return redirect(route('staff.major.page'));
 
+        session()->put('success_notif', 'You have successfuly CREATED 1 new major record!');
+        return redirect(route('staff.major.page'));
+    }
+
+    public function show_editPage(Major $major){
+        session()->forget('referred_major_id');
+        session()->put('referred_major_id', $major->id);
+
+        return view('staff_side\master_major\edit', ['referred_major' => $major]);
     }
     
     public function confirm_update(MajorCRUD $request){
         $request->flash();
         $validatedData = $request->validated();
+        session()->forget(['inputted_major']);
         $request->session()->put('inputted_major', $validatedData);
+
+        session()->put('success_notif', 'You have successfuly UPDATED 1 new major record!');
         return view('staff_side/master_major/update-confirm', ['referred_major' => Major::find(session('referred_major_id')), 'inputted_major' => $validatedData]);
     }
 
@@ -61,20 +80,20 @@ class ManageMajorController extends Controller{
             $this->model_assignment($major, $inputted_major);
             session()->forget(['inputted_major', 'referred_major_id']);
         }
-        return redirect(route('staff.major.page'));
-    }
 
-    public function show_editPage(Major $major){
-        Session()->put('referred_major_id', $major->id);
-        return view('staff_side\master_major\edit', ['referred_major' => $major]);
+        // Feedback
+        return redirect(route('staff.major.page'));
     }
 
     public function confirm_delete($major_id){
         $major = Major::where('id', $major_id)->first();
         if($major != null){
             session()->put('referred_major_id', $major->id);
-            return response()->json(['referred_major' => $major]);
-        }
+            return response()->json([
+                'referred_major' => $major,
+                'failed' => false
+            ]);
+        } 
         else{
             return response()->json(['failed' => true]);
         }
@@ -84,6 +103,8 @@ class ManageMajorController extends Controller{
         $major = Major::find(session('referred_major_id'));
         $major->delete();
         session()->forget('referred_major_id');
+        
+        session()->put('success_notif', 'You have successfuly DELETED 1 major record!');
         return redirect(route('staff.major.page'));
     }
 

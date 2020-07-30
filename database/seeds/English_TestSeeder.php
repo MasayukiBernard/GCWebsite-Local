@@ -15,14 +15,14 @@ class English_TestSeeder extends Seeder
         $type = ['TOEFL', 'IELTS'];
         $score = [104.0, 8.5];
         $date = ['2019-12-12', '2020-01-01'];
-        $path = ['TOEFL/dummy_toefl.jpg', 'IELTS/dummy_ielts.jpg'];
+        $path = ['TOEFL\dummy_toefl.jpg', 'IELTS\dummy_ielts.jpg'];
         for($i = 1; $i <= 2; $i++){
             DB::table('english_tests')->insert([
                 'csa_form_id' => $i,
                 'test_type' => $type[$i-1],
                 'score' => $score[$i-1],
                 'test_date' => $date[$i-1],
-                'proof_path' => 'students\english_tests\\' . $path[$i-1]
+                'proof_path' => 'students/english_tests/' . $path[$i-1]
             ]);
         }
     }

@@ -10,7 +10,12 @@
             <div class="col-md">
                 <div class="card">
                     <div class="card-header h2">
-                        {{$csa_form->yearly_student->academic_year->starting_year}}/{{$csa_form->yearly_student->academic_year->ending_year}} - {{$csa_form->yearly_student->academic_year->odd_semester ? "Odd" : "Even"}} | {{$csa_form->yearly_student->student->nim}}
+                        <table class="table table-borderless w-auto mb-0">
+                            <tr>
+                                <td class="p-0 pr-2">{{$csa_form->yearly_student->academic_year->starting_year}}/{{$csa_form->yearly_student->academic_year->ending_year}} - {{$csa_form->yearly_student->academic_year->odd_semester ? "Odd" : "Even"}}</td>
+                                <td class="p-0 pl-2 border-left border-dark">{{$csa_form->yearly_student->student->nim}}</td>
+                            </tr>
+                        </table>
                     </div>
                     <div class="card-body">
                         @if ($csa_form->is_submitted)
@@ -23,10 +28,9 @@
                             @endif
                         @endif
                             
-
                         <table class="table table-bordered table-sm">
                             <thead>
-                                <th class="h4 bg-info" colspan="2">Status</th>
+                                <th class="h4 bg-info p-2" colspan="2">Status</th>
                             </thead>
                             <tbody>
                                 <tr>
@@ -43,11 +47,13 @@
                         @if ($csa_form->is_submitted)
                             <table class="table table-bordered table-sm">
                                 <thead>
-                                    <th class="h4 bg-info" colspan="2">Personal Information</th>
+                                    <th class="h4 bg-info p-2" colspan="2">Personal Information</th>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td colspan="2">Profile Pic</td>
+                                        <td class="text-center" colspan="2">
+                                            <img src="/photos/users_id={{$csa_form->yearly_student->student->user_id}}&opt=picture_path&mt={{$pp_last_modified}}" class="img-thumbnail" width="25%">
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th scope="row">NIM</th>
@@ -81,16 +87,18 @@
                                         <th scope="row">Passport Expiration Date</th>
                                         <td>{{$csa_form->passport->pass_expiry}}</td>
                                     </tr>
-                                    <tr>
+                                    <tr>    
                                         <th scope="row">Passport Proof</th>
-                                        <td>Passport Image</td>
+                                        <td>
+                                            <a target="_blank" href="{{route('staff.see-image', ['last_modified' => $filemtimes['passport'], 'table_name' => 'passports', 'id' => $csa_form->id, 'column_name' => 'pass_proof_path'])}}">See Image</a>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
 
                             <table class="table table-bordered table-sm">
                                 <thead>
-                                    <th class="h4 bg-info" colspan="4">Contact Information</th>
+                                    <th class="h4 bg-info p-2" colspan="4">Contact Information</th>
                                 </thead>
                                 <tbody>
                                     <tr>
@@ -112,7 +120,7 @@
 
                             <table class="table table-bordered table-sm" id="application_details">
                                 <thead>
-                                    <th class="h4 bg-info" colspan="4">Application Details</th>
+                                    <th class="h4 bg-info p-2" colspan="4">Application Details</th>
                                 </thead>
                                 <tbody>
                                     <tr>
@@ -173,7 +181,7 @@
 
                             <table class="table table-bordered table-sm">
                                 <thead>
-                                    <th class="h4 bg-info" colspan="2">Academic Information</th>
+                                    <th class="h4 bg-info p-2" colspan="2">Academic Information</th>
                                 </thead>
                                 <tbody>
                                     <tr>
@@ -197,6 +205,16 @@
                                         <td>{{$csa_form->yearly_student->student->binusian_year}}</td>
                                     </tr>
                                     <tr>
+                                        <th scope="row">GPA</th>
+                                        <td>{{$csa_form->academic_info->gpa}} / 4.00</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">GPA Transcript Proof</th>
+                                        <td>
+                                            <a target="_blank" href="{{route('staff.see-image', ['last_modified' => $filemtimes['gpa_trans'], 'table_name' => 'academic_infos', 'id' => $csa_form->id, 'column_name' => 'gpa_proof_path'])}}">See Image</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <th scope="row">English Proficiency Test Type / Score</th>
                                         <td>{{$csa_form->english_test->test_type}} / {{$csa_form->english_test->score}}</td>
                                     </tr>
@@ -204,13 +222,19 @@
                                         <th scope="row">Test Date</th>
                                         <td>{{$csa_form->english_test->test_date}}</td>
                                     </tr>
+                                    <tr>
+                                        <th scope="row">English Test Result Proof</th>
+                                        <td>
+                                            <a target="_blank" href="{{route('staff.see-image', ['last_modified' => $filemtimes['english'], 'table_name' => 'english_tests', 'id' => $csa_form->id, 'column_name' => 'proof_path'])}}">See Image</a>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
 
                             <table class="table table-bordered table-sm">
                                 <thead>
                                     <tr>
-                                        <th class="h4 bg-info" colspan="2">Academic Achievements / Awards</th>
+                                        <th class="h4 bg-info p-2" colspan="2">Academic Achievements / Awards</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -235,6 +259,12 @@
                                             <th scope="row">Other Details</th>
                                             <td>{{$achievement->other_details}}</td>
                                         </tr>
+                                        <tr>
+                                            <th scope="row">Achievement Proof</th>
+                                            <td>
+                                                <a target="_blank" href="{{route('staff.see-image', ['last_modified' => $filemtimes['achievements'][$i-1], 'table_name' => 'achievements', 'id' => $achievement->id, 'column_name' => 'proof_path'])}}">See Image</a>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -242,7 +272,7 @@
                             <table class="table table-bordered table-sm">
                                 <thead>
                                     <tr>
-                                        <th class="h4 bg-info" colspan="4">Emergency Contact</th>
+                                        <th class="h4 bg-info p-2" colspan="4">Emergency Contact</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -274,7 +304,7 @@
                             <table class="table table-bordered table-sm">
                                 <thead>
                                     <tr>
-                                        <th class="h4 bg-info" colspan="2">Medical, Dietary and Other Information</th>
+                                        <th class="h4 bg-info p-2" colspan="2">Medical, Dietary and Other Information</th>
                                     </tr>
                                 </thead>
                                 <tbody>

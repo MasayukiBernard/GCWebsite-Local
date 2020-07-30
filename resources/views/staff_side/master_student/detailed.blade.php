@@ -19,12 +19,29 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <th scope="row">Profile Status</th>
+                                    <td class="font-weight-bold {{$referred_user->student->is_finalized ? 'text-success' : 'text-danger'}}">{{$referred_user->student->is_finalized ? "FINALIZED" : "NOT YET FINALIZED"}}</td>
+                                </tr>
+                                <tr>
                                     <th scope="row">Binusian Year</th>
                                     <td>{{$referred_user->student->binusian_year}}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">NIM</th>
                                     <td>{{$referred_user->student->nim}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Email</th>
+                                    <td>
+                                        <div class="d-flex">
+                                            <div>
+                                                {{$referred_user->email}}
+                                            </div>
+                                            <div class="ml-5 font-weight-bold {{$referred_user->email_verified_at == null ? 'text-danger' : 'text-success'}}">
+                                                Verified At: {{$referred_user->email_verified_at == null ? 'Not Yet Verified' : $referred_user->email_verified_at}}
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Major</th>

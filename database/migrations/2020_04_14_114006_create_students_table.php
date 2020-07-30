@@ -33,7 +33,10 @@ class CreateStudentsTable extends Migration
             $table->string('id_card_picture_path', 100);
             $table->string('flazz_card_picture_path', 100);
             $table->integer('binusian_year');
-            $table->timestamps();
+            $table->boolean('is_finalized');
+            $table->timestamp('latest_created_at')->nullable();
+            $table->timestamp('latest_updated_at')->nullable();
+            $table->softDeletes('latest_deleted_at')->nullable();
         });
     }
 

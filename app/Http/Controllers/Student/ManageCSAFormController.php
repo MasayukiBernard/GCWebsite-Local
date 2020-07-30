@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Student;
 
+use App\Academic_Year;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Achievement;
@@ -316,5 +317,12 @@ class ManageCSAFormController extends Controller
         $csa_form->save();
         return redirect(route('student.home'));
     }
+  
+    public function mail_tempCreatedCSAForm(){
+        Auth::user()->notify(new CSAFormCreated(Auth::user()->student->yearly_students()->first()->academic_year));
+    }
 
+    public function mail_tempSubmittedCSAForm(){
+        Auth::user()->notify(new CSAFormSubmitted(Auth::user()->student->yearly_students()->first()->academic_year));
+    }
 }

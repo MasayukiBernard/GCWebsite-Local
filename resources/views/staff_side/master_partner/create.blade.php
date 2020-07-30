@@ -14,12 +14,16 @@
             <label class="input-group-text bg-info text-light" for="major-selection">Major Name</label>
         </div>
         <select class="custom-select @error('major') is-invalid @enderror" id="major-selection" name="major">
-            <option value=" ">Choose...</option>
-            @foreach ($all_majors as $major)
-                <option {{session('last_picked_major_id') != null ? (session('last_picked_major_id') == $major->id ? "selected" : "") : (old('major') == $major-> id ? "selected" : "")}} value={{$major->id}}>
-                    {{$major->name}}
-                </option>
-            @endforeach
+            @if ($all_majors->count() > 0)
+                <option value=" ">Choose...</option>
+                @foreach ($all_majors as $major)
+                    <option {{session('last_picked_major_id') != null ? (session('last_picked_major_id') == $major->id ? "selected" : "") : (old('major') == $major-> id ? "selected" : "")}} value={{$major->id}}>
+                        {{$major->name}}
+                    </option>
+                @endforeach
+            @else
+                <option value="0">No data yet!!</option>
+            @endif
         </select>
     </div>
     @error('major')

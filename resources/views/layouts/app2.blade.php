@@ -34,10 +34,17 @@
                         @auth
                             @if ((Auth::user()->is_staff))
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('staff.major.page') }}">
+                                    Major
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('staff.academic-year.page') }}">
                                     Academic Year
                                 </a>
                             </li>
+
                             <li class="nav-item">
                                 <div class="nav-link dropdown show">
                                     <a class="text-decoration-none text-secondary dropdown-toggle" style="cursor: pointer;" role="button" id="partnerDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -45,16 +52,12 @@
                                     </a>
                                   
                                     <div class="dropdown-menu" aria-labelledby="partnerDropdown">
-                                        <a class="dropdown-item" href="{{route('staff.partner.page')}}">Master Partner</a>
                                         <a class="dropdown-item" href="{{route('staff.yearly-partner.page')}}">Yearly Partner</a>
+                                        <a class="dropdown-item" href="{{route('staff.partner.page')}}">Master Partner</a>
                                     </div>
                                 </div>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('staff.major.page') }}">
-                                    Major
-                                </a>
-                            </li>
+                            
                             <li class="nav-item">
                                 <div class="nav-link dropdown show">
                                     <a class="text-decoration-none text-secondary dropdown-toggle" style="cursor: pointer;" role="button" id="studentDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

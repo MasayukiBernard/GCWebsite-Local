@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\VerifiesEmails;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class VerificationController extends Controller
 {
@@ -28,6 +30,16 @@ class VerificationController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
+    public function redirectTo()
+    {
+        if(request()->user()->is_staff){
+            return route('staff.home');
+        }
+        else{
+            return route('student.home');
+        }
+    }
+
     /**
      * Create a new controller instance.
      *
@@ -37,6 +49,23 @@ class VerificationController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('signed')->only('verify');
-        $this->middleware('throttle:6,1')->only('verify', 'resend');
+        $this->middleware('throttle:60,1')->only('verify');
+        $this->middleware('throttle:30,1')->only('resend');
+    }
+
+    // Overrided Functions
+    public function resend(Request $request){
+        if ($request->user()->hasVerifiedEmail()) {
+            return $request->wantsJson()
+                        ? new Response('', 204)
+                        : redirect($this->redirectPath());
+        }
+
+        $request->user()->sendEmailVerificationNotification();
+
+        session()->put('success_notif', 'A verification link has been sent to your email address');
+        return $request->wantsJson()
+                    ? new Response('', 202)
+                    : back()->with('sent', true);
     }
 }

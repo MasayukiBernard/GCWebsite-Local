@@ -14,7 +14,7 @@
         <tbody>
             <tr>
                 <th scope="row">Name</th><td>-</td>
-                <th scope="row">Major</th><td>Computer Science</td>
+                <th scope="row">Major</th><td>{{$first_major->name}}</td>
             </tr>
             <tr>
                 <th scope="row">Gender</th><td>-</td>

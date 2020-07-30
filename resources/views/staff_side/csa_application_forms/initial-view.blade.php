@@ -8,6 +8,32 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md">
+                <div id="notification_bar" class="row justify-content-center m-0 mb-2 text-light">
+                    @isset($success)
+                        <div id="success_notif" class="col-md-12 bg-success rounded py-2 font-weight-bold h4 m-0">
+                            <div class="row">
+                                <div class="col-11">
+                                    {{$success}}
+                                </div>
+                                <div class="col-1 text-right">
+                                    <span id="close_notif" style="cursor: pointer;" onclick="close_notif();">X</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endisset
+                    @isset($failed)
+                        <div id="failed_notif" class="col-md-12 bg-danger rounded py-2 font-weight-bold h4 m-0">
+                            <div class="row">
+                                <div class="col-11">
+                                    {{$failed}}
+                                </div>
+                                <div class="col-1 text-right">
+                                    <span id="close_notif" style="cursor: pointer;" onclick="close_notif();">X</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endisset
+                </div>
                 <div class="card">
                     <div class="card-header h2">CSA Application Forms</div>
                     <div class="card-body">
@@ -15,11 +41,15 @@
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
-                                    <th scope="row">Academic Year</th>
+                                    <th class="align-middle" scope="row">Academic Year</th>
                                     <td>
-                                    <div class="dropdown">
+                                        <div class="dropdown">
                                             <button class="btn btn-primary dropdown-toggle" type="button" id="academicYearDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Academic Year
+                                                @if ($academic_years->count() > 0)
+                                                    Academic Year
+                                                @else
+                                                    No academic year data yet!!
+                                                @endif
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="academicYearDropdownMenuButton">
                                                 @foreach ($academic_years as $year)
@@ -30,11 +60,15 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">Major Name</th>
+                                    <th scope="row" class="align-middle">Major Name</th>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle xml-3" type="button" id="majorDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Major Name
+                                                @if ($majors->count() > 0)
+                                                    Major Name
+                                                @else
+                                                    No major data yet!!
+                                                @endif
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="majorDropdownMenuButton">
                                                 @foreach ($majors as $major)
@@ -46,9 +80,11 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="text-center">
-                                        <a onclick="get_view();" class="btn btn-success btn-lg text-light px-5" role="button">
-                                            Search
-                                        </a>
+                                        @if ($academic_years->count() > 0 && $majors->count() > 0)
+                                            <a onclick="get_view();" class="btn btn-success btn-lg text-light px-5" role="button">
+                                                Search
+                                            </a>
+                                        @endif
                                     </td>
                                 </tr>
                             </tbody>
@@ -64,6 +100,10 @@
     <script>
         var academic_year_id = 0, major_id = 0;
 
+        function close_notif(){
+            $('#notification_bar').fadeOut(500);
+        }
+        
         function set_year_id(id){
             academic_year_id = id;
             $('#academicYearDropdownMenuButton').text($('#academic_year_' + academic_year_id).text());

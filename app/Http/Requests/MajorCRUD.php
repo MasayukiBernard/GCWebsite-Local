@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 
 class MajorCRUD extends FormRequest
 {
@@ -18,9 +19,17 @@ class MajorCRUD extends FormRequest
      */
     public function rules()
     {
-        // Refer to change-pass blade file for the regex explanation
+        $major = DB::table('majors')
+                    ->select('name')
+                    ->where('latest_deleted_at', null)->where('name', request('major-name'))
+                    ->first();
+        $name = " ";
+        if($major != null){
+            $name = $major->name;
+        }
+
         return [
-            'major-name' => ['required', 'string', 'max:50'],
+            'major-name' => ['required', 'string', 'max:50', 'not_in:'. $name],
         ];
     }
     
@@ -28,6 +37,12 @@ class MajorCRUD extends FormRequest
     {
         return [
             'major-name' => 'major name',
+        ];
+    }
+
+    public function messages(){
+        return[
+            'major-name.not_in' => 'Major name has already existed!'
         ];
     }
 }

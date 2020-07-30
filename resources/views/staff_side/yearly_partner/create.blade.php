@@ -16,7 +16,7 @@
         <select class="custom-select @error('academic_year') is-invalid @enderror" id="academic_year_selection" name="academic_year">
             <option value=" ">Choose...</option>
             @foreach ($academic_years as $year)
-                <option onclick="get_partners ({{$year->id}});" {{session('latest_yearly_partner_year_id') != null ? (session('latest_yearly_partner_year_id') == $year->id ? "selected" : "") : (old('academic_year') == $year-> id ? "selected" : "")}} value={{$year->id}}>
+                <option onclick="get_partners({{$year->id}});" {{session('latest_yearly_partner_year_id') != null ? (session('latest_yearly_partner_year_id') == $year->id ? "selected" : "") : (old('academic_year') == $year-> id ? "selected" : "")}} value={{$year->id}}>
                     {{$year->starting_year}}/{{$year->ending_year}} - {{$year->odd_semester ? "Odd" : "Even"}}
                 </option>
             @endforeach
@@ -39,7 +39,7 @@
                 @endif
             </option>
             @foreach ($unpicked_partners as $partner)
-                <option value="{{$partner->id}}">{{$partner->name}} | {{$partner->location}}</option>
+                <option value="{{$partner->id}}">{{$partner->name}} | {{$partner->location}} | {{$partner->major_name}} </option>
             @endforeach
         </select>
     </div>
@@ -63,12 +63,12 @@ Yearly Partner
                 data: {_token: CSRF_TOKEN},
                 dataType: 'JSON',
                 success: function(response_data){
-                    if(response_data['failed'] == null){
+                    if(response_data['failed'] === false){
                         var data = response_data['partners'];
                         $('#partner_selection').empty();
                         $('#partner_selection').append("<option value=\" \">" + (jQuery.isEmptyObject(data) == true ? "All partners have been added!!" : "Choose...") + "</option>");
                         $.each(data, function(i, val){
-                            $('#partner_selection').append("<option value=\"" + data[i].id + "\">" + data[i].name + " | " + data[i].location + "</option>");
+                            $('#partner_selection').append("<option value=\"" + data[i].id + "\">" + data[i].name + " | " + data[i].location + " | " + data[i].major_name + "</option>");
                         });
                     }
                 }

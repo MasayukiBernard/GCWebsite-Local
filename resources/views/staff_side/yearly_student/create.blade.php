@@ -113,7 +113,7 @@ Yearly Student
                             users = response_data['students_users'];
                             $('#available_students_list').empty();
                             if(jQuery.isEmptyObject(students) == true){
-                                $('#available_students_list').append("<li class=\"list-group-item\">" + "All partners have been added!!" + "</li>");
+                                $('#available_students_list').append("<li class=\"list-group-item\">" + "All students have been added!!" + "</li>");
                             }
                             else{
                                 for(var i = 0; i < students.length; ++i){
