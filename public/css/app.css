@@ -10882,3 +10882,6 @@ a.text-dark:focus {
   }
 }
 
+.inline{
+  display: inline;
+}

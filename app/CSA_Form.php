@@ -15,7 +15,7 @@ class CSA_Form extends Model
     // not to use the convention table 'CSA_Forms'
     protected $table = 'csa_forms';
 
-    protected $guarded = ['yearly_student_id', 'is_submitted'];
+    protected $guarded = ['id','yearly_student_id', 'is_submitted'];
 
     protected $attributes = ['is_submitted' => false];
     
@@ -78,5 +78,8 @@ class CSA_Form extends Model
     
     public function choices(){
         return $this->hasMany('App\Choice', 'csa_form_id');
+    }
+    public function personal_info(){
+        return $this->hasMany('App\Personal_Info', 'csa_form_id');
     }
 }
