@@ -9,8 +9,8 @@ You have created a new CSA Application Form in the academic year stated below:<b
 
 Please fill in you application as soon as possible to speed up your nomination process to partner university!
 
-@component('mail::button', ['url' => config('app.url')])
-View CSA Application Status
+@component('mail::button', ['url' => route('student.csa-form.csa-mainpage')])
+View CSA Application Form
 @endcomponent
 
 Regards,<br>
