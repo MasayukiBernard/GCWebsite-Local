@@ -58,6 +58,8 @@ class Kernel extends HttpKernel
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'changePass' => \App\Http\Middleware\EnsureChangePass::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'csa-form-created' => \App\Http\Middleware\CheckStudentHasCSAForm::class,
+        'csa-form-none' => \App\Http\Middleware\CheckStudentHasNoCSAForm::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'profile-edit-request-none' => \App\Http\Middleware\NoProfileEditRequest::class,

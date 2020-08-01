@@ -5,9 +5,9 @@
 @endsection
 
 @section('content')
-    <div class="container-fluid">
+    <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header h2">@yield('entity')</div>
                     <div class="card-body">
@@ -16,8 +16,8 @@
                             @csrf
                             @yield('form-inputs')
                             <div class="form-group row">
-                                <div class="col-md-4 offset-md-4">
-                                    <input type="submit" class="btn btn-primary" value="@yield('confirm-value')">
+                                <div class="col-md-12 text-right">
+                                    <input type="submit" class="btn btn-primary rounded btn-lg" value="@yield('confirm-value')">
                                 </div>
                             </div>
                         </form>

@@ -2,189 +2,237 @@
 
 namespace App\Http\Controllers\Student;
 
-use App\Academic_Year;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Achievement;
 use App\Academic_Info;
-use App\Academic_Year;
 use App\Choice;
 use App\Condition;
 use App\CSA_Form;
 use App\Emergency;
 use App\English_Test;
+use App\Http\Requests\CSAAcademicInfo;
 use App\Major;
-use App\Passport;
-use App\Http\Requests\StudentCSAFormCreate;
-use App\User;
-use App\Student;
+use App\Notifications\CSAFormCreated;
+use App\Notifications\CSAFormSubmitted;
 use App\Partner;
-use App\Yearly_Student;
-use Illuminate\Support\Facades\DB;
+use App\Passport;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Session\Store;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ManageCSAFormController extends Controller
 {
-    /*
-        Rules for Profile Page:
-        'name' => ['required'],
-        'nim' => ['required'],
-        'picture_path' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-        'gender' => ['required'],
-        'place_birth' => ['required'],
-        'date_birth' => ['required'],
-        'nationality' => ['required'],
-        'email' => ['required'],
-        'mobile' => ['required'],
-        'telp_num' => ['required'],
-        'address' => ['required'],
-        'flazz_card_picture_path' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-        'id_card_picture_path' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-    */
+    private function mail_notifyCSAFormCreation($yearly_student_id){
+        $user = Auth::user();
+        $user->notify(new CSAFormCreated($user->student->yearly_students()->where('id', $yearly_student_id)->first()->academic_year));
+    }
 
-    // public function show_csaFormPage(){
-    //     return view('student_side\csa_form\csa-page1');
-    // }
+    private function mail_notifyCSAFormSubmission($yearly_student_id){
+        $user = Auth::user();
+        $user->notify(new CSAFormSubmitted($user->student->yearly_students()->where('id', $yearly_student_id)->first()->academic_year));
+    }
 
-    public function initial_view(){
+    public function show_initialView(){
         $user = Auth::user();
         $student = $user->student;
         $nim = $student->nim;
-        $academic_year_id = DB::table('yearly_students')->select('academic_year_id')->where('nim', $nim)->get();
-        session()->forget('csa_form_id');
-        session()->forget('csa_form_yearly_student_id');
-        return view('student_side\csa-form\csa-mainpage', ['academic_years' =>Academic_Year::whereIn('id', Arr::pluck($academic_year_id, 'academic_year_id'))->orderBy('ending_year', 'desc')->orderBy('odd_semester')->get()]);
+        $yearly_students_academic_year = DB::table('yearly_students')
+                                ->select('academic_years.*', 'yearly_students.id as ys_id')
+                                ->where('yearly_students.latest_deleted_at', null)->where('nim', $nim)
+                                ->join('academic_years', 'academic_years.id', '=', 'yearly_students.academic_year_id')
+                                ->get();
+
+        $success = $failed = null;
+        if(session('success_notif') != null){
+            $success = session('success_notif');
+        }
+        if(session('failed_notif') != null){
+            $failed = session('failed_notif');
+        }
+
+        session()->forget(['csa_form_id', 'csa_form_yearly_student_id','success_notif', 'failed_notif']);
+
+        return view('student_side\csa-form\csa-mainpage', [
+            'yearly_students_academic_year' => $yearly_students_academic_year,
+            'success' => $success,
+            'failed' => $failed
+        ]);
+    }
+    
+    public function set_ysid_session(Request $request){
+        $yearly_student = Auth::user()->student->yearly_students()->where('academic_year_id', $request['ys-id'])->first();
+        
+        if($yearly_student != null){
+            session()->put('csa_form_yearly_student_id', $yearly_student->id);
+            return redirect(route('student.csa-form.csa-page1'));    
+        }
+
+        session()->put('failed_notif', 'Please pick the enrolled academic year from the provided list!');
+        return redirect(route('student.csa-form.csa-mainpage'));
     }
 
-    public function afterInitial_view($academic_year_id){
-        $yearly_student_id = Auth::user()->student->yearly_students()->where('academic_year_id', $academic_year_id)->first()->id;
-        if($yearly_student_id == null){
-            abort(404);
+    public function show_createPage(){
+        if(session('csa_form_yearly_student_id') != null){
+            $yearly_student = Auth::user()->student->yearly_students()->where('id', session('csa_form_yearly_student_id'))->first();
+
+            if($yearly_student != null){
+                return view('student_side\csa-form\create-csa-form',['academic_year' => $yearly_student->academic_year]);
+            }
+            session()->put('failed_notif', 'Missing enrollment in academic year!');
         }
-        else{
-            session()->put('csa_form_yearly_student_id', $yearly_student_id);
+        return redirect(route('student.csa-form.csa-mainpage'));
+    }
+
+    public function create(){
+        $create_form_ysid = session('csa_form_yearly_student_id');
+        if($create_form_ysid != null){
+            $csa_form = new CSA_Form();
+            $csa_form->yearly_student_id = $create_form_ysid;
+            $csa_form->latest_updated_at = null;
+            $csa_form->save();
+
+            $this->mail_notifyCSAFormCreation($create_form_ysid);
+
             return redirect(route('student.csa-form.csa-page1'));
         }
+
+        session()->put('failed_notif', 'Failed to create a csa application form!');
+        return redirect(route('student.csa-form.csa-mainpage'));
     }
 
     public function show_insertPage1(){
-        // Entry point to CSA Form
-        // $csa_form = new CSA_Form();
-        // $csa_form->yearly_student_id = xxxx;
-        // $csa_form->save();
-        // Notify student by email 
-
         $user = Auth::user();
         $student = $user->student;
         $nim = $student->nim;
+
+        $pp_path = Storage::disk('private')->exists($user->student->picture_path);
+        $ic_path = Storage::disk('private')->exists($user->student->id_card_picture_path);
+        $fc_path = Storage::disk('private')->exists($user->student->flazz_card_picture_path);
+        
         return view('student_side\csa-form\csa-page1',[
             'user' => $user,
-            'user_student' => $student
+            'user_student' => $student,
+            'filemtimes' => [
+                'pp' => $pp_path == true ? filemtime(storage_path('app\private\\' . $user->student->picture_path)) : '0',
+                'ic' => $ic_path == true ? filemtime(storage_path('app\private\\' . $user->student->id_card_picture_path)) : '0',
+                'fc' => $fc_path == true ? filemtime(storage_path('app\private\\' . $user->student->flazz_card_picture_path)) : '0'
+            ],
         ]);
     }
 
-    public function page1_insert(){
+    public function goto_page2(){
+        return redirect(route('student.csa-form.csa-page2'));
+    }
 
+    public function show_insertPage2(){
         $csa_form = CSA_Form::where('yearly_student_id', session('csa_form_yearly_student_id'))->first();
-        if($csa_form == null){
-            $csa_form = new CSA_Form;
-            $csa_form->id = $csa_form->id;
-            $csa_form->yearly_student_id = session('csa_form_yearly_student_id');
-            $csa_form->is_submitted = false;
-            $csa_form->save();
-            return redirect(route('student.csa-form.csa-page2'));
-        }
-        else{
-            return redirect(route('student.csa-form.csa-page2'));
-        }
+        session()->put('csa_form_id', $csa_form->id);
+
+        $major = $csa_form->yearly_student->student->major->name;
+        $academic_info = Academic_Info::where('csa_form_id', $csa_form->id)->first();
+        $english_test = English_Test::where('csa_form_id', $csa_form->id)->first();
+
+        $gpa = $academic_info != null ? Storage::disk('private')->exists($academic_info->gpa_proof_path) : false;
+        $e_test = $english_test != null ? Storage::disk('private')->exists($english_test->proof_path) : false;
+
+        return view('student_side\csa-form\csa-page2', [
+            'major' => $major,
+            'academic_info' => $academic_info != null ? $academic_info : null,
+            'english_test' => $english_test != null ? $english_test : null,
+            'ysid' => session('csa_form_yearly_student_id'),
+            'filemtimes' => [
+                'gpa' => $gpa ? filemtime(storage_path('app\private\\' . $academic_info->gpa_proof_path)) : '0',
+                'e-test' => $e_test ? filemtime(storage_path('app\private\\' . $english_test->proof_path)) : '0'
+            ]
+        ]);
     }
 
-    public function insertPage2(){
-        $csa_id = CSA_Form::where('yearly_student_id', session('csa_form_yearly_student_id'))->first()->id;
-        session()->put('csa_form_id', $csa_id);
-        $majors = Major::All();
-        $test = English_Test::All();
-        $academic_info = Academic_Info::where('csa_form_id', session('csa_form_id'))->first();
-        $english_test = English_Test::where('csa_form_id', session('csa_form_id'))->first();
-        $passport = Passport::where('csa_form_id', session('csa_form_id'))->first();
-        if($academic_info == null && $english_test == null && $passport == null){
-            return view('student_side\csa-form\csa-page2', [ 
-            'english_test' => new English_Test(),
-            'passport' => new Passport(),
-            'academic_info'=> new Academic_Info(),
-            'majors' => $majors,
-            'testtype' => $test,
-            ]);
-        }
-        else{
-            return view('student_side\csa-form\csa-page2', [   
-                'english_test' => $english_test,
-                'passport' => $passport,
-                'academic_info'=>$academic_info,
-                'majors' => $majors,
-                'testtype' => $test
-            ]);
-        }
-    }
+    public function page2_insert(CSAAcademicInfo $request){
+        // if no Academic_Info and English_Test record
+            // Creates Academic_Info and English_Test record
+        // else
+            // display, existing db data along with images
 
-    public function afterInsertPage2(Request $request){
+        $validatedData = $request->validated();
+
         $academic_info = Academic_Info::where('csa_form_id', session('csa_form_id'))->first();
         $english_test = English_Test::where('csa_form_id', session('csa_form_id'))->first();
-        $passport = Passport::where('csa_form_id', session('csa_form_id'))->first();
-        if($academic_info == null || $english_test == null || $passport == null)
-        {
+        if($academic_info == null && $english_test == null){
             $academic_info = new Academic_Info();
             $academic_info->csa_form_id = session('csa_form_id');
-            $academic_info->major_id = $request->major;
-            $academic_info->campus = $request->campus;
-            $academic_info->study_level = 'U';
-            $academic_info->class = 'Global Class';
-            $academic_info->semester = $request->semester;
-            $academic_info->gpa = $request->gpa;
-            $academic_info->gpa_proof_path = 'students\gpa_transcripts\dummy_gpa.png';
+            $academic_info->major_id = Auth::user()->student->major->id;
+            $academic_info->class = 0;
+            $academic_info->latest_updated_at = null;
 
             $english_test = new English_Test();
             $english_test->csa_form_id = session('csa_form_id');
-            $english_test->test_type = $request->test_type;
-            $english_test->score = $request->score;
-            $english_test->test_date = $request->date;
-            $english_test->proof_path = 'students\english_tests\TOEFL/dummy_toefl.jpg';
-
-            $passport = new Passport();
-            $passport->csa_form_id = session('csa_form_id');
-            $passport->pass_num = $request->pass_num;
-            $passport->pass_expiry = $request->pass_expiry;
-            $passport->pass_proof_path = 'students\passports\dummy_passport.jpeg';
+            $english_test->latest_updated_at = null;
         }
         
-        else{
-            $academic_info->campus = $request->campus;
-            $academic_info->study_level = 'U';
-            $academic_info->class = 'Global Class';
-            $academic_info->semester = $request->semester;
-            $academic_info->gpa = $request->gpa;
-            $academic_info->gpa_proof_path = 'students\gpa_transcripts\dummy_gpa.png';
+        // Academic Info
+        $campuses = array('Alam Sutera', 'Kemanggisan');
 
-            $english_test->test_type = $request->test_type;
-            $english_test->score = $request->score;
-            $english_test->test_date = $request->date;
-            $english_test->proof_path = 'students\english_tests\TOEFL/dummy_toefl.jpg';
-
-            $passport->pass_num = $request->pass_num;
-            $passport->pass_expiry = $request->pass_expiry;
-            $passport->pass_proof_path = 'students\passports\dummy_passport.jpeg';
+        if(Arr::exists($validatedData, 'gpa-proof')){
+            if($academic_info->gpa_proof_path != null){
+                Storage::disk('private')->move($academic_info->gpa_proof_path, 'students/trashed/gpa_transcripts/' . Str::afterLast($academic_info->gpa_proof_path, '/'));
+            }
+            $academic_info->gpa_proof_path = Storage::disk('private')->putFile('students/gpa_transcripts', $validatedData['gpa-proof']);
+            Arr::forget($validatedData, 'gpa-proof');
         }
 
+        $academic_info->campus = $campuses[$validatedData['campus']];
+        $academic_info->study_level = $validatedData['study-level'];
+        $academic_info->semester = $validatedData['semester'];
+        $academic_info->gpa = $validatedData['gpa'];
+
         $academic_info->save();
+
+        // English Test
+        $test_types = array('IELTS', 'TOEFL');
+
+        if(!(Arr::exists($validatedData, 'test-type'))){
+            $capitalized = Str::upper($validatedData['other-test']);
+            foreach ($test_types as $type){
+                if($type == $capitalized){
+                    if($type == 'IELTS'){
+                        $validatedData['test-type'] = 0;
+                    }
+                    else if($type == 'TOEFL'){
+                        $validatedData['test-type'] = 1;
+                    }
+                }
+            }
+            $english_test->test_type = $capitalized;
+        }
+        else{
+            $english_test->test_type = $test_types[$validatedData['test-type']];
+        }
+
+        if(Arr::exists($validatedData, 'proof-path')){
+            if($english_test->proof_path != null){
+                Storage::disk('private')->move($english_test->proof_path, 'students/trashed/english_tests/' . Str::afterLast($english_test->proof_path, '/'));
+            }
+            $english_test->proof_path = Storage::disk('private')->putFile('students/english_tests/' . (Arr::exists($validatedData, 'test-type') ? 'Other' : $test_types[$validatedData['test-type']]), $validatedData['proof-path']);
+        }
+
+        $english_test->score = $validatedData['score'];
+        $english_test->test_date = $validatedData['test-date'];
+
         $english_test->save();
-        $passport->save();
 
         return redirect(route('student.csa-form.csa-page3'));
     }
 
-    public function insertPage3(){
+    public function show_insertPage3(){
+        // if no Achievements record
+            // Creates Achievements record
+        // else
+            // display, existing db record along with proof image
+
         $achievement = Achievement::where('csa_form_id', session('csa_form_id'))->get();
         if($achievement==null){
             return view('student_side\csa-form\csa-page3', [
@@ -199,11 +247,8 @@ class ManageCSAFormController extends Controller
         }
         
     }
-    public function afterInsertPage3(){
-        return redirect(route('student.csa-form.csa-page4'));
-    }
 
-    public function insertPage4(){
+    public function show_insertPage4(){
         $user = Auth::user();
         $student = $user->student;
         $major_id = $student->major_id;
@@ -315,14 +360,8 @@ class ManageCSAFormController extends Controller
         $csa_form = CSA_Form::where('yearly_student_id', session('csa_form_yearly_student_id'))->first();
         $csa_form->is_submitted = true ;
         $csa_form->save();
-        return redirect(route('student.home'));
-    }
-  
-    public function mail_tempCreatedCSAForm(){
-        Auth::user()->notify(new CSAFormCreated(Auth::user()->student->yearly_students()->first()->academic_year));
-    }
 
-    public function mail_tempSubmittedCSAForm(){
-        Auth::user()->notify(new CSAFormSubmitted(Auth::user()->student->yearly_students()->first()->academic_year));
+        session()->forget(['csa_form_yearly_student_id', 'csa_form_id']);
+        return redirect(route('student.home'));
     }
 }

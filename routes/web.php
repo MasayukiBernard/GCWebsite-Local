@@ -204,9 +204,39 @@ Route::middleware('auth', 'throttle:150,15')->group(function(){
             Route::prefix('student')->group(function(){
                 Route::middleware('profile-updated', 'verified', 'profile-finalized')->group(function(){
                     Route::get('/{last_modified}/{yearly_student_id}/image/{requested_image}/{optional_id?}', 'ShowPhotoController@show_student')->name('see-image');
+                    
                     Route::get('home', 'HomeController@student_index')->name('home');
-                    Route::prefix('csaform')->group(function(){
-                        Route::get('/', 'User\ManageCSAFormController@show_csaFormPage')->name('csaform');
+
+                    Route::name('csa-form.')->group(function(){
+                        Route::prefix('csa-form')->group(function(){
+                            $csa_controller = 'Student\ManageCSAFormController@';
+                            Route::get('/', $csa_controller . 'show_initialView')->name('csa-mainpage');
+                            Route::post('/ys-id', $csa_controller . 'set_ysid_session')->name('set-ysid');
+
+                            Route::middleware('csa-form-none')->group(function(){
+                                $csa_controller = 'Student\ManageCSAFormController@';
+                                Route::get('/create', $csa_controller . 'show_createPage')->name('create-page');
+                                Route::post('/create/csa-form', $csa_controller . 'create')->name('create');
+                            });
+
+                            Route::middleware('csa-form-created')->group(function(){
+                                $csa_controller = 'Student\ManageCSAFormController@';
+                                Route::get('/csapage1', $csa_controller . 'show_insertPage1')->name('csa-page1');
+                                Route::post('/csapage1', $csa_controller . 'goto_page2')->name('after-page1');
+                                Route::get('/csapage2', $csa_controller . 'show_insertPage2')->name('csa-page2');
+                                Route::post('/csapage2', $csa_controller . 'page2_insert')->name('after-page2');
+                                Route::get('/csapage3', $csa_controller . 'show_insertPage3')->name('csa-page3');
+                                Route::post('/csapage3', $csa_controller . 'page3_insert')->name('after-page3');
+                                Route::get('/csapage4', $csa_controller . 'show_insertPage4')->name('csa-page4');
+                                Route::post('/csapage4', $csa_controller . 'afterInsertPage4')->name('after-page4');
+                                Route::get('/csapage5', $csa_controller . 'insertPage5')->name('csa-page5');
+                                Route::post('/csapage5', $csa_controller . 'afterInsertPage5')->name('after-page5');
+                                Route::get('/csapage6', $csa_controller . 'insertPage6')->name('csa-page6');
+                                Route::post('/csapage6', $csa_controller . 'afterInsertPage6')->name('after-page6');
+                                Route::get('/csapage7', $csa_controller . 'insertPage7')->name('csa-page7');
+                                Route::post('/csapage7', $csa_controller . 'afterInsertPage7')->name('after-page7');
+                            });
+                        });
                     });
                 });
 
@@ -230,35 +260,7 @@ Route::middleware('auth', 'throttle:150,15')->group(function(){
 
                     Route::get('change-pass', $profile_controller . 'show_changePass')->middleware(['profile-updated', 'password.confirm'])->name('change-pass-page');
                 });
-              
-              Route::name('csa-form.')->group(function(){
-                    Route::prefix('csa-form')->group(function(){
-                        $csa_controller = 'Student\ManageCSAFormController@';
-                        Route::get('/', $csa_controller . 'initial_view')->name('csa-mainpage');
-                        Route::get('/csapage1/{academic_year_id}', $csa_controller . 'afterInitial_view')->name('after-mainpage');
-                        Route::get('/csapage1', $csa_controller . 'show_insertPage1')->name('csa-page1');
-                        Route::post('/csapage1', $csa_controller . 'page1_insert')->name('after-page1');
-                        Route::get('/csapage2', $csa_controller . 'insertPage2')->name('csa-page2');
-                        Route::get('/csapage2', $csa_controller . 'insertPage2')->name('csa-page2');
-                        Route::post('/csapage2', $csa_controller . 'afterInsertPage2')->name('after-page2');
-                        Route::get('/csapage3', $csa_controller . 'insertPage3')->name('csa-page3');
-                        Route::get('/csapage3', $csa_controller . 'insertPage3')->name('csa-page3');
-                        Route::post('/csapage3', $csa_controller . 'afterInsertPage3')->name('after-page3');
-                        Route::get('/csapage4', $csa_controller . 'insertPage4')->name('csa-page4');
-                        Route::get('/csapage4', $csa_controller . 'insertPage4')->name('csa-page4');
-                        Route::post('/csapage4', $csa_controller . 'afterInsertPage4')->name('after-page4');
-                        Route::get('/csapage5', $csa_controller . 'insertPage5')->name('csa-page5');
-                        Route::get('/csapage5', $csa_controller . 'insertPage5')->name('csa-page5');
-                        Route::post('/csapage5', $csa_controller . 'afterInsertPage5')->name('after-page5');
-                        Route::get('/csapage6', $csa_controller . 'insertPage6')->name('csa-page6');
-                        Route::get('/csapage6', $csa_controller . 'insertPage6')->name('csa-page6');
-                        Route::post('/csapage6', $csa_controller . 'afterInsertPage6')->name('after-page6');
-                        Route::get('/csapage7', $csa_controller . 'insertPage7')->name('csa-page7');
-                        Route::post('/csapage7', $csa_controller . 'afterInsertPage7')->name('after-page7');
-
-                    
-                    });
-            });
+            });  
         });
     });
     // -> Both

@@ -19,7 +19,7 @@ class Academic_InfoSeeder extends Seeder
                 'major_id' => 1,
                 'campus' => 'Alam Sutera',
                 'study_level' => 'U',
-                'class' => 'Global Class',
+                'class' => '0',
                 'semester' => $semester[$i-1],
                 'gpa' => 2.25,
                 'gpa_proof_path' => 'students/gpa_transcripts/dummy_gpa.png'

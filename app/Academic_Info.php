@@ -12,6 +12,8 @@ class Academic_Info extends Model
     use SoftDeletes;
     use LogsActivity;
 
+    // class field array = ['Global Class'] 
+
     // custom primary key, not auto-incrementing, 
     protected $primaryKey = 'csa_form_id';
     
