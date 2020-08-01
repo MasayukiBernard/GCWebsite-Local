@@ -194,7 +194,8 @@
                                     </tr>
                                     <tr>
                                         <th scope="row">Class</th>
-                                        <td>{{$csa_form->academic_info->class}}</td>
+                                        <?php $classes = array('Global Class');?>
+                                        <td>{{$classes[$csa_form->academic_info->class]}}</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Major</th>

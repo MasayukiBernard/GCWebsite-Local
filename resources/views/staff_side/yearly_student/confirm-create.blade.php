@@ -34,7 +34,7 @@
                 </tr>
                 <tr>
                     <th scope="row">Major</th>
-                    <td>0{{$student->major->gpa}}</td>
+                    <td>{{$student->major->name}}</td>
                 </tr>
                 <tr>
                     <th scope="row">Nationality</th>

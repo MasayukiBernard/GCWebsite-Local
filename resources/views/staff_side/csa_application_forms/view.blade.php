@@ -78,7 +78,7 @@
                                         </div>
                                         <div class="col-3 py-3 pr-1 border-left" scope="col">Created At</div>
                                         <div class="col-1 py-2 px-0 border-right d-flex justify-content-center align-items-center " style="cursor: pointer;">
-                                            <div class="rounded-circle py-2 px-3" id="created_at_state" onclick="get_forms('created_at');">
+                                            <div class="rounded-circle py-2 px-3" id="latest_created_at_state" onclick="get_forms('latest_created_at');">
                                                 &#8597
                                             </div>
                                         </div>
@@ -103,7 +103,7 @@
                                             </td>
                                             <td class="col-6 p-0 d-flex align-items-center">
                                                 <div class="col-4 py-2 border-right">{{$yearly_student->csa_form->is_submitted ? "Submitted" : "On Process"}}</div>
-                                                <div class="col-4 py-2 border-left border-right">{{$yearly_student->csa_form->created_at == null ? "Null" : $yearly_student->csa_form->created_at}}</div>
+                                                <div class="col-4 py-2 border-left border-right">{{$yearly_student->csa_form->latest_created_at == null ? "Null" : $yearly_student->csa_form->latest_created_at}}</div>
                                                 <div class="col-4 py-2 px-0 border-left text-center">{{$yearly_student->is_nominated ? "Nominated" : "Not Yet Nominated"}}</div>
                                             </td>
                                         </tr>
@@ -146,12 +146,12 @@
             nim: 'n',
             name: 'n',
             form_status: 'n',
-            created_at: 'n',
+            latest_created_at: 'n',
             nomination_status: 'a',
         };
 
         function set_state(column, state){
-            var properties = ['nim', 'name', 'form_status', 'created_at', 'nomination_status'];
+            var properties = ['nim', 'name', 'form_status', 'latest_created_at', 'nomination_status'];
             var states = ['a', 'd'];
             if(properties.includes(column) && states.includes(state)){
                 for(var i = 0; i < 5; ++i){
@@ -212,7 +212,7 @@
                                     '</td>' +
                                     '<td class="col-6 p-0 d-flex align-items-center">' + 
                                     '<div class="col-4 py-2 border-right">' + (csa_forms[index].form_status ? "Submitted" : "On Process") + '</div>' + 
-                                    '<div class="col-4 py-2 border-left border-right">' + (csa_forms[index].created_at == null ? "Null" : csa_forms[index].created_at) + '</div>' +
+                                    '<div class="col-4 py-2 border-left border-right">' + (csa_forms[index].latest_created_at == null ? "Null" : csa_forms[index].created_at) + '</div>' +
                                     '<div class="col-4 py-2 px-0 border-left text-center">' + (csa_forms[index].nomination_status ? "Nominated" : "Not Yet Nominated") + '</div>' +
                                     '</td>' +
                                     '</tr>'
