@@ -10,7 +10,7 @@
     @if($is_staff)
         <img src="http://localhost:8000/photos/{{$table}}_id={{$id}}&opt={{$column}}&mt={{$last_modified}}" height="100%" style="">
     @else
-        <img src="http://localhost:8000/photos/mt={{$last_modified}}&ys={{$id}}&opt={{$req}}&id={{$opt_id}}" height="100%" style="">
+        <img src="http://localhost:8000/photos/mt={{$last_modified}}&ys={{$id}}&opt={{$req}}{{$opt_id != null ? '&id=' . $opt_id : ''}}" height="100%" style="">
     @endif
 </body>
 </html>
