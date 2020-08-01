@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\EmailNotExist;
+use App\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,13 +27,14 @@ class StudentProfileEdit extends FormRequest
     public function rules()
     {
         $student = Auth::user()->student;
+        
         return [
             'profile-picture' => [($student->picture_path == '-' ? 'required' : ''), 'mimes:jpeg,png,jpg', 'max:2048'],
             'id-card' => [($student->id_card_picture_path == '-' ? 'required' : ''), 'mimes:jpeg,png,jpg', 'max:2048'],
             'flazz-card' => [($student->flazz_card_picture_path == '-' ? 'required' : ''), 'mimes:jpeg,png,jpg', 'max:2048'],
             'name' => ['required', 'string', 'max:75', 'regex:/^[a-zA-Z0-9]{1}[a-zA-Z0-9\s]{1,73}[a-zA-Z0-9]{1}$/'],
             'gender' => ['required', 'string', 'max:1', 'in:M,F'],
-            'email' => ['required', 'email', 'max:50'],
+            'email' => ['required', 'email', 'max:50', new EmailNotExist('email')],
             'mobile' => ['required', 'regex:/^[1-9]{1}[0-9]{1,12}$/'],
             'telp-num' => ['required', 'regex:/^[1-9]{1}[0-9]{1,12}$/'],
             'major' => ['required', 'exists:majors,id'],
