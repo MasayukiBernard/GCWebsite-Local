@@ -20,8 +20,7 @@ class CreateConditionsTable extends Migration
             $table->foreignId('csa_form_id')
                 ->constrained()
                 ->onDelete('cascade')
-                ->onUpdate('cascade')
-                ->primary();
+                ->onUpdate('cascade');
             $table->boolean('med_condition');
             $table->boolean('allergy');
             $table->boolean('special_diet');
@@ -31,6 +30,8 @@ class CreateConditionsTable extends Migration
             $table->timestamp('latest_created_at')->nullable();
             $table->timestamp('latest_updated_at')->nullable();
             $table->softDeletes('latest_deleted_at')->nullable();
+
+            $table->primary('csa_form_id');
         });
     }
 

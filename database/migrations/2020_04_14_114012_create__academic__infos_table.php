@@ -19,21 +19,22 @@ class CreateAcademicInfosTable extends Migration
             $table->foreignId('csa_form_id')
                 ->constrained()
                 ->onDelete('cascade')
-                ->onUpdate('cascade')
-                ->primary();
+                ->onUpdate('cascade');
             $table->foreignId('major_id')
                 ->constrained()
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->string('campus', 20);
             $table->char('study_level', 1);
-            $table->string('class', 30);
+            $table->char('class', 1);
             $table->integer('semester');
             $table->decimal('gpa', 3, 2, true);
             $table->string('gpa_proof_path', 100);
             $table->timestamp('latest_created_at')->nullable();
             $table->timestamp('latest_updated_at')->nullable();
             $table->softDeletes('latest_deleted_at')->nullable();
+
+            $table->primary('csa_form_id');
         });
     }
 

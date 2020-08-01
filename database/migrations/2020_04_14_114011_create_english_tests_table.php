@@ -19,8 +19,7 @@ class CreateEnglishTestsTable extends Migration
             $table->foreignId('csa_form_id')
                 ->constrained()
                 ->onDelete('cascade')
-                ->onUpdate('cascade')
-                ->primary();
+                ->onUpdate('cascade');
             $table->char('test_type', 5);
             $table->decimal('score', 8, 1, true);
             $table->date('test_date');
@@ -28,6 +27,8 @@ class CreateEnglishTestsTable extends Migration
             $table->timestamp('latest_created_at')->nullable();
             $table->timestamp('latest_updated_at')->nullable();
             $table->softDeletes('latest_deleted_at')->nullable();
+
+            $table->primary('csa_form_id');
         });
     }
 

@@ -19,8 +19,7 @@ class CreateEmergenciesTable extends Migration
             $table->foreignId('csa_form_id')
                 ->constrained()
                 ->onDelete('cascade')
-                ->onUpdate('cascade')
-                ->primary();
+                ->onUpdate('cascade');
             $table->char('gender', 1);
             $table->string('name', 75);
             $table->string('relationship', 20);
@@ -31,6 +30,8 @@ class CreateEmergenciesTable extends Migration
             $table->timestamp('latest_created_at')->nullable();
             $table->timestamp('latest_updated_at')->nullable();
             $table->softDeletes('latest_deleted_at')->nullable();
+
+            $table->primary('csa_form_id');
         });
     }
 
