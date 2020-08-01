@@ -7,15 +7,19 @@
 @section('entity-distinct-content')
     <table class="table table-bordered">
         <tr>
-            <th scope="row" class="align-middle">Profile Picture</th>
-            <th scope="row" class="align-middle">ID Card Picture</th>
+            <th scope="row" class="align-middle w-50">Profile Picture</th>
+            <th scope="row" class="align-middle w-50">ID Card Picture</th>
         </tr>
         <tr>
-            <td class="text-center" rowspan="3">
-                <img src="/photos/type=temp&opt=profile-picture" width="275vw" alt="No Data" class="img-thumbnail border-secondary">
+            <td class="align-middle" rowspan="3">
+                <div class="d-flex border border-dark rounded justify-content-center">
+                    <div><img src="/photos/type=temp&opt=profile-picture" style="max-width: 100%; max-height: 100%;"alt="No Data" class="img-thumbnail border-secondary"></div>
+                </div>
             </td>
             <td class="text-center">
-                <img src="/photos/type=temp&opt=id-card" width="175vw" alt="No Data" class="img-thumbnail border-secondary">
+                <div class="d-flex justify-content-center">
+                    <div><img src="/photos/type=temp&opt=id-card" width="175vw" alt="No Data" class="img-thumbnail border-secondary"></div>
+                </div>
             </td>
         </tr>
         <tr>
@@ -23,7 +27,9 @@
         </tr>
         <tr>
             <td class="text-center">
-                <img src="/photos/type=temp&opt=flazz-card" width="175vw" alt="No Data" class="img-thumbnail border-secondary">
+                <div class="d-flex justify-content-center">
+                    <div><img src="/photos/type=temp&opt=flazz-card" width="175vw" alt="No Data" class="img-thumbnail border-secondary"></div>
+                </div>
             </td>
         </tr>
         <tr>

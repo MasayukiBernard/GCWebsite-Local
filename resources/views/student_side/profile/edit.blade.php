@@ -128,7 +128,7 @@
         <tr>
             <th scope="row" class="align-middle">Name</th>
             <td> 
-                <input type="text" autocomplete="off" name="name" maxlength="75" placeholder="Format: [First] [Middles (opt)] [Last]" class="form-control @error('name') is-invalid @enderror" value="{{old('name') == null ? $old_user->name : old('name')}}">
+                <input type="text" autocomplete="off" name="name" maxlength="75" placeholder="Format: [First] [Middles (opt)] [Last]" class="form-control @error('name') is-invalid @enderror" value="{{old('name', $old_user->name)}}">
                 @error('name')
                     <div class="alert alert-danger mb-0">{{ $message }}</div>
                 @enderror
@@ -137,7 +137,7 @@
         <tr>
             <th scope="row" class="align-middle">Email</th>
             <td>
-                <input type="email" autocomplete="off" name="email" maxlength="50" class="form-control @error('email') is-invalid @enderror" value="{{old('email') == null ? $old_user->email : old('email')}}">
+                <input type="email" autocomplete="off" name="email" maxlength="50" class="form-control @error('email') is-invalid @enderror" value="{{old('email', $old_user->email)}}">
                 @error('email')
                     <div class="alert alert-danger mb-0">{{ $message }}</div>
                 @enderror
@@ -171,7 +171,7 @@
                 <div class="row">
                     <div class="col-1 p-0 text-right pt-2">0</div>
                     <div class="col-11">
-                        <input type="text" autocomplete="off" name="mobile" maxlength="13" class="form-control @error('mobile') is-invalid @enderror" value="{{old('mobile') == null ? $old_user->mobile : old('mobile')}}">
+                        <input type="text" autocomplete="off" name="mobile" maxlength="13" class="form-control @error('mobile') is-invalid @enderror" value="{{old('mobile', $old_user->mobile)}}">
                     </div>
                 </div>
                 @error('mobile')
@@ -185,7 +185,7 @@
                 <div class="row">
                     <div class="col-1 p-0 text-right pt-2">0</div>
                     <div class="col-11">
-                        <input type="text" autocomplete="off" name="telp-num" maxlength="14" class="form-control @error('telp-num') is-invalid @enderror" value="{{old('telp-num') == null ? $old_user->telp_num : old('telp-num')}}">
+                        <input type="text" autocomplete="off" name="telp-num" maxlength="14" class="form-control @error('telp-num') is-invalid @enderror" value="{{old('telp-num', $old_user->telp_num)}}">
                     </div>
                 </div>
                 @error('telp-num')
@@ -212,7 +212,7 @@
         <tr>
             <th scope="row" class="align-middle">Place of Birth</th>
             <td>
-                <input type="text" autocomplete="off" name="place-birth" maxlength="50" class="form-control @error('place-birth') is-invalid @enderror" value="{{old('place-birth') == null ? $old_user->student->place_birth : old('place-birth')}}">
+                <input type="text" autocomplete="off" name="place-birth" maxlength="50" class="form-control @error('place-birth') is-invalid @enderror" value="{{old('place-birth', $old_user->student->place_birth)}}">
                 @error('place-birth')
                     <div class="alert alert-danger mb-0">{{ $message }}</div>
                 @enderror    
@@ -221,7 +221,7 @@
         <tr>
             <th scope="row" class="align-middle">Date of Birth</th>
             <td>
-                <input type="text" autocomplete="off" name="date-birth" maxlength="10" placeholder="Format: YYYY-MM-DD" class="form-control @error('date-birth') is-invalid @enderror" value="{{old('date-birth') == null ? $old_user->student->date_birth : old('date-birth')}}">
+                <input type="text" autocomplete="off" name="date-birth" maxlength="10" placeholder="Format: YYYY-MM-DD" class="form-control @error('date-birth') is-invalid @enderror" value="{{old('date-birth', $old_user->student->date_birth)}}">
                 @error('date-birth')
                     <div class="alert alert-danger mb-0">{{ $message }}</div>
                 @enderror    
@@ -230,7 +230,7 @@
         <tr>
             <th scope="row" class="align-middle">Nationality</th>
             <td>
-                <input type="text" autocomplete="off" name="nationality" maxlength="20" class="form-control @error('nationality') is-invalid @enderror" value="{{old('nationality') == null ? $old_user->student->nationality : old('nationality')}}">
+                <input type="text" autocomplete="off" name="nationality" maxlength="20" class="form-control @error('nationality') is-invalid @enderror" value="{{old('nationality', $old_user->student->nationality)}}">
                 @error('nationality')
                     <div class="alert alert-danger mb-0">{{ $message }}</div>
                 @enderror    
@@ -239,7 +239,7 @@
         <tr>
             <th scope="row" class="align-middle">Address</th>
             <td>
-                <textarea name="address" maxlength="200" class="form-control @error('address') is-invalid @enderror" rows="3">{{old('address') == null ? $old_user->student->address : old('address')}}</textarea>
+                <textarea name="address" maxlength="200" class="form-control @error('address') is-invalid @enderror" rows="3">{{old('address', $old_user->student->address)}}</textarea>
                 @error('address')
                     <div class="alert alert-danger mb-0">{{ $message }}</div>
                 @enderror    
@@ -255,8 +255,8 @@
 
 @push('scripts')
 <script>
-    function changeLabel($label_id, $input_id){
-        document.getElementById($label_id).innerHTML = document.getElementById($input_id).files[0].name;
+    function changeLabel(label_id, input_id){
+        document.getElementById(label_id).innerHTML = document.getElementById(input_id).files[0].name;
     }
 
     function show_element($id, $causer_id){

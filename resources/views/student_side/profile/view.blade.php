@@ -53,8 +53,8 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <div class="border border-dark rounded d-flex align-items-center" style="height: 150px; width=150vw;">
-                                        <img src="/photos/mt={{$filemtimes['pp']}}&ys=0&opt=profile-picture" width="150vw" class="p-2">
+                                    <div class="border border-dark rounded d-flex align-items-center" style="height: 15vw; width: 15vw;">
+                                        <img src="/photos/mt={{$filemtimes['pp']}}&ys=0&opt=profile-picture" style="max-width: 100%; max-height: 100%;" class="p-2">
                                     </div>
                                 </td>
                                 <td class="w-auto">
@@ -73,8 +73,8 @@
                                             </div>
                                         @endif
                                     </div>
-                                    <div class="mb-4">{{$user->student->nim}}</div>
-                                    <div>
+                                    <div>{{$user->student->nim}}</div>
+                                    <div class="mt-2">
                                         @if(!($profile_finalized))
                                             <a class="btn btn-primary" href="{{route('student.profile-edit-page')}}" role="button">Edit Profile</a>
                                         @else
