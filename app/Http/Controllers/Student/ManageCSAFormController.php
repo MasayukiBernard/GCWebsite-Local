@@ -19,6 +19,8 @@ use App\Notifications\CSAFormCreated;
 use App\Notifications\CSAFormSubmitted;
 use App\Partner;
 use App\Passport;
+use App\Yearly_Partner;
+use App\Yearly_Student;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -225,7 +227,7 @@ class ManageCSAFormController extends Controller
 
         $english_test->save();
 
-        return redirect(route('student.csa-form.csa-page2'));
+        return redirect(route('student.csa-form.csa-page2a'));
     }
 
     public function show_insertPage2a(){
@@ -273,17 +275,28 @@ class ManageCSAFormController extends Controller
 
     public function show_insertPage3(){
         // SHOW EXISTING ACHIVEMENT IMAGE
-        $achievement = Achievement::where('csa_form_id', session('csa_form_id'))->get();
-        if($achievement == null){
+        $achievements = Achievement::where('csa_form_id', session('csa_form_id'))->orderBy('latest_created_at')->get();
+        if($achievements == null){
             return view('student_side\csa-form\csa-page3');   
         }
         else{
-            $achievements = Achievement::where('csa_form_id', session('csa_form_id'))->get();
+            $filemtimes = array('0', '0', '0');
+            $proof_ids = array(0, 0, 0);
+            $i = 0;
+            foreach($achievements as $ac){
+                if(Storage::disk('private')->exists($ac->proof_path)){
+                    $proof_ids[$i] = $ac->id;
+                    $filemtimes[$i++] = filemtime(storage_path('app\private\\' . $ac->proof_path));
+                }
+            }
+
             return view('student_side\csa-form\csa-page3', [
-                'achievements' => $achievements
+                'achievements' => $achievements,
+                'ysid' => session('csa_form_yearly_student_id'),
+                'filemtimes' => $filemtimes,
+                'proof_ids' => $proof_ids
             ]);
         }
-        
     }
 
     public function page3_insert(CSAAchievement $request){
@@ -294,26 +307,46 @@ class ManageCSAFormController extends Controller
         
         $validatedData = $request->validated();
 
+        $achievements = Achievement::where('csa_form_id', session('csa_form_id'))->orderBy('latest_created_at')->get();
+
+        // foreach($validatedData as $key => $val){
+        //     echo $key . ': ' . $val . '<br>';
+        // }
+
         for($i = 0; $i < 3; ++$i){
             if($validatedData['name-' . $i] != null){
                 // NEED TO COMPARE FIRST WHETHER EXISTING ACHIEVEMENT AVAILABLE
                 // MIGHT NEED TO CHANGE THE REQUEST RULES
-                $achievement = new Achievement();
-                $achievement->csa_form_id = session('csa_form_id');
-                $achievement->achievement = $validatedData['name-' . $i];
-                $achievement->year = $validatedData['year-' . $i];
-                $achievement->institution = $validatedData['institution-' . $i];
-                $achievement->other_details = $validatedData['other-details-' . $i];
-                $achievement->latest_updated_at = null;
-                
-                if(Arr::exists($validatedData, 'proof-path-' . $i)){
-                    if($achievement->proof_path != null){
-                        Storage::disk('private')->move($achievement->proof_path, 'students/trashed/achievements/' . Str::afterLast($achievement->proof_path, '/'));
-                    }
-                    $achievement->proof_path = Storage::disk('private')->putFile('students/achievements', $validatedData['proof-path-'. $i]);
-                }
 
-                $achievement->save();
+                if(isset($achievements[$i])){
+                    $achievements[$i]->achievement = $validatedData['name-' . $i];
+                    $achievements[$i]->year = $validatedData['year-' . $i];
+                    $achievements[$i]->institution = $validatedData['institution-' . $i];
+                    $achievements[$i]->other_details = $validatedData['other-details-' . $i];
+
+                    if(Arr::exists($validatedData, 'proof-path-' . $i)){
+                        if($achievements[$i]->proof_path != null){
+                            Storage::disk('private')->move($achievements[$i]->proof_path, 'students/trashed/achievements/' . Str::afterLast($achievements[$i]->proof_path, '/'));
+                        }
+                        $achievements[$i]->proof_path = Storage::disk('private')->putFile('students/achievements', $validatedData['proof-path-'. $i]);
+                    }
+
+                    $achievements[$i]->save();
+                }
+                else{
+                    $achievement = new Achievement();
+                    $achievement->csa_form_id = session('csa_form_id');
+                    $achievement->latest_updated_at = null;
+
+                    $achievement->achievement = $validatedData['name-' . $i];
+                    $achievement->year = $validatedData['year-' . $i];
+                    $achievement->institution = $validatedData['institution-' . $i];
+                    $achievement->other_details = $validatedData['other-details-' . $i];
+
+                    $achievement->proof_path = Storage::disk('private')->putFile('students/achievements', $validatedData['proof-path-'. $i]);
+
+                    $achievement->save();
+                }
             }
         }
         
@@ -321,22 +354,27 @@ class ManageCSAFormController extends Controller
     }
 
     public function show_insertPage4(){
-        $user = Auth::user();
-        $student = $user->student;
-        $major_id = $student->major_id;
-        $partner = Partner::where('major_id', $major_id)->get();
-        $choice = Choice::where('csa_form_id', session('csa_form_id'))->get();
-        if($choice == null){
-            return view('student_side\csa-form\csa-page4', [
-            'choice' => new Choice(),
-            'partner'=>$partner,
-            ]);
+        $major_id = Auth::user()->student->major->id;
+        $academic_info = Academic_Info::where('csa_form_id', session('csa_form_id'))->first();
+        
+        if($academic_info == null){
+            session('failed_notif', 'Please fill in your academic information before proceeding to application details!');
+            return redirect(route('student.csa-form.csa-page2'));
         }
-        else{
-            return view('student_side\csa-form\csa-page4', [
-                'partner'=>$partner,
-            ]);
-        }
+
+        $academic_year_id = Yearly_Student::where('id', session('csa_form_yearly_student_id'))->first()->academic_year->id;
+
+        $yp_in_mjay = DB::table('yearly_partners')
+                            ->join('partners', 'yearly_partners.partner_id', '=', 'partners.id')
+                            ->join('majors', 'partners.major_id', '=', 'majors.id')
+                            ->where('yearly_partners.latest_deleted_at', null)->where('yearly_partners.academic_year_id', $academic_year_id)
+                            ->where('partners.min_gpa', '<=', $academic_info->gpa)->where('majors.id', $major_id)
+                            ->select('partners.id', 'partners.name', 'partners.location')
+                            ->get();
+
+        return view('student_side\csa-form\csa-page4', [
+            'yp_in_mjay' => $yp_in_mjay,
+        ]);
     }
 
     public function afterInsertPage4(){
