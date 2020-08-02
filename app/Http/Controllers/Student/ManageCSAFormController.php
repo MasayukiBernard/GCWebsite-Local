@@ -14,19 +14,16 @@ use App\English_Test;
 use App\Http\Requests\CSAAcademicInfo;
 use App\Http\Requests\CSAAchievement;
 use App\Http\Requests\CSAApplicationDetails;
+use App\Http\Requests\CSACondition;
 use App\Http\Requests\CSAEmergency;
 use App\Http\Requests\CSAPassport;
-use App\Major;
 use App\Notifications\CSAFormCreated;
 use App\Notifications\CSAFormSubmitted;
-use App\Partner;
 use App\Passport;
-use App\Yearly_Partner;
 use App\Yearly_Student;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -221,7 +218,7 @@ class ManageCSAFormController extends Controller
             if($english_test->proof_path != null){
                 Storage::disk('private')->move($english_test->proof_path, 'students/trashed/english_tests/' . Str::afterLast($english_test->proof_path, '/'));
             }
-            $english_test->proof_path = Storage::disk('private')->putFile('students/english_tests/' . (Arr::exists($validatedData, 'test-type') ? 'Other' : $test_types[$validatedData['test-type']]), $validatedData['proof-path']);
+            $english_test->proof_path = Storage::disk('private')->putFile('students/english_tests/' . (Arr::exists($validatedData, 'test-type') ? $test_types[$validatedData['test-type']] : 'Other'), $validatedData['proof-path']);
         }
 
         $english_test->score = $validatedData['score'];
@@ -449,37 +446,26 @@ class ManageCSAFormController extends Controller
 
     public function show_insertPage6(){
         $condition = Condition::where('csa_form_id', session('csa_form_id'))->first();
-        if($condition == null){
-            return view('student_side\csa-form\csa-page6', [
-                'condition' => new Condition(),
-            ]);
-        }
-        else{
-            return view('student_side\csa-form\csa-page6', [
-                'condition' => $condition,
-            ]);
-        }
+        return view('student_side\csa-form\csa-page6', [
+            'condition' => $condition,
+        ]);
     }
-    public function page6_insert(Request $request){
+    public function page6_insert(CSACondition $request){
+        $validatedData = $request->validated();
+
         $condition = Condition::where('csa_form_id', session('csa_form_id'))->first();
         if($condition == null){
             $condition = new Condition();
             $condition->csa_form_id = session('csa_form_id');
-            $condition->med_condition = $request->med_condition;
-            $condition->allergy = $request->allergy;
-            $condition->special_diet = $request->special_diet;
-            $condition->convicted_crime = $request->convicted_crime;
-            $condition->future_diffs = $request->future_diffs;
-            $condition->reasons = $request->explanation;
+            $condition->latest_updated_at = null;
         }
-        else{
-            $condition->med_condition = $request->med_condition;
-            $condition->allergy = $request->allergy;
-            $condition->special_diet = $request->special_diet;
-            $condition->convicted_crime = $request->convicted_crime;
-            $condition->future_diffs = $request->future_diffs;
-            $condition->reasons = $request->explanation;
-        }
+
+        $condition->med_condition = $validatedData['med-condition'];
+        $condition->allergy = $validatedData['allergy'];
+        $condition->special_diet = $validatedData['special-diet'];
+        $condition->convicted_crime = $validatedData['convicted-crime'];
+        $condition->future_diffs = $validatedData['future-diffs'];
+        $condition->reasons = $validatedData['explanation'];
 
         $condition->save();
 
@@ -487,15 +473,82 @@ class ManageCSAFormController extends Controller
     }
 
     public function show_insertPage7(){
-        return view('student_side\csa-form\csa-page7', [
+        $academic_info = Academic_Info::where('csa_form_id', session('csa_form_id'))->first();
+        $passport = Passport::where('csa_form_id', session('csa_form_id'))->first();
+        $achievements = Passport::where('csa_form_id', session('csa_form_id'))->get();
+        $choices = Choice::where('csa_form_id', session('csa_form_id'))->get();
+        $emergency = Emergency::where('csa_form_id', session('csa_form_id'))->first();
+        $condition = Condition::where('csa_form_id', session('csa_form_id'))->first();
+
+        $form_submitted = CSA_Form::where('id', session('csa_form_id'))->first()->is_submitted;
+        $allow_submit = false;
+        if($academic_info != null && $passport != null && $achievements->first() != null 
+                && $choices->first() != null && $emergency != null && $condition != null){
+            $allow_submit = true;
+        }
+
+        return view('student_side\csa-form\csa-page7',[
+            'form_submitted' => $form_submitted,
+            'allow_submit' => $allow_submit
         ]);
     }
-    public function page7_insert(){
-        $csa_form = CSA_Form::where('yearly_student_id', session('csa_form_yearly_student_id'))->first();
-        $csa_form->is_submitted = true ;
-        $csa_form->save();
 
-        session()->forget(['csa_form_yearly_student_id', 'csa_form_id']);
-        return redirect(route('student.home'));
+    public function page7_insert(Request $request){
+        $validatedData = $request->validate([
+            'agree' => ['required']
+        ]);
+
+        $csa_form = CSA_Form::where('yearly_student_id', session('csa_form_yearly_student_id'))->first();
+        if(!($csa_form->is_submitted)){
+            $csa_form->is_submitted = true;
+            $csa_form->save();
+
+            $this->mail_notifyCSAFormSubmission(session('csa_form_yearly_student_id'));
+        }
+
+        return redirect(route('student.csa-form.summary'));
+    }
+
+    public function show_summaryPage(){
+        $student = Auth::user()->student;
+        $csa_form = CSA_Form::where('yearly_student_id', session('csa_form_yearly_student_id'))->first();
+        $achievements = $csa_form->achievements;
+
+        $pp_path = Storage::disk('private')->exists($student->picture_path);
+        $ic_path = Storage::disk('private')->exists($student->id_card_picture_path);
+        $fc_path = Storage::disk('private')->exists($student->flazz_card_picture_path);
+        $pass_path = Storage::disk('private')->exists($csa_form->passport->pass_proof_path);
+        $gpa_path = Storage::disk('private')->exists($csa_form->passport->pass_proof_path);
+        $et_path = Storage::disk('private')->exists($csa_form->english_test->proof_path);
+        $ac_path = array(
+            isset($achievements[0]) ? Storage::disk('private')->exists($achievements[0]->proof_path) : false,
+            isset($achievements[1]) ? Storage::disk('private')->exists($achievements[1]->proof_path) : false,
+            isset($achievements[2]) ? Storage::disk('private')->exists($achievements[2]->proof_path) : false,
+        );
+
+        return view('student_side\csa-form\summary',[
+            'csa_form' => $csa_form,
+            'student' => $csa_form->yearly_student->student,
+            'academic_year' => $csa_form->yearly_student->academic_year,
+            'ysid' => $csa_form->yearly_student->id,
+            'filemtimes' => array(
+                'pp' => $pp_path == true ? filemtime(storage_path('app\private\\' . $student->picture_path)) : '0',
+                'ic' => $ic_path == true ? filemtime(storage_path('app\private\\' . $student->id_card_picture_path)) : '0',
+                'fc' => $fc_path == true ? filemtime(storage_path('app\private\\' . $student->flazz_card_picture_path)) : '0',
+                'gpa_trans' => $gpa_path == true ? filemtime(storage_path('app\private\\' . $csa_form->academic_info->gpa_proof_path)) : '0',
+                'passport' => $pass_path == true ? filemtime(storage_path('app\private\\' . $csa_form->passport->pass_proof_path)) : '0',
+                'english_test' => $et_path == true ? filemtime(storage_path('app\private\\' . $csa_form->english_test->proof_path)) : '0',
+                'achievements' => array(
+                    $ac_path[0] == true ? filemtime(storage_path('app\private\\' . $achievements[0]->proof_path)) : '0',
+                    $ac_path[1] == true ? filemtime(storage_path('app\private\\' . $achievements[1]->proof_path)) : '0',
+                    $ac_path[2] == true ? filemtime(storage_path('app\private\\' . $achievements[2]->proof_path)) : '0',
+                )
+                ),
+            'ac_ids' => array(
+                $achievements[0]->id,
+                $achievements[1]->id,
+                $achievements[2]->id,
+            )
+        ]);
     }
 }

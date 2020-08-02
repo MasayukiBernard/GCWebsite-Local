@@ -21,7 +21,7 @@ Route::fallback(function () {
     // if user accessed any route that is not listed below
     return response()
     ->view('warnings.lost', [], 404);
-})->middleware('throttle:5,1');
+})->middleware('throttle:30,1');
 
 // Auth route, with register feature turned off and default account email verification
 Auth::routes(['register' => false, 'verify' => true]);
@@ -226,22 +226,26 @@ Route::middleware('auth', 'throttle:150,15')->group(function(){
 
                             Route::middleware('csa-form-created')->group(function(){
                                 $csa_controller = 'Student\ManageCSAFormController@';
-                                Route::get('/csapage1', $csa_controller . 'show_insertPage1')->name('csa-page1');
-                                Route::post('/csapage1', $csa_controller . 'goto_page2')->name('after-page1');
-                                Route::get('/csapage2', $csa_controller . 'show_insertPage2')->name('csa-page2');
-                                Route::post('/csapage2', $csa_controller . 'page2_insert')->name('after-page2');
-                                Route::get('/csapage2a', $csa_controller . 'show_insertPage2a')->name('csa-page2a');
-                                Route::post('/csapage2a', $csa_controller . 'page2a_insert')->name('after-page2a');
-                                Route::get('/csapage3', $csa_controller . 'show_insertPage3')->name('csa-page3');
-                                Route::post('/csapage3', $csa_controller . 'page3_insert')->name('after-page3');
-                                Route::get('/csapage4', $csa_controller . 'show_insertPage4')->name('csa-page4');
-                                Route::post('/csapage4', $csa_controller . 'page4_insert')->name('after-page4');
-                                Route::get('/csapage5', $csa_controller . 'show_insertPage5')->name('csa-page5');
-                                Route::post('/csapage5', $csa_controller . 'page5_insert')->name('after-page5');
-                                Route::get('/csapage6', $csa_controller . 'show_insertPage6')->name('csa-page6');
-                                Route::post('/csapage6', $csa_controller . 'page6_insert')->name('after-page6');
-                                Route::get('/csapage7', $csa_controller . 'show_insertPage7')->name('csa-page7');
-                                Route::post('/csapage7', $csa_controller . 'page7_insert')->name('after-page7');
+                                Route::middleware('csa-form-redirected-summary')->group(function(){
+                                    $csa_controller = 'Student\ManageCSAFormController@';
+                                    Route::get('/csapage1', $csa_controller . 'show_insertPage1')->name('csa-page1');
+                                    Route::post('/csapage1', $csa_controller . 'goto_page2')->name('after-page1');
+                                    Route::get('/csapage2', $csa_controller . 'show_insertPage2')->name('csa-page2');
+                                    Route::post('/csapage2', $csa_controller . 'page2_insert')->name('after-page2');
+                                    Route::get('/csapage2a', $csa_controller . 'show_insertPage2a')->name('csa-page2a');
+                                    Route::post('/csapage2a', $csa_controller . 'page2a_insert')->name('after-page2a');
+                                    Route::get('/csapage3', $csa_controller . 'show_insertPage3')->name('csa-page3');
+                                    Route::post('/csapage3', $csa_controller . 'page3_insert')->name('after-page3');
+                                    Route::get('/csapage4', $csa_controller . 'show_insertPage4')->name('csa-page4');
+                                    Route::post('/csapage4', $csa_controller . 'page4_insert')->name('after-page4');
+                                    Route::get('/csapage5', $csa_controller . 'show_insertPage5')->name('csa-page5');
+                                    Route::post('/csapage5', $csa_controller . 'page5_insert')->name('after-page5');
+                                    Route::get('/csapage6', $csa_controller . 'show_insertPage6')->name('csa-page6');
+                                    Route::post('/csapage6', $csa_controller . 'page6_insert')->name('after-page6');
+                                    Route::get('/csapage7', $csa_controller . 'show_insertPage7')->name('csa-page7');
+                                    Route::post('/csapage7', $csa_controller . 'page7_insert')->name('after-page7');
+                                });
+                                Route::get('/summary', $csa_controller . 'show_summaryPage')->middleware('csa-form-submitted')->name('summary');
                             });
                         });
                     });
