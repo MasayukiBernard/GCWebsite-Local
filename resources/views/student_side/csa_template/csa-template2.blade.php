@@ -19,7 +19,7 @@
                                 <div class="col-md-12 text-right">
                                     <a class="btn btn-secondary btn-lg" href=@yield('return-route') role="button">Prev</a>
                                     <input type="submit" id="submit_btn" class="btn btn-primary btn-lg d-none" value="@yield('confirm-value')">
-                                    <a class="btn btn-primary btn-lg" href="{{route('student.csa-form.csa-page3')}}" role="button" id="next_btn">@yield('next-value')</a>
+                                    <a class="btn btn-primary btn-lg" href="{{route('student.csa-form.csa-page2a')}}" role="button" id="next_btn">@yield('next-value')</a>
                                 </div>
                             </div>
                         </form>
