@@ -14,6 +14,7 @@ use App\English_Test;
 use App\Http\Requests\CSAAcademicInfo;
 use App\Http\Requests\CSAAchievement;
 use App\Http\Requests\CSAApplicationDetails;
+use App\Http\Requests\CSAEmergency;
 use App\Http\Requests\CSAPassport;
 use App\Major;
 use App\Notifications\CSAFormCreated;
@@ -416,47 +417,37 @@ class ManageCSAFormController extends Controller
 
     public function show_insertPage5(){
         $emergency = Emergency::where('csa_form_id', session('csa_form_id'))->first();
-        if($emergency == null){
-            return view('student_side\csa-form\csa-page5', [
-                'emergency' => new Emergency(),
-            ]);
-        }
-        else
-        {
-            return view('student_side\csa-form\csa-page5', [
-                'emergency' => $emergency,
-            ]);
-        }
+        
+        return view('student_side\csa-form\csa-page5', [
+            'emergency' => $emergency
+        ]);
     }
-    public function afterInsertPage5(Request $request){
+
+    public function page5_insert(CSAEmergency $request){
+        $validatedData = $request->validated();
+        
         $emergency = Emergency::where('csa_form_id', session('csa_form_id'))->first();
+
         if($emergency == null){
             $emergency = new Emergency();
             $emergency->csa_form_id = session('csa_form_id');
-            $emergency->name = $request->name;
-            $emergency->gender = 'F';
-            $emergency->relationship = $request->relationship;
-            $emergency->address = $request->address;
-            $emergency->mobile = $request->mobilenum;
-            $emergency->telp_num = $request->telp_num;
-            $emergency->email = $request->email;
-
+            $emergency->latest_updated_at = null;
         }
-        else{
-            $emergency->name = $request->name;
-            $emergency->relationship = $request->relationship;
-            $emergency->address = $request->address;
-            $emergency->mobile = $request->mobilenum;
-            $emergency->telp_num = $request->telp_num;
-            $emergency->email = $request->email;
-        }
+        
+        $emergency->gender = $validatedData['gender'];
+        $emergency->name = $validatedData['name'];
+        $emergency->relationship = $validatedData['relationship'];
+        $emergency->address = $validatedData['address'];
+        $emergency->mobile = $validatedData['mobile'];
+        $emergency->telp_num = $validatedData['telp-num'];
+        $emergency->email = $validatedData['email'];
 
         $emergency->save();
 
         return redirect(route('student.csa-form.csa-page6'));
     }
 
-    public function insertPage6(){
+    public function show_insertPage6(){
         $condition = Condition::where('csa_form_id', session('csa_form_id'))->first();
         if($condition == null){
             return view('student_side\csa-form\csa-page6', [
@@ -469,7 +460,7 @@ class ManageCSAFormController extends Controller
             ]);
         }
     }
-    public function afterInsertPage6(Request $request){
+    public function page6_insert(Request $request){
         $condition = Condition::where('csa_form_id', session('csa_form_id'))->first();
         if($condition == null){
             $condition = new Condition();
@@ -495,11 +486,11 @@ class ManageCSAFormController extends Controller
         return redirect(route('student.csa-form.csa-page7'));
     }
 
-    public function insertPage7(){
+    public function show_insertPage7(){
         return view('student_side\csa-form\csa-page7', [
         ]);
     }
-    public function afterInsertPage7(){
+    public function page7_insert(){
         $csa_form = CSA_Form::where('yearly_student_id', session('csa_form_yearly_student_id'))->first();
         $csa_form->is_submitted = true ;
         $csa_form->save();
