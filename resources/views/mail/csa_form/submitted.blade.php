@@ -9,7 +9,7 @@ You have submitted your CSA Application Form in the academic year stated below:<
 
 Please regularly check your email up for reply from us about your nomination status to partner university!
 
-@component('mail::button', ['url' => config('app.url')])
+@component('mail::button', ['url' => route('student.csa-form.csa-mainpage')])
 View CSA Application Status
 @endcomponent
 
