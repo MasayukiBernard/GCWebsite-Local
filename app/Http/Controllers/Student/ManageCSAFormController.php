@@ -13,6 +13,7 @@ use App\Emergency;
 use App\English_Test;
 use App\Http\Requests\CSAAcademicInfo;
 use App\Http\Requests\CSAAchievement;
+use App\Http\Requests\CSAApplicationDetails;
 use App\Http\Requests\CSAPassport;
 use App\Major;
 use App\Notifications\CSAFormCreated;
@@ -71,6 +72,7 @@ class ManageCSAFormController extends Controller
         $yearly_student = Auth::user()->student->yearly_students()->where('academic_year_id', $request['ys-id'])->first();
         
         if($yearly_student != null){
+            session()->put('csa_form_id', $yearly_student->csa_form->id);
             session()->put('csa_form_yearly_student_id', $yearly_student->id);
             return redirect(route('student.csa-form.csa-page1'));    
         }
@@ -134,7 +136,6 @@ class ManageCSAFormController extends Controller
 
     public function show_insertPage2(){
         $csa_form = CSA_Form::where('yearly_student_id', session('csa_form_yearly_student_id'))->first();
-        session()->put('csa_form_id', $csa_form->id);
 
         $major = $csa_form->yearly_student->student->major->name;
         $academic_info = Academic_Info::where('csa_form_id', $csa_form->id)->first();
@@ -369,19 +370,51 @@ class ManageCSAFormController extends Controller
                             ->join('majors', 'partners.major_id', '=', 'majors.id')
                             ->where('yearly_partners.latest_deleted_at', null)->where('yearly_partners.academic_year_id', $academic_year_id)
                             ->where('partners.min_gpa', '<=', $academic_info->gpa)->where('majors.id', $major_id)
-                            ->select('partners.id', 'partners.name', 'partners.location')
+                            ->select('yearly_partners.id', 'partners.name', 'partners.location')
                             ->get();
+        
+        $choices = Choice::where('csa_form_id', session('csa_form_id'))->orderBy('latest_created_at')->get();
 
         return view('student_side\csa-form\csa-page4', [
             'yp_in_mjay' => $yp_in_mjay,
+            'academic_year_id' => $academic_year_id,
+            'choices' => $choices != null ? $choices : null
         ]);
     }
 
-    public function afterInsertPage4(){
+    public function page4_insert(CSAApplicationDetails $request){
+        // if no choice record
+            // Creates choice record
+        // else
+            // display, existing db record
+
+        $validatedData = $request->validated();
+
+        $choices = Choice::where('csa_form_id', session('csa_form_id'))->orderBy('latest_created_at')->get();
+        for($i = 0; $i < 3; ++$i){
+            if($validatedData['preferred-uni-' . $i] != null){
+                if(isset($choices[$i])){
+                    $choices[$i]->yearly_partner_id = $validatedData['preferred-uni-' . $i];
+                    $choices[$i]->motivation = $validatedData['motivation-' . $i];
+
+                    $choices[$i]->save();
+                }
+                else{
+                    $choice = new Choice();
+                    $choice->csa_form_id = session('csa_form_id');
+                    $choice->latest_updated_at = null;
+                    $choice->yearly_partner_id = $validatedData['preferred-uni-' . $i];
+                    $choice->motivation = $validatedData['motivation-' . $i];
+
+                    $choice->save();
+                }
+            }
+        }
+        
         return redirect(route('student.csa-form.csa-page5'));
     }
 
-    public function insertPage5(){
+    public function show_insertPage5(){
         $emergency = Emergency::where('csa_form_id', session('csa_form_id'))->first();
         if($emergency == null){
             return view('student_side\csa-form\csa-page5', [
