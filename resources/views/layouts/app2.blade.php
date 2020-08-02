@@ -82,6 +82,11 @@
                                     CSA Form
                                 </a>
                             </li>
+                            <li class='nav-item'>
+                                <a class="nav-link" href="{{ route('student.pick-year') }}">
+                                    Yearly Partners
+                                </a>
+                            </li>
                             @endif
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ Auth::user()->is_staff ? route('staff.profile') : route('student.profile') }}">

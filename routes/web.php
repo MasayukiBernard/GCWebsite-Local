@@ -207,6 +207,11 @@ Route::middleware('auth', 'throttle:150,15')->group(function(){
                     
                     Route::get('home', 'HomeController@student_index')->name('home');
 
+                    $yearly_partner_controller = 'Student\YearlyPartnerController@';
+
+                    Route::get('/yearly-partners/pick-year', $yearly_partner_controller . 'show_initialView')->name('pick-year');
+                    Route::get('/academic-year/{academic_year_id}/yearly-partners', $yearly_partner_controller . 'show_page')->name('yearly-partners');
+
                     Route::name('csa-form.')->group(function(){
                         Route::prefix('csa-form')->group(function(){
                             $csa_controller = 'Student\ManageCSAFormController@';
