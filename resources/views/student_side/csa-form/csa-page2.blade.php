@@ -70,7 +70,7 @@
      <div class="form-group row">
           <label for="semester" class="col-md-4 col-form-label text-md-left font-weight-bold">Semester</label>
           <div class="col-md-4">
-               <input id="semester" class="col-md-12 form-control @error('semester') is-invalid @enderror" type="number" name="semester" min="0" max="14" onkeypress="changeUpdate();" onchange="changeUpdate();" value="{{old('semester', $academic_info != null ? $academic_info->semester : '')}}">
+               <input id="semester" class="col-md-12 form-control @error('semester') is-invalid @enderror" type="number" name="semester" min="0" max="14" onkeypress="changeUpdate();" onchange="changeUpdate();" value="{{old('semester', $academic_info != null ? $academic_info->semester : '')}}" autocomplete="off">
                <small class="form-text text-muted m-0">Value must be in the range of [1 - 14]!</small>
                @error('semester')
                     <div class="alert alert-danger">{{ $message }}</div>
@@ -81,7 +81,7 @@
      <div class="form-group row">
           <label for="gpa" class="col-md-4 col-form-label text-md-left font-weight-bold">GPA</label>
           <div class="col-md-4">
-               <input id="gpa" class="col-md-12 form-control @error('gpa') is-invalid @enderror" type="number" name="gpa" step="0.01" min="0.00" max="4.00" onkeypress="changeUpdate();" onchange="changeUpdate();" value="{{old('gpa', $academic_info != null ? $academic_info->gpa : '')}}">
+               <input id="gpa" class="col-md-12 form-control @error('gpa') is-invalid @enderror" type="number" name="gpa" step="0.01" min="0.00" max="4.00" onkeypress="changeUpdate();" onchange="changeUpdate();" value="{{old('gpa', $academic_info != null ? $academic_info->gpa : '')}}" autocomplete="off">
                <small class="form-text text-muted m-0">Value must be in the range of [0.00 - 4.00]</small>
                @error('gpa')
                     <div class="alert alert-danger">{{ $message }}</div>
@@ -126,7 +126,7 @@
                     <label class="custom-control-label" for="TOEFL">TOEFL</label>
                </div>
                <div>
-                    Other: <input id="other_test" class="col-md-6 ml-2 d-inline form-control" placeholder="Other Test Type" onkeypress="changeUpdate();" onclick="uncheckRB('IELTS', 'TOEFL');" type="text" name="other-test" value="{{old('other-test') != null ? old('other-test') : ''}}">
+                    Other: <input id="other_test" class="col-md-6 ml-2 d-inline form-control" placeholder="Other Test Type" onkeypress="changeUpdate();" onclick="uncheckRB('IELTS', 'TOEFL');" type="text" name="other-test" value="{{old('other-test') != null ? old('other-test') : ''}}" autocomplete="off">
                </div>
                @error('test-type')
                     <div class="alert alert-danger">{{ $message }}</div>
@@ -140,7 +140,7 @@
      <div class="form-group row">
           <label for="score" class="col-md-4 col-form-label text-md-left font-weight-bold">English Test Score</label>
           <div class="col-md-4">
-               <input id="score" class="col-md-12 form-control @error('score') is-invalid @enderror" type="number" name="score" step="0.1" min="0.0" onkeypress="changeUpdate();" onchange="changeUpdate();" value="{{old('score', $english_test != null ? $english_test->score : '')}}">
+               <input id="score" class="col-md-12 form-control @error('score') is-invalid @enderror" type="number" name="score" step="0.1" min="0.0" onkeypress="changeUpdate();" onchange="changeUpdate();" value="{{old('score', $english_test != null ? $english_test->score : '')}}" autocomplete="off">
                @error('score')
                     <div class="alert alert-danger">{{ $message }}</div>
                @enderror
@@ -150,7 +150,7 @@
      <div class="form-group row">
           <label for="date" class="col-md-4 col-form-label text-md-left font-weight-bold">English Test Date of Occurence</label>
           <div class="col-md-8">
-          <input id="date" class="col-md-12 form-control @error('test-date') is-invalid @enderror" type="text" placeholder="Format: YYYY-MM-DD" name="test-date" onkeypress="changeUpdate();" value="{{old('test-date', $english_test != null ? $english_test->test_date : '')}}">
+          <input id="date" class="col-md-12 form-control @error('test-date') is-invalid @enderror" type="text" placeholder="Format: YYYY-MM-DD" name="test-date" onkeypress="changeUpdate();" value="{{old('test-date', $english_test != null ? $english_test->test_date : '')}}" autocomplete="off">
           @error('test-date')
                <div class="alert alert-danger">{{ $message }}</div>
           @enderror
@@ -165,17 +165,17 @@
                          <a target="_blank" href="/student/{{$filemtimes['e-test']}}/{{$ysid}}/image/english-test-result">See Existing English Test Result Proof</a>
                     </div>
                @endisset
-                <div id="gpa_proof_file" class="custom-file">
+               <div id="gpa_proof_file" class="custom-file">
                     <input type="file" name="proof-path" id="proof_path" onchange="changeLabel('proof_path_label', 'proof_path'); changeUpdate();" class="custom-file-input @error('proof-path') is-invalid @enderror" style="cursor: pointer;">
                     <label class="custom-file-label" id="proof_path_label" for="proof_path">
-                         @if(isset($academic_info))
+                         @if(isset($english_test))
                               Change existing English test result proof picture file
                          @else
                               Choose English test result proof picture file
                          @endif
                     </label>
                     <small class="file_size_notif" class="form-text text-muted m-0">Maximum uploaded file size is 2 Megabytes.</small>
-                </div>
+               </div>
                @error('proof-path')
                <div class="alert alert-danger">{{ $message }}</div>
                @enderror
