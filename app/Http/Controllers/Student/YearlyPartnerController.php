@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class YearlyPartnerController extends Controller{
     public function show_initialView(){
+        session()->forget(['csa_form_id', 'csa_form_yearly_student_id']);
+        
         $academic_years = DB::table('yearly_students')
                             ->select('academic_years.*')
                             ->where('yearly_students.latest_deleted_at', null)->where('nim', Auth::user()->student->nim)

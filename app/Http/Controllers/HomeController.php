@@ -108,6 +108,7 @@ class HomeController extends Controller
     }
     
     public function student_index(){
+        session()->forget(['csa_form_id', 'csa_form_yearly_student_id']);
         return view('student_side\home', ['user_verified' => is_null(Auth::user()->email_verified_at) ? false : true]);
     }
 

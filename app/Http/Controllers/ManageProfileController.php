@@ -93,7 +93,7 @@ class ManageProfileController extends Controller
         else if (session('failed_notif') != null){
             $failed = session('failed_notif');
         }
-        session()->forget(['success_notif', 'warning_notif', 'failed_notif']);
+        session()->forget(['csa_form_id', 'csa_form_yearly_student_id', 'success_notif', 'warning_notif', 'failed_notif']);
 
         $user = Auth::user();
         $student_request_id = Student_Request::select('id')

@@ -16,13 +16,13 @@ class CheckStudentHasCSAForm
      */
     public function handle($request, Closure $next)
     {   
-        if(session('csa_form_yearly_student_id') == null){
+        if(session('csa_form_yearly_student_id') == null || session('csa_form_id') == null){
             return redirect(route('student.csa-form.csa-mainpage'));
         }
         
         $student = Auth::user()->student;
         $referred_ys = $student->yearly_students()->where('id', session('csa_form_yearly_student_id'))->first();
-        
+
         // if curr student does not have referred ys record
         if($referred_ys == null){
             session()->put('failed_notif', 'Failed to get the request CSA Application Form');
