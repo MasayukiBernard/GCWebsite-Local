@@ -54,7 +54,7 @@
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                         @if ($yearly_students_academic_year->count() > 0)
                                             @foreach ($yearly_students_academic_year as $ysac)
-                                        <a class="dropdown-item" onclick="set_ysid({{$ysac->id}});">{{$ysac->starting_year}}/{{$ysac->ending_year}} - {{$ysac->odd_semester ? "Odd" : "Even    "}}</a>
+                                        <a class="dropdown-item" style="cursor: pointer;" onclick="set_ysid({{$ysac->id}});">{{$ysac->starting_year}}/{{$ysac->ending_year}} - {{$ysac->odd_semester ? "Odd" : "Even    "}}</a>
                                             @endforeach
                                         @endif
 
