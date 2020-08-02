@@ -144,6 +144,7 @@
                                             <th class="text-center" scope="col">Nominate to</th>
                                         @endif
                                     </tr>
+                                    <?php $choices_count = 0?>
                                     @foreach ($csa_form->choices as $key => $choice)
                                         @if ($choice->nominated_to_this)
                                             <tr class="text-center uni_nomination bg-success">
@@ -166,7 +167,17 @@
                                                 @endif
                                             </td>
                                         </tr>
+                                        <?php ++$choices_count?>
                                     @endforeach
+                                    
+                                    @for($choices_count; $choices_count < 3; ++$choices_count)
+                                        <tr>
+                                            <td class="py-3"></td>
+                                            <td class="py-3"></td>
+                                            <td class="py-3"></td>
+                                        </tr>
+                                    @endfor
+
                                     <tr>
                                         <th scope="col" class="text-center" colspan="4">Motivations</th>
                                     </tr>
