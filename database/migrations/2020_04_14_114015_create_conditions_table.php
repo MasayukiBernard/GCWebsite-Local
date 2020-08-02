@@ -26,7 +26,7 @@ class CreateConditionsTable extends Migration
             $table->boolean('special_diet');
             $table->boolean('convicted_crime');
             $table->boolean('future_diffs');
-            $table->text('reasons');
+            $table->text('reasons')->nullable();
             $table->timestamp('latest_created_at')->nullable();
             $table->timestamp('latest_updated_at')->nullable();
             $table->softDeletes('latest_deleted_at')->nullable();
