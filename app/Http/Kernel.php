@@ -60,6 +60,8 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'csa-form-created' => \App\Http\Middleware\CheckStudentHasCSAForm::class,
         'csa-form-none' => \App\Http\Middleware\CheckStudentHasNoCSAForm::class,
+        'csa-form-submitted' => \App\Http\Middleware\CheckCSAFormSubmitted::class,
+        'csa-form-redirected-summary' => \App\Http\Middleware\RedirectAfterFormSubmission::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'profile-edit-request-none' => \App\Http\Middleware\NoProfileEditRequest::class,
