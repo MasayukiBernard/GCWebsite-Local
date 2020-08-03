@@ -126,7 +126,7 @@
                     <label class="custom-control-label" for="TOEFL">TOEFL</label>
                </div>
                <div>
-                    Other: <input id="other_test" class="col-md-6 ml-2 d-inline form-control" placeholder="Other Test Type" onkeypress="changeUpdate();" onclick="uncheckRB('IELTS', 'TOEFL');" type="text" name="other-test" value="{{old('other-test') != null ? old('other-test') : ''}}" autocomplete="off">
+                    Other: <input id="other_test" class="col-md-6 ml-2 d-inline form-control" placeholder="Other Test Type" onkeypress="changeUpdate();" onclick="uncheckRB('IELTS', 'TOEFL');" type="text" name="other-test" value="{{old('other-test') != null ? old('other-test') : ($english_test != null ? $english_test->test_type : '')}}" autocomplete="off">
                </div>
                @error('test-type')
                     <div class="alert alert-danger">{{ $message }}</div>

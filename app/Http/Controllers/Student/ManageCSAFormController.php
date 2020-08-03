@@ -70,8 +70,13 @@ class ManageCSAFormController extends Controller
         $yearly_student = Auth::user()->student->yearly_students()->where('academic_year_id', $request['ys-id'])->first();
         
         if($yearly_student != null){
-            session()->put('csa_form_id', $yearly_student->csa_form->id);
             session()->put('csa_form_yearly_student_id', $yearly_student->id);
+
+            $csa_form = CSA_Form::where('yearly_student_id' , $yearly_student->id)->first();
+            if($csa_form != null){
+                session()->put('csa_form_id', $csa_form->id);
+            }
+
             return redirect(route('student.csa-form.csa-page1'));    
         }
 
@@ -99,6 +104,8 @@ class ManageCSAFormController extends Controller
             $csa_form->latest_updated_at = null;
             $csa_form->save();
 
+            session()->put('csa_form_id', $csa_form->id);
+            
             $this->mail_notifyCSAFormCreation($create_form_ysid);
 
             return redirect(route('student.csa-form.csa-page1'));
@@ -108,7 +115,7 @@ class ManageCSAFormController extends Controller
         return redirect(route('student.csa-form.csa-mainpage'));
     }
 
-    public function show_insertPage1(){
+    public function show_insertPage1(){        
         $user = Auth::user();
         $student = $user->student;
         $nim = $student->nim;
