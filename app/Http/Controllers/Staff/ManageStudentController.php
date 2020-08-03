@@ -121,7 +121,7 @@ class ManageStudentController extends Controller
 
         $request->flash();
         $validatedData = $request->validate([
-            'nim' => ['required', 'string', 'digits:10'],
+            'nim' => ['required', 'string', 'digits:10', 'unique:students,nim'],
             'password' => ['required', 'string', 'max:100']
         ]);
         $request->session()->put('validatedData', $validatedData);
