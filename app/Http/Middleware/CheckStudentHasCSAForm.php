@@ -16,7 +16,7 @@ class CheckStudentHasCSAForm
      */
     public function handle($request, Closure $next)
     {   
-        if(session('csa_form_yearly_student_id') == null || session('csa_form_id') == null){
+        if(session('csa_form_yearly_student_id') == null){
             return redirect(route('student.csa-form.csa-mainpage'));
         }
         
