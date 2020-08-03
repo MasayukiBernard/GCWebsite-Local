@@ -108,6 +108,7 @@
             These data are the person to contact in a case of emergencies.
         </div>
     </div>
+    <hr>
 @endsection
 
 @section('return-route')

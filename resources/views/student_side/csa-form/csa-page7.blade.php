@@ -34,7 +34,6 @@
             </div>
         </div>
     </div>
-
     <div class="custom-control custom-checkbox">
         <input type="checkbox" class="custom-control-input" id="agree" name="agree">
         <label class="custom-control-label" for="agree">I agree to the Applicant's Declaration</label>
@@ -42,6 +41,7 @@
             <div class="alert text-danger p-0 font-weight-bold">^^^^ {{ $message }}</span>
         @enderror
     </div>
+    <hr>
 @endsection
 
 @section('return-route')
@@ -49,5 +49,5 @@
 @endsection
 
 @section('confirm-value')
-SUBMIT CSA APPLICATION FORM
+SUBMIT FORM
 @endsection

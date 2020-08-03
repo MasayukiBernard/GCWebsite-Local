@@ -123,7 +123,7 @@
             You no need to fill the explanation field if you answer any question with a 'YES'!
         </div>
     </div>
-
+    <hr>
 @endsection
 
 @section('return-route')
