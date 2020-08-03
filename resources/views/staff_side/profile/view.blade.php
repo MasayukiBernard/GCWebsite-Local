@@ -13,18 +13,16 @@
                     <table class="table table-borderless table-sm 2 w-auto mb-0">
                         <tbody>
                             <tr>
-                                <td class="border-right">
+                                <td>
                                     <strong class="h1">{{$user->name}}</strong><br>
                                     {{$user->email}}
-                                </td>
-                                <td class="align-middle">
-                                    <a class="btn btn-primary" href="{{route('staff.profile-edit-page')}}" role="button">Edit Profile</a>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="card-body">
+                    <a class="btn btn-primary mb-2" href="{{route('staff.profile-edit-page')}}" role="button">Edit Profile</a>
                     <table class="table table-bordered">
                         <tr>
                             <th scope="row">Role</th>

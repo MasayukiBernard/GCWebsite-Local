@@ -25,9 +25,9 @@
     <table class="table table-bordered">
         <tbody>
             <tr>
-                <th scope="row">Major Name</th>
-                <td>
-                    <input type="text" name="major-name" class="@error('major-name') is-invalid @enderror" value="{{old('major-name') == null ? $referred_major->name : old('major-name')}}"><br>
+                <th scope="row" class="align-middle">Major Name</th>
+                <td class="align-middle">
+                    <input type="text" name="major-name" class="form-control mb-n4 @error('major-name') is-invalid @enderror" value="{{old('major-name') == null ? $referred_major->name : old('major-name')}}" autocomplete="off"><br>
                     @error('major-name')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror

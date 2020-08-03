@@ -47,7 +47,7 @@
             <tr>
                 <th scope="row">University Name</th>
                 <td>
-                    <input type="text" name="uni-name" class="@error('uni-name') is-invalid @enderror" value="{{old('uni-name') == null ? $referred_partner->name : old('uni-name')}}"><br>
+                    <input type="text" name="uni-name" class="form-control mb-n4 @error('uni-name') is-invalid @enderror" value="{{old('uni-name') == null ? $referred_partner->name : old('uni-name')}}"><br>
                     @error('uni-name')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
@@ -72,7 +72,7 @@
             <tr>
                 <th scope="row">Location</th>
                 <td>
-                    <input type="text" name="location" class="@error('location') is-invalid @enderror" value="{{old('location') == null ? $referred_partner->location : old('location')}}"><br>
+                    <input type="text" name="location" class="form-control mb-n4 @error('location') is-invalid @enderror" value="{{old('location') == null ? $referred_partner->location : old('location')}}"><br>
                     @error('location')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
@@ -81,7 +81,7 @@
             <tr>
                 <th scope="row">Minimum GPA</th>
                 <td>
-                    <input type="number" step=0.01 min=0 max=4 name="min-gpa" class="@error('min-gpa') is-invalid @enderror" value="{{old('min-gpa') == null ? $referred_partner->min_gpa : old('min-gpa')}}"><br>
+                    <input type="number" step=0.01 min=0 max=4 name="min-gpa" class="form-control mb-n4 @error('min-gpa') is-invalid @enderror" value="{{old('min-gpa') == null ? $referred_partner->min_gpa : old('min-gpa')}}"><br>
                     @error('min-gpa')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
@@ -90,7 +90,7 @@
             <tr>
                 <th scope="row">English Proficiency Requirement</th>
                 <td>
-                    <input type="text" name="eng-proficiency" class="@error('eng-proficiency') is-invalid @enderror" value="{{old('eng-proficiency') == null ? $referred_partner->eng_requirement : old('eng-proficiency')}}"><br>
+                    <input type="text" name="eng-proficiency" class="form-control mb-n5 @error('eng-proficiency') is-invalid @enderror" value="{{old('eng-proficiency') == null ? $referred_partner->eng_requirement : old('eng-proficiency')}}"><br>
                     @error('eng-proficiency')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
@@ -101,7 +101,7 @@
             </tr>
             <tr class="text-center">
                 <td colspan="2">
-                    <textarea name="details" class="@error('details') is-invalid @enderror">{{old('details') == null ? $referred_partner->short_detail : old('details')}}</textarea><br>
+                    <textarea name="details" class="form-control mb-n3 @error('details') is-invalid @enderror" rows="5">{{old('details') == null ? $referred_partner->short_detail : old('details')}}</textarea><br>
                     @error('details')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror

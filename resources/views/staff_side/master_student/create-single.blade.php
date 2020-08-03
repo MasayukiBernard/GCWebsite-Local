@@ -10,13 +10,13 @@
 
 @section('form-inputs')
     <label>NIM</label><br>
-    <input type="text" name="nim" maxlength="10" mclass="@error('nim') is-invalid @enderror" value="{{ old('nim') }}"><br>
+    <input type="text" name="nim" maxlength="10" class="form-control @error('nim') is-invalid @enderror" value="{{ old('nim') }}" autocomplete="off"><br>
     @error('nim')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
 
     <label>Password</label><br>
-    <input type="password" maxlength="100" name="password" class="@error('password') is-invalid @enderror"><br>
+    <input type="password" maxlength="100" name="password" class="form-control @error('password') is-invalid @enderror"><br>
     @error('password')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror

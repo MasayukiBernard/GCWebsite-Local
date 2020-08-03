@@ -15,13 +15,13 @@
     @enderror
 
     <label>Starting Year</label><br>
-    <input type="text" name="start-year" class="@error('start-year') is-invalid @enderror" value="{{ old('start-year') == null ? $temp_year->starting_year : old('start-year')}}"><br>
+    <input type="text" name="start-year" class="form-control @error('start-year') is-invalid @enderror" value="{{ old('start-year') == null ? $temp_year->starting_year : old('start-year')}}" autocomplete="off"><br>
     @error('start-year')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
 
     <label>Ending Year</label><br>
-    <input type="text" name="end-year" class="@error('end-year') is-invalid @enderror" value="{{ old('end-year') == null ? $temp_year->ending_year : old('end-year') }}"><br>
+    <input type="text" name="end-year" class="form-control @error('end-year') is-invalid @enderror" value="{{ old('end-year') == null ? $temp_year->ending_year : old('end-year') }}" autocomplete="off"><br>
     @error('end-year')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror

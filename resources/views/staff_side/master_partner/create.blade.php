@@ -31,31 +31,31 @@
     @enderror
 
     <label>University Name</label><br>
-    <input type="text" name="uni-name" class="@error('uni-name') is-invalid @enderror" value="{{ old('uni-name') }}"><br>
+    <input type="text" name="uni-name" class="form-control @error('uni-name') is-invalid @enderror" value="{{ old('uni-name') }}" autocomplete="off"><br>
     @error('uni-name')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
 
     <label>Location</label><br>
-    <input type="text" name="location" class="@error('location') is-invalid @enderror" value="{{ old('location') }}"><br>
+    <input type="text" name="location" class="form-control @error('location') is-invalid @enderror" value="{{ old('location') }}" autocomplete="off"><br>
     @error('location')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
 
     <label>Minimum GPA</label><br>
-    <input type="number" step=0.01 min=0 max=4 name="min-gpa" class="@error('min-gpa') is-invalid @enderror" value="{{ old('min-gpa') }}"><br>
+    <input type="number" step=0.01 min=0 max=4 name="min-gpa" class="form-control @error('min-gpa') is-invalid @enderror" value="{{ old('min-gpa') }}" autocomplete="off"><br>
     @error('min-gpa')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
 
     <label>English Proficiency Requirements</label><br>
-    <input type="text" name="eng-proficiency" class="@error('eng-proficiency') is-invalid @enderror" value="{{ old('eng-proficiency') }}"><br>
+    <input type="text" name="eng-proficiency" class="form-control @error('eng-proficiency') is-invalid @enderror" value="{{ old('eng-proficiency') }}" autocomplete="off"><br>
     @error('eng-proficiency')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
 
     <label>Short Details</label><br>
-    <textarea name="details" class="@error('details') is-invalid @enderror">{{ old('details') }}</textarea><br>
+    <textarea name="details" class="form-control @error('details') is-invalid @enderror" rows="5" autocomplete="off">{{ old('details') }}</textarea><br>
     @error('details')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
