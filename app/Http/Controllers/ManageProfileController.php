@@ -46,7 +46,7 @@ class ManageProfileController extends Controller
     public function confirm_staffEdit(Request $request){
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:75'],
-            'email' => ['required', 'email:rfc', 'max:50'],
+            'email' => ['required', 'email:rfc', 'max:50', 'unique:users,email'],
             'position' => ['required', 'string', 'max:50'],
             'gender' => ['required', 'in:M,F', 'max:1'],
             'mobile' => ['required', 'digits_between:1,13'],
