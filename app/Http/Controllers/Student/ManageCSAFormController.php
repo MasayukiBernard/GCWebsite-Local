@@ -492,15 +492,15 @@ class ManageCSAFormController extends Controller
     public function show_insertPage7(){
         $academic_info = Academic_Info::where('csa_form_id', session('csa_form_id'))->first();
         $passport = Passport::where('csa_form_id', session('csa_form_id'))->first();
-        $achievements = Passport::where('csa_form_id', session('csa_form_id'))->get();
+        $achievements = Achievement::where('csa_form_id', session('csa_form_id'))->get();
         $choices = Choice::where('csa_form_id', session('csa_form_id'))->get();
         $emergency = Emergency::where('csa_form_id', session('csa_form_id'))->first();
         $condition = Condition::where('csa_form_id', session('csa_form_id'))->first();
 
         $form_submitted = CSA_Form::where('id', session('csa_form_id'))->first()->is_submitted;
         $allow_submit = false;
-        if($academic_info != null && $passport != null && $achievements->first() != null 
-                && $choices->first() != null && $emergency != null && $condition != null){
+        if($academic_info != null && $passport != null && $choices->first() != null 
+                && $emergency != null && $condition != null){
             $allow_submit = true;
         }
 
@@ -561,11 +561,11 @@ class ManageCSAFormController extends Controller
                     $ac_path[2] == true ? filemtime(storage_path('app\private\\' . $achievements[2]->proof_path)) : '0',
                 )
                 ),
-            'ac_ids' => array(
+            'ac_ids' => $achievements->count() > 0 ? array(
                 $achievements[0]->id,
                 $achievements[1]->id,
                 $achievements[2]->id,
-            )
+            ) : null
         ]);
     }
 }
