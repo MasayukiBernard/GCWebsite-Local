@@ -170,33 +170,39 @@
                         </thead>
                         <tbody>
                             <?php $i = 0;?>
-                            @foreach ($csa_form->achievements as $achievement)
+                            @if ($csa_form->achievements->count() > 0)
+                                @foreach ($csa_form->achievements as $achievement)
+                                    <tr>
+                                        <th class="h5 text-center" colspan="2">Achievement #{{$i}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Name</th>
+                                        <td>{{$achievement->achievement}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Year</th>
+                                        <td>{{$achievement->year}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Institution</th>
+                                        <td>{{$achievement->institution}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Other Details</th>
+                                        <td>{{$achievement->other_details}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Achievement Proof</th>
+                                        <td>
+                                            <a target="_blank" href="{{route('student.see-image', ['last_modified' => $filemtimes['achievements'][$i], 'yearly_student_id' => $ysid, 'requested_image' => 'achievement-proof', 'optional_id' => $ac_ids[$i++]])}}">See Image</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
                                 <tr>
-                                    <th class="h5 text-center" colspan="2">Achievement #{{$i}}</th>
+                                    <th class="h5 text-center" colspan="2">No Data</th>
                                 </tr>
-                                <tr>
-                                    <th scope="row">Name</th>
-                                    <td>{{$achievement->achievement}}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Year</th>
-                                    <td>{{$achievement->year}}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Institution</th>
-                                    <td>{{$achievement->institution}}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Other Details</th>
-                                    <td>{{$achievement->other_details}}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Achievement Proof</th>
-                                    <td>
-                                        <a target="_blank" href="{{route('student.see-image', ['last_modified' => $filemtimes['achievements'][$i], 'yearly_student_id' => $ysid, 'requested_image' => 'achievement-proof', 'optional_id' => $ac_ids[$i++]])}}">See Image</a>
-                                    </td>
-                                </tr>
-                            @endforeach
+                            @endif
                         </tbody>
                     </table>
 

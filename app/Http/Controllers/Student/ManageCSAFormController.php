@@ -133,6 +133,14 @@ class ManageCSAFormController extends Controller
     }
 
     public function show_insertPage2(){
+        $success = $failed = null;
+        if(session('success_notif') != null){
+            $success = session('success_notif');
+        }
+        if(session('failed_notif') != null){
+            $failed = session('failed_notif');
+        }
+
         $csa_form = CSA_Form::where('yearly_student_id', session('csa_form_yearly_student_id'))->first();
 
         $major = $csa_form->yearly_student->student->major->name;
@@ -143,6 +151,8 @@ class ManageCSAFormController extends Controller
         $e_test = $english_test != null ? Storage::disk('private')->exists($english_test->proof_path) : false;
 
         return view('student_side\csa-form\csa-page2', [
+            'success' => $success,
+            'failed' => $failed,
             'major' => $major,
             'academic_info' => $academic_info != null ? $academic_info : null,
             'english_test' => $english_test != null ? $english_test : null,
