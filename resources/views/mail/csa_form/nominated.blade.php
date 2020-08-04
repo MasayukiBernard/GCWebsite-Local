@@ -10,7 +10,7 @@ We are happy to inform you that you have been nominated to the partner universit
 
 Please be prepared to manage application processes required by the partner university!
 
-@component('mail::button', ['url' => config('app.url')])
+@component('mail::button', ['url' => route('student.csa-form.csa-mainpage')])
 View CSA Application Status
 @endcomponent
 
