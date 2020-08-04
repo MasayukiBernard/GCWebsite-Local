@@ -118,6 +118,17 @@
                                 <tr>
                                     <td colspan="3" class="align-middle border-top-0 text-center">
                                         <div id="submission_chart" style="height: 350px;" class="text-center mt-n5 mb-0"></div>
+                                        <div class="row loading_bar_container">
+                                            <div class="col-12">
+                                                <div class="row" style="position: relative;">
+                                                    <div class="col-6 p-0 text-right">Loading</div>
+                                                    <div class="dots" class="col-6 p-0"></div>
+                                                </div>
+                                                <div class="progress mt-n4" style="height: 25px;">
+                                                    <div class="loading_bar1 progress-bar progress-bar-striped progress-bar-animated bg-success rounded" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%; margin-left: -50%;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr class="text-center h3">
@@ -126,14 +137,19 @@
                                 <tr>
                                     <td colspan="3" class="align-middle border-top-0 text-center">
                                         <div id="nomination_chart" style="height: 350px;" class="text-center mt-n5 mb-0"></div>
+                                        <div class="row loading_bar_container">
+                                            <div class="col-12">
+                                                <div class="row" style="position: relative;">
+                                                    <div class="col-6 p-0 text-right">Loading</div>
+                                                    <div class="dots" class="col-6 p-0"></div>
+                                                </div>
+                                                <div class="progress mt-n4" style="height: 25px;">
+                                                    <div class="loading_bar1 progress-bar progress-bar-striped progress-bar-animated bg-success rounded" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%; margin-left: -50%;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
-
-                        <table class="table table-bordered table-sm">
-                            <tbody>
-                                
                             </tbody>
                         </table>
                     </div>
@@ -142,17 +158,6 @@
         </div>
     </div>
 @endsection
-
-{{-- 
-    get_percentage() description:
-    The function uses jquery library and utilizes AJAX feature provided by jquery.
-    Perform async HTTP request to web server, in this case a POST request to a designated route,
-    with 'X-CSRF-TOKEN' as the data in the POST body, it also expects JSON response from the server
-    which is fulfilled in the controller, upon request success the method will show the percentages
-    data from the server without refreshing the page.
-
---}}
-
 
 @push('scripts')
     <script>
@@ -216,15 +221,17 @@
                 });
             }
         }
+
     </script>
 
     <!-- Charting library -->
-    <script src="https://unpkg.com/echarts/dist/echarts.min.js"></script>
+    <script src="https://unpkg.com/echarts/dist/echarts.min.js" defer></script>
     <!-- Chartisan -->
-    <script src="https://unpkg.com/@chartisan/echarts/dist/chartisan_echarts.js"></script>
+    <script src="https://unpkg.com/@chartisan/echarts/dist/chartisan_echarts.js" defer></script>
 
     <script>
         window.onload = (event) => {
+            animate_loading();
             <?php
                 if(isset($initial_percentages) && $initial_percentages['total_student'] == 0){
                     echo "$('.no-data-alert').remove();";
@@ -234,6 +241,9 @@
                 else if(isset($initial_percentages)){
                     echo "show_submission_chart(" . $initial_percentages['is_submitted'] . ", " . $initial_percentages['con_is_submitted'] . ");";
                     echo "show_nomination_chart(" . $initial_percentages['is_nominated'] . ", " . $initial_percentages['con_is_nominated'] . ");";
+                    echo "clearInterval(bar_interval);";
+                    echo "clearInterval(dots_interval);";
+                    echo "$('.loading_bar_container').fadeOut(750);";
                 }
                 else{
                     echo "$('.no-data-alert').remove();";
@@ -275,6 +285,27 @@
                     .tooltip(true)
                     .datasets('bar')
             });
+        }
+
+        var bar_interval, dots_interval, freq = 0;
+        function animate_loading(){
+            $('.loading_bar_container').fadeIn(0);
+            ++freq;
+            if(freq == 1){
+                $('.loading_bar1').animate({'margin-left': '+=125%'}, 2500);
+                $('.loading_bar1').animate({'margin-left': '-=100%'}, 2000);
+            }
+            run_1();
+            dots_interval = setInterval(run_2, 1300);
+            bar_interval = setInterval(run_1, 4000);
+            function run_1(){
+                $('.loading_bar1').animate({'margin-left': '+=100%'}, 2000);
+                $('.loading_bar1').animate({'margin-left': '-=100%'}, 2000);
+                $('.dots').empty();
+            }
+            function run_2(){
+                $('.dots').append(' .');
+            }
         }
     </script>
 @endpush
