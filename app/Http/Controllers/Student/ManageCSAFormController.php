@@ -31,12 +31,16 @@ class ManageCSAFormController extends Controller
 {
     private function mail_notifyCSAFormCreation($yearly_student_id){
         $user = Auth::user();
-        $user->notify(new CSAFormCreated($user->student->yearly_students()->where('id', $yearly_student_id)->first()->academic_year));
+        dispatch(function() use(&$user, &$yearly_student_id){
+            $user->notify(new CSAFormCreated($user->student->yearly_students()->where('id', $yearly_student_id)->first()->academic_year));
+        });
     }
 
     private function mail_notifyCSAFormSubmission($yearly_student_id){
         $user = Auth::user();
-        $user->notify(new CSAFormSubmitted($user->student->yearly_students()->where('id', $yearly_student_id)->first()->academic_year));
+        dispatch(function() use(&$user, &$yearly_student_id){
+            $user->notify(new CSAFormSubmitted($user->student->yearly_students()->where('id', $yearly_student_id)->first()->academic_year));  
+        });
     }
 
     public function show_initialView(){
@@ -560,12 +564,7 @@ class ManageCSAFormController extends Controller
                     $ac_path[1] == true ? filemtime(storage_path('app\private\\' . $achievements[1]->proof_path)) : '0',
                     $ac_path[2] == true ? filemtime(storage_path('app\private\\' . $achievements[2]->proof_path)) : '0',
                 )
-                ),
-            'ac_ids' => $achievements->count() > 0 ? array(
-                $achievements[0]->id,
-                $achievements[1]->id,
-                $achievements[2]->id,
-            ) : null
+            ),
         ]);
     }
 }

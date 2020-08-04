@@ -168,8 +168,12 @@ class ManageCSAFormController extends Controller
             $csa_form->yearly_student->save();
 
             $yearly_student = $csa_form->yearly_student;
+
             // Email notification
-            $yearly_student->student->user->notify(new CSAFormNominated($yearly_student->academic_year, $choice->yearly_partner->partner));
+            dispatch(function() use (&$yearly_student, &$choice){
+                $yearly_student->student->user->notify(new CSAFormNominated($yearly_student->academic_year, $choice->yearly_partner->partner));
+            });
+
             session()->put('success_notif', 'You have successfuly NOMINATED 1 student! An email has also been sent to the student.');
         }
         else{
