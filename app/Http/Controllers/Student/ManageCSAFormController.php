@@ -152,6 +152,7 @@ class ManageCSAFormController extends Controller
             $failed = session('failed_notif');
         }
 
+        session()->forget(['success_notif', 'failed_notif']);
         $csa_form = CSA_Form::where('yearly_student_id', session('csa_form_yearly_student_id'))->first();
 
         $major = $csa_form->yearly_student->student->major->name;
@@ -378,7 +379,7 @@ class ManageCSAFormController extends Controller
         $academic_info = Academic_Info::where('csa_form_id', session('csa_form_id'))->first();
         
         if($academic_info == null){
-            session('failed_notif', 'Please fill in your academic information before proceeding to application details!');
+            session()->put('failed_notif', 'Please fill in your academic information before proceeding to application details!');
             return redirect(route('student.csa-form.csa-page2'));
         }
 
