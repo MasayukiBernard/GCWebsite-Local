@@ -21,9 +21,9 @@
 </head>
 <body style="text-align: center; margin: 0; min-height: 100%;">
     @if($is_staff)
-    <img src="http://localhost:8000/photos/{{$table}}_id={{$id}}&opt={{$column}}&mt={{$last_modified}}" class="display-image">
+    <img src="/photos/{{$table}}_id={{$id}}&opt={{$column}}&mt={{$last_modified}}" class="display-image">
     @else
-        <img src="http://localhost:8000/photos/mt={{$last_modified}}&ys={{$id}}&opt={{$req}}{{$opt_id != null ? $opt_id : ''}}" class="display-image">
+        <img src="/photos/mt={{$last_modified}}&ys={{$id}}&opt={{$req}}{{$opt_id != null ? $opt_id : ''}}" class="display-image">
     @endif
 </body>
 </html>
