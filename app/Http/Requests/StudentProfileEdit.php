@@ -34,7 +34,7 @@ class StudentProfileEdit extends FormRequest
             'flazz-card' => [($student->flazz_card_picture_path == '-' ? 'required' : ''), 'mimes:jpeg,png,jpg', 'max:2048'],
             'name' => ['required', 'string', 'max:75', 'regex:/^[a-zA-Z0-9]{1}[a-zA-Z0-9\s]{1,73}[a-zA-Z0-9]{1}$/'],
             'gender' => ['required', 'string', 'max:1', 'in:M,F'],
-            'email' => ['required', 'email', 'max:50', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:50', 'unique:users,email,' . $student->user->id],
             'mobile' => ['required', 'regex:/^[1-9]{1}[0-9]{1,12}$/'],
             'telp-num' => ['required', 'regex:/^[1-9]{1}[0-9]{1,12}$/'],
             'major' => ['required', 'exists:majors,id'],
