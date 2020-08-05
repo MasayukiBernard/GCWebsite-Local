@@ -50,7 +50,7 @@ class VerificationController extends Controller
         $this->middleware('auth');
         $this->middleware('signed')->only('verify');
         $this->middleware('throttle:60,1')->only('verify');
-        $this->middleware('throttle:30,1')->only('resend');
+        $this->middleware('throttle:60,1')->only('resend');
     }
 
     // Overrided Functions
