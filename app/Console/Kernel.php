@@ -27,9 +27,6 @@ class Kernel extends ConsoleKernel
     {
         $schedule->call(function () {
             // Delete temporary files in defined directories
-            // Staffs' temp files
-            Storage::disk('private')->deleteDirectory('staffs/temp/batch_students_templates');
-            Storage::disk('private')->makeDirectory('staffs/temp/batch_students_templates');
             // Students' temp files
             Storage::disk('private')->deleteDirectory('student/temp/pictures');
             Storage::disk('private')->makeDirectory('student/temp/pictures');
