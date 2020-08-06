@@ -30,7 +30,7 @@ class ManageStudentController extends Controller
         $student = new Student();
         $student->nim = $nim;
         $student->user_id = $user->id;
-        $student->major_id = session('first_major_id');
+        $student->major_id = Major::orderBy('name')->first()->id;
         $student->place_birth = '-';
         $student->date_birth = date('Y-m-d', 0);
         $student->nationality = '-';
@@ -95,155 +95,81 @@ class ManageStudentController extends Controller
         return response()->json(['failed' => true]);
     }
 
-    public function show_createPage(){
-        $first_major_id = Major::first();
-        if($first_major_id == null){
-            session()->put('failed_notif', 'Cannot make new student record(s) yet, please make at least 1 major record!');
-            return redirect(route('staff.student.page'));
-        }
-        return view('staff_side/master_student/create-type');
-    }
-
-    public function download_template(){
-        return Storage::disk('private')->download('staffs/templates/create-batch-student-template.xlsx');
-    }
-
-    public function show_createSinglePage(){
-        return view('staff_side/master_student/create-single');
-    }
-
-    public function confirm_create_single(Request $request){
-        $first_major_id = Major::first();
-        if($first_major_id == null){
-            session()->put('failed_notif', 'Cannot make new student record(s) yet, please make at least 1 major record!');
-            return redirect(route('staff.student.page'));
-        }
-
-        $request->flash();
+    public function set_students(Request $request){
         $validatedData = $request->validate([
-            'nim' => ['required', 'string', 'digits:10', 'unique:students,nim'],
-            'password' => ['required', 'string', 'max:100']
+            'sum' => ['required', 'numeric', 'min:1']
         ]);
-        $request->session()->put('validatedData', $validatedData);
-        $validatedData['password'] = Str::substr($validatedData['password'], 0, 5) . '.......';
 
-        $request->session()->put('first_major_id', $first_major_id->id);
-        return view ('staff_side/master_student/confirm-create-single', ['validatedData' => $validatedData, 'first_major' => Major::find($first_major_id->id)]);
+        session()->forget('set_student_sum');
+        session()->put('set_student_sum', $validatedData['sum']);
+
+        return redirect(route('staff.student.create-page'));
     }
 
-    public function create_single(){
-        $selected_major = Major::where('id', session('first_major_id'))->first();
-        if($selected_major == null){
-            session()->put('failed_notif', 'Failed to create student record! Missing referred major record!');
-            return redirect(route('staff.student.page'));
-        }
-
-        $input = session('validatedData');
-        $this->create_new_student($input['nim'], $input['password']);
-        session()->forget('validatedData');
-
-        session()->put('success_notif', 'You have successfuly CREATED 1 new student record!');
-        return redirect(route('staff.student.page'));
-    }
-
-    public function show_createBatchPage(){
-        $view_data = [];
-        if(session('template_error') == true){
-            $view_data = ['error' => true];
-            session()->forget('template_error');
-        }
-
-        return view('staff_side/master_student/create-batch', $view_data);
-    }
-
-    public function confirm_create_batch(Request $request){
+    public function show_createPage(){
+        session()->forget('create_students');
+        
         $first_major_id = Major::first();
         if($first_major_id == null){
             session()->put('failed_notif', 'Cannot make new student record(s) yet, please make at least 1 major record!');
             return redirect(route('staff.student.page'));
         }
 
-        $validator = Validator::make($request->all(),[
-            'batch-students' => ['required', 'mimes:txt', 'mimetypes:text/plain']
-        ],[],
-        [
-            'batch-students' => 'uploaded file'
+        return view('staff_side\master_student\create');
+    }
+
+    public function confirm_create(Request $request){
+        $first_major_id = Major::orderBy('name')->first();
+        if($first_major_id == null){
+            session()->put('failed_notif', 'Cannot make new student record(s) yet, please make at least 1 major record!');
+            return redirect(route('staff.student.page'));
+        }
+
+        $validator = Validator::make($request->all(), [
+            'nims.*' => ['required_with:passwords.*', 'nullable', 'string', 'digits:10', 'unique:students,nim'],
+            'passwords.*' => ['required_with:nims.*', 'nullable', 'string', 'max:100', 'regex:/\\A[a-zA-Z0-9`~!@#\\$%\\^&\\*\\(\\)_\\-\\+=\\[\\{\\]\\}\\\\\\|;:\\\'",<\\.>\\/\\?]+\\z/']
+        ], [], [
+            'nims.*' => 'nim',
+            'passwords.*' => 'password'
         ]);
-        
+
         if ($validator->fails()) {
-            return redirect(route('staff.student.create-page-batch'))
+            return redirect(route('staff.student.create-page'))
                         ->withErrors($validator)
                         ->withInput();
         }
 
-        $temp_file_path = Storage::disk('private')->putFile('staffs/temp/batch_students_templates', $request->file('batch-students'));
-        $request->session()->put('uploaded_temp_file_path', $temp_file_path);
-        $file_data = Storage::disk('private')->get($temp_file_path);
+        $request->session()->put('create_students', $request->except('_token'));
 
-        if (strcmp(substr($file_data, 29, 14), "NIM\tPassword\r\n") == 0){
-            $trimmed_data = Str:: after($file_data, "NIM\tPassword\r\n");
-
-            $current = Str::before($trimmed_data, "\r\n");
-            $next = Str::after($trimmed_data, "\r\n");
-
-            $must_be_nim_regex = '/\d{10}/';
-            $must_be_pass_regex = '/^[^\s]([a-zA-Z0-9_~`\\-!@#\\$%\\^&\\*\\(\\)-\\+=\\{}\\[\\]\\\\\\|:";\'<>,\\.\\?\/])+\\z/';  
-
-            $enrolling_students = array();
-
-            $i = 0;
-            while(!empty($current) && strcmp($current, "\t") != 0){
-                $nim = Str::before($current, "\t");
-                $pass = Str::between($current, "\t", "\r");
-                if(!preg_match($must_be_nim_regex, $nim) || !preg_match($must_be_pass_regex, $pass) || strlen($pass) > 100){
-                    // Return error response
-                    session()->put('template_error', true);
-                    return redirect(route('staff.student.create-page-batch'));
-                }
-                $enrolling_students[] = array("nim" => $nim, "password" => Str::substr($pass, 0, 5) . '......');
-                $current = Str::before($next, "\r\n");
-                $next = Str::after($next, "\r\n");
-            }
-        }
-
-        $request->session()->put('first_major_id', $first_major_id->id);
-        return view('staff_side/master_student/confirm-create-batch', [
-            'enrolling_students' => $enrolling_students, 
-            'first_major' => Major::find($first_major_id->id)
+        return view('staff_side\master_student\confirm-create',[
+            'first_major' => Major::orderBy('name')->first(),
+            'enrolling_students' => $request->except('_token')
         ]);
     }
 
-    public function create_batch(){
-        if(session('uploaded_temp_file_path') != null){
-            $selected_major = Major::where('id', session('first_major_id'))->first();
-            if($selected_major == null){
-                session()->put('failed_notif', 'Failed to create student record(s)! Missing major record!');
-                return redirect(route('staff.student.page'));
-            }
+    public function create(){
+        $first_major_id = Major::orderBy('name')->first();
+        if($first_major_id == null){
+            session()->put('failed_notif', 'Cannot make new student record(s) yet, please make at least 1 major record!');
+            return redirect(route('staff.student.page'));
+        }
 
-            $temp_file_path = session('uploaded_temp_file_path');
-            session()->forget('uploaded_temp_file_path');
-            $file_data = Storage::disk('private')->get($temp_file_path);
-
-            $trimmed_data = Str:: after($file_data, "NIM\tPassword\r\n");
-            $current = Str::before($trimmed_data, "\r\n");
-            $next = Str::after($trimmed_data, "\r\n");
-
+        $sess_data = session('create_students');
+        if($sess_data != null){
+            $i = 0;
             $total = 0;
-            while(!empty($current) && strcmp($current, "\t") != 0){
-                $nim = Str::before($current, "\t");
-                $pass = Str::between($current, "\t", "\r");
-
-                $this->create_new_student($nim, $pass);
-
-                $current = Str::before($next, "\r\n");
-                $next = Str::after($next, "\r\n");
-                ++$total;
+            foreach($sess_data['nims'] as $nim){
+                if($nim != null && $sess_data['passwords'][$i] != null){
+                    $this->create_new_student($nim, $sess_data['passwords'][$i]);
+                    ++$total;
+                }
+                ++$i;
             }
 
             session()->put('success_notif', 'You have successfuly CREATED ' . $total . ' new student record!');
         }
 
+        session()->forget(['set_student_sum', 'create_students']);
         return redirect(route('staff.student.page'));
     }
 
