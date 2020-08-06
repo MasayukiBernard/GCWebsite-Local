@@ -134,15 +134,10 @@ Route::middleware('auth', 'throttle:150,15')->group(function(){
                         Route::get('/', $student_controller . 'show_studentPage')->name('page');
                         Route::post('/binusian-year/{year}/sort-by/{field}/{sort_type}', $student_controller . 'show_StudentsByYear');
                         
+                        Route::post('/create/set', $student_controller . 'set_students')->name('set-students');
                         Route::get('/create', $student_controller . 'show_createPage')->name('create-page');
-                        Route::post('/download/batch-template', $student_controller . 'download_template')->name('download-batch-template');
-                        Route::get('/create/single', $student_controller . 'show_createSinglePage')->name('create-page-single');
-                        Route::post('/create/single/confirm', $student_controller . 'confirm_create_single')->name('create-single-confirm');
-                        Route::post('/create/single/student', $student_controller . 'create_single')->name('create-single');
-
-                        Route::get('/create/batch', $student_controller . 'show_createBatchPage')->name('create-page-batch');
-                        Route::post('/create/batch/confirm', $student_controller . 'confirm_create_batch')->name('create-batch-confirm');
-                        Route::post('/create/batch/student', $student_controller . 'create_batch')->name('create-batch');
+                        Route::post('/create/confirm', $student_controller . 'confirm_create')->name('create-confirm');
+                        Route::post('/create/students', $student_controller . 'create')->name('create');
 
                         Route::get('/details/{user}', $student_controller . 'show_studentDetails');
 
