@@ -117,15 +117,16 @@
                                 </tr>
                                 <tr>
                                     <td colspan="3" class="align-middle border-top-0 text-center">
-                                        <div id="submission_chart" style="height: 350px;" class="text-center mt-n5 mb-0"></div>
-                                        <div class="row loading_bar_container">
-                                            <div class="col-12">
-                                                <div class="row" style="position: relative;">
-                                                    <div class="col-6 p-0 text-right">Loading</div>
-                                                    <div class="dots" class="col-6 p-0"></div>
-                                                </div>
-                                                <div class="progress mt-n4" style="height: 25px;">
-                                                    <div class="loading_bar1 progress-bar progress-bar-striped progress-bar-animated bg-success rounded" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%; margin-left: -50%;"></div>
+                                        <div id="submission_chart" style="height: 350px;" class="text-center mt-n5 mb-0">
+                                            <div class="col-12 loading_bar_container mt-5 pt-2">
+                                                <div class="col-12">
+                                                    <div class="row" style="position: relative;">
+                                                        <div class="col-6 p-0 text-right">Loading</div>
+                                                        <div class="dots" class="col-6 p-0"></div>
+                                                    </div>
+                                                    <div class="progress mt-n4" style="height: 25px;">
+                                                        <div class="loading_bar1 progress-bar progress-bar-striped progress-bar-animated bg-success rounded" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%; margin-left: -50%;"></div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -136,15 +137,16 @@
                                 </tr>
                                 <tr>
                                     <td colspan="3" class="align-middle border-top-0 text-center">
-                                        <div id="nomination_chart" style="height: 350px;" class="text-center mt-n5 mb-0"></div>
-                                        <div class="row loading_bar_container">
-                                            <div class="col-12">
-                                                <div class="row" style="position: relative;">
-                                                    <div class="col-6 p-0 text-right">Loading</div>
-                                                    <div class="dots" class="col-6 p-0"></div>
-                                                </div>
-                                                <div class="progress mt-n4" style="height: 25px;">
-                                                    <div class="loading_bar1 progress-bar progress-bar-striped progress-bar-animated bg-success rounded" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%; margin-left: -50%;"></div>
+                                        <div id="nomination_chart" style="height: 350px;" class="text-center mt-n5 mb-0">
+                                            <div class="col-12 loading_bar_container mt-5 pt-2">
+                                                <div class="col-12">
+                                                    <div class="row" style="position: relative;">
+                                                        <div class="col-6 p-0 text-right">Loading</div>
+                                                        <div class="dots" class="col-6 p-0"></div>
+                                                    </div>
+                                                    <div class="progress mt-n4" style="height: 25px;">
+                                                        <div class="loading_bar1 progress-bar progress-bar-striped progress-bar-animated bg-success rounded" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%; margin-left: -50%;"></div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -241,15 +243,15 @@
                 else if(isset($initial_percentages)){
                     echo "show_submission_chart(" . $initial_percentages['is_submitted'] . ", " . $initial_percentages['con_is_submitted'] . ");";
                     echo "show_nomination_chart(" . $initial_percentages['is_nominated'] . ", " . $initial_percentages['con_is_nominated'] . ");";
-                    echo "clearInterval(bar_interval);";
-                    echo "clearInterval(dots_interval);";
-                    echo "$('.loading_bar_container').fadeOut(750);";
                 }
                 else{
                     echo "$('.no-data-alert').remove();";
                     echo "$('#submission_chart').before('<span class=\"h4 bg-warning mb-0 no-data-alert\">No Data Yet!!</span>');";
                     echo "$('#nomination_chart').before('<span class=\"h4 bg-warning mb-0 no-data-alert\">No Data Yet!!</span>');";
                 }
+                echo "clearInterval(bar_interval);";
+                echo "clearInterval(dots_interval);";
+                echo "$('.loading_bar_container').fadeOut(750);";
             ?>
         };
 
