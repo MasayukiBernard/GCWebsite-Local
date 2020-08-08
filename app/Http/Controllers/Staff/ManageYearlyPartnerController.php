@@ -24,6 +24,7 @@ class ManageYearlyPartnerController extends Controller
                     ->select('partners.id as id', 'partners.name as name', 'partners.location', 'majors.name as major_name')
                     ->where('partners.latest_deleted_at', null)->where('majors.latest_deleted_at', null)
                     ->whereNotIn('partners.id', Arr::pluck($partner_ids, 'partner_id'))
+                    ->orderBy('majors.name')
                     ->get();
     }
 
