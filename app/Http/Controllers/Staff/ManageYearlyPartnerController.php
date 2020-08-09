@@ -58,12 +58,18 @@ class ManageYearlyPartnerController extends Controller
         }
         session()->forget(['success_notif', 'failed_notif']);
         
-        return view('staff_side/yearly_partner/details', [
-            'academic_year' => Academic_Year::where('id', $academic_year_id)->first(),
-            'all_majors' => Major::orderBy('name')->get(),
-            'success' => $success,
-            'failed' => $failed
-        ]);
+        $academic_year = Academic_Year::where('id', $academic_year_id)->first();
+
+        if($academic_year != null){
+            return view('staff_side/yearly_partner/details', [
+                'academic_year' => $academic_year,
+                'all_majors' => Major::orderBy('name')->get(),
+                'success' => $success,
+                'failed' => $failed
+            ]);
+        }
+
+        abort(404);
     }
 
     public function get_yearlyPartnerDetails($academic_year_id, $major_id, $field, $sort_type){
