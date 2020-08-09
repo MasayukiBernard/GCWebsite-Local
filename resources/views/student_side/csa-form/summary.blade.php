@@ -197,6 +197,7 @@
                                             <a target="_blank" href="{{route('student.see-image', ['last_modified' => $filemtimes['achievements'][$i], 'yearly_student_id' => $ysid, 'requested_image' => 'achievement-proof', 'optional_id' => $achievement->id])}}">See Image</a>
                                         </td>
                                     </tr>
+                                    <?php ++$i;?>
                                 @endforeach
                             @else
                                 <tr>
