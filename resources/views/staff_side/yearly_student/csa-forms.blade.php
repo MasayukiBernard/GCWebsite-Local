@@ -20,7 +20,7 @@
                                     </tr>
                                     <tr>
                                         <th scope="row">Created at</th>
-                                        <td>{{$yearly_student->csa_form->created_at}}</td>
+                                        <td>{{$yearly_student->csa_form->latest_created_at}}</td>
                                     </tr>
                                     <tr>
                                         <td colspan="2"><a href="{{route('staff.csa-forms.details', ['csa_form_id' => $yearly_student->csa_form->id])}}" role="button" class="btn btn-primary">See Details</a></td>
