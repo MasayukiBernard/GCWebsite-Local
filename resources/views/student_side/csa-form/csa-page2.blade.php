@@ -194,6 +194,10 @@ Next &#x0226B;
 
 @push('scripts')
      <script>
+          function close_notif(){
+               $('#notification_bar').fadeOut(500);
+          }
+          
           function changeLabel(label_id, input_id){
                document.getElementById(label_id).innerHTML = document.getElementById(input_id).files[0].name;
           }
