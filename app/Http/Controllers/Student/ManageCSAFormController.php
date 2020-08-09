@@ -311,13 +311,37 @@ class ManageCSAFormController extends Controller
                 }
             }
 
+            $success = null;
+            if(session('success_notif') != null){
+                $success = session('success_notif');
+            }
+
             return view('student_side\csa-form\csa-page3', [
+                'success' => $success,
                 'achievements' => $achievements,
                 'ysid' => session('csa_form_yearly_student_id'),
                 'filemtimes' => $filemtimes,
                 'proof_ids' => $proof_ids
             ]);
         }
+    }
+
+    public function delete_achievement(Request $request){
+        $validatedData = $request->validate([
+            'id' => ['required', 'integer', 'min:1', 'exists:achievements,id']
+        ]);
+
+        $achievement = Achievement::where('id', $request['id'])->first();
+
+        if(strcmp($achievement->csa_form->yearly_student->nim, Auth::user()->student->nim) == 0){
+            Storage::disk('private')->move($achievement->proof_path, 'students/trashed/achievements/' . Str::afterLast($achievement->proof_path, '/'));
+            $achievement->delete();
+            
+            session()->put('success_notif', 'You have succesfuly deleted an uploaded achievement!');
+            return redirect(route('student.csa-form.csa-page3'));
+        }
+
+        abort(403);
     }
 
     public function page3_insert(CSAAchievement $request){
@@ -329,10 +353,6 @@ class ManageCSAFormController extends Controller
         $validatedData = $request->validated();
 
         $achievements = Achievement::where('csa_form_id', session('csa_form_id'))->orderBy('latest_created_at')->get();
-
-        // foreach($validatedData as $key => $val){
-        //     echo $key . ': ' . $val . '<br>';
-        // }
 
         for($i = 0; $i < 3; ++$i){
             if($validatedData['name-' . $i] != null){

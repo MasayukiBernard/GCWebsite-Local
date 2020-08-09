@@ -225,18 +225,26 @@ Route::middleware('auth', 'throttle:150,15')->group(function(){
                                     $csa_controller = 'Student\ManageCSAFormController@';
                                     Route::get('/csa-page-1', $csa_controller . 'show_insertPage1')->name('csa-page1');
                                     Route::post('/csa-page-1', $csa_controller . 'goto_page2')->name('after-page1');
+
                                     Route::get('/csa-page-2', $csa_controller . 'show_insertPage2')->name('csa-page2');
                                     Route::post('/csa-page-2', $csa_controller . 'page2_insert')->name('after-page2');
+
                                     Route::get('/csa-page-2a', $csa_controller . 'show_insertPage2a')->name('csa-page2a');
                                     Route::post('/csa-page-2a', $csa_controller . 'page2a_insert')->name('after-page2a');
+
                                     Route::get('/csa-page-3', $csa_controller . 'show_insertPage3')->name('csa-page3');
+                                    Route::post('/csa-page-3/delete-achievement', $csa_controller . 'delete_achievement')->name('delete-achievement');
                                     Route::post('/csa-page-3', $csa_controller . 'page3_insert')->name('after-page3');
+
                                     Route::get('/csa-page-4', $csa_controller . 'show_insertPage4')->name('csa-page4');
                                     Route::post('/csa-page-4', $csa_controller . 'page4_insert')->name('after-page4');
+
                                     Route::get('/csa-page-5', $csa_controller . 'show_insertPage5')->name('csa-page5');
                                     Route::post('/csa-page-5', $csa_controller . 'page5_insert')->name('after-page5');
+
                                     Route::get('/csa-page-6', $csa_controller . 'show_insertPage6')->name('csa-page6');
                                     Route::post('/csa-page-6', $csa_controller . 'page6_insert')->name('after-page6');
+
                                     Route::get('/csa-page-7', $csa_controller . 'show_insertPage7')->name('csa-page7');
                                     Route::post('/csa-page-7', $csa_controller . 'page7_insert')->name('after-page7');
                                 });

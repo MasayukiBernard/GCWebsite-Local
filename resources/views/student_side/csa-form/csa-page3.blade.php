@@ -77,6 +77,8 @@
                                         @isset($achievements[$i])
                                             <div class="col-md-12">
                                                 <a target="_blank" href="/student/{{$filemtimes[$i]}}/{{$ysid}}/image/achievement-proof/{{$proof_ids[$i]}}">See Existing Achievement Proof</a>
+                                                - 
+                                                <button type="button" class="btn btn-sm btn-danger" onclick="show_deleteModal({{$achievements[$i]->id}}, {{$i}});">Delete Achievement</button>
                                             </div>
                                         @endisset
                                     </div>
@@ -111,6 +113,26 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        Please confirm the deletion of your <b><span id="achievement_order"></span></b> achievement!
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" onclick="document.getElementById('deleteForm').submit();">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('return-route')
@@ -127,6 +149,10 @@ Next &#x0226B;
 
 @push('scripts')
     <script>
+        function close_notif(){
+            $('#notification_bar').fadeOut(500);
+        }
+
         function changeLabel(label_id, input_id){
             document.getElementById(label_id).innerHTML = document.getElementById(input_id).files[0].name;
         }
@@ -134,6 +160,15 @@ Next &#x0226B;
         function changeUpdate(){
             $('#next_btn').addClass('d-none');
             $('#submit_btn').removeClass('d-none');
+        }
+
+        function show_deleteModal(id, order){
+            document.getElementById('deleteForm').id.value = id;
+
+            var callings = ['first', 'second', 'third'];
+            $('#achievement_order').empty();
+            $('#achievement_order').append(callings[order]);
+            $('#deleteModal').modal();
         }
     </script>
 @endpush
