@@ -76,7 +76,7 @@
                                     <div class="row">
                                         @isset($achievements[$i])
                                             <div class="col-md-12">
-                                                <a target="_blank" href="/student/{{$filemtimes[$i]}}/{{$ysid}}/image/achievement-proof/{{$proof_ids[$i]}}">See Existing Achivement Proof</a>
+                                                <a target="_blank" href="/student/{{$filemtimes[$i]}}/{{$ysid}}/image/achievement-proof/{{$proof_ids[$i]}}">See Existing Achievement Proof</a>
                                             </div>
                                         @endisset
                                     </div>
