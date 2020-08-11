@@ -41,8 +41,13 @@
                                         <div class="col-md-3 p-2 text-center border rounded bg-secondary text-light">
                                             NIM
                                         </div>
-                                        <div class="col-md-8 p-2 text-center border rounded bg-secondary text-light">
-                                            PASSWORD
+                                        <div class="col-md-8 p-2 border rounded bg-secondary text-light">
+                                            <div class="row px-2">
+                                                <div class="col-md-10 text-center">PASSWORD</div>
+                                                <div class="col-md-2 text-right">
+                                                    <button type="button" class="btn btn-primary btn-sm p-0 px-1" onclick="show_autoFillModal();">Auto Fill</button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -79,4 +84,47 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="autoFillModal" tabindex="-1" role="dialog" aria-labelledby="autoFillModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="autoFillModalLabel">Autofill Passwords</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="autofill_value-name" class="col-form-label">Autofill the passwords with the below string:</label>
+                        <input type="text" class="form-control" id="autofill_value">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="autoFillModal();">Confirm</button>
+                </div>
+            </div>
+        </div>
+      </div>
 @endsection
+
+@push('scripts')
+    <script>
+        function show_autoFillModal(){
+            document.getElementById('autofill_value').value = '';
+            $('#autoFillModal').modal();
+        }
+
+        function autoFillModal(){
+            var input = document.getElementById('autofill_value').value;
+            if(input.length != 0){
+                var collection = document.getElementsByName("passwords[]");
+                for(var i = 0; i < collection.length; ++i){
+                    collection[i].value = input;
+                }
+            }
+            $('#autoFillModal').modal('hide');
+        }
+    </script>
+@endpush
