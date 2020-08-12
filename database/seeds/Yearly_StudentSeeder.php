@@ -19,7 +19,7 @@ class Yearly_StudentSeeder extends Seeder
         ]);
         for($i = 4; $i < 10; $i++){
             DB::table('yearly_students')->insert([
-                'nim'=> '210100000' . $i-3,
+                'nim'=> '210100000' . ($i-3),
                 'academic_year_id' => 8,
                 'is_nominated' => $i > 4 ? false : true
             ]);
