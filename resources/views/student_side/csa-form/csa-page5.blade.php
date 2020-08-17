@@ -16,11 +16,11 @@
             <div class="row">
                 <div class="col-md-1 pr-0">
                     <div class="custom-control custom-radio">
-                        <input type="radio" id="male" name="gender" class="custom-control-input" value="M" onclick="changeUpdate();" {{old('gender') != null ? (old('gender') == 'M' ? 'checked' : '') : isset($emergency) ? ($emergency->gender == 'M' ? 'checked' : '') : ''}}>
+                        <input type="radio" id="male" name="gender" class="custom-control-input" value="M" onclick="changeUpdate();" {{old('gender') != null ? (old('gender') == 'M' ? 'checked' : '') : (isset($emergency) ? ($emergency->gender == 'M' ? 'checked' : '') : '')}}>
                         <label class="custom-control-label" for="male">Mr.</label>
                     </div>
                     <div class="custom-control custom-radio">
-                        <input type="radio" id="female" name="gender" class="custom-control-input" value="F" onclick="changeUpdate();" {{old('gender') != null ? (old('gender') == 'F' ? 'checked' : '') : isset($emergency) ? ($emergency->gender == 'F' ? 'checked' : '') : ''}}>
+                        <input type="radio" id="female" name="gender" class="custom-control-input" value="F" onclick="changeUpdate();" {{old('gender') != null ? (old('gender') == 'F' ? 'checked' : '') : (isset($emergency) ? ($emergency->gender == 'F' ? 'checked' : '') : '')}}>
                         <label class="custom-control-label" for="female">Mrs.</label>
                     </div>
                 </div>
