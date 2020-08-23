@@ -24,13 +24,13 @@ Route::fallback(function () {
 })->middleware('throttle:30,1');
 
 // Auth route, with register feature turned off and default account email verification
-Auth::routes(['register' => false, 'verify' => true]);
+Auth::routes(['register' => false, 'verify' => true, 'reset' => false]);
 
 // Routes that can be accessed only by
 // -> Authenticated users
 Route::middleware('auth', 'throttle:150,15')->group(function(){
     Route::get('/test', function(){
-        
+
     });
 
     // Prevent this route to be accessed directly from GET requests
@@ -170,6 +170,7 @@ Route::middleware('auth', 'throttle:150,15')->group(function(){
 
                         Route::get('/', $csa_form_controller . 'show_page')->name('page');
                         Route::get('/academic-year/{academic_year_id}/major/{major_id}', $csa_form_controller . 'show_CSAForms');
+                        Route::get('/spreadsheet/{academic_year_id}/{major_id}', 'Staff\ManageCSAFormController@create_spreadsheet')->name('create-spreadsheet');
                         Route::post('/academic-year/{academic_year_id}/major/{major_id}/sort-by/{field}/{sort_type}', $csa_form_controller . 'get_sortedCSAForms');
 
                         Route::get('/details/{csa_form_id}', $csa_form_controller . 'show_detailsPage')->name('details');

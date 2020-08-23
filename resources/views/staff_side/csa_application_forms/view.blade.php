@@ -37,18 +37,25 @@
                 <div class="card">
                     <div class="card-header">
                         <h2>CSA Application Forms</h2>
-                        <table class="table table-sm mb-0">
-                            <tr>
-                                <td>Academic Year</td>
-                                <td>
-                                    : {{$academic_year->starting_year}}/{{$academic_year->ending_year}} - {{$academic_year->odd_semester ? "Odd" : "Even"}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Major</td>
-                                <td>: {{$major->name}}</td>
-                            </tr>
-                        </table>
+                        <div class="d-flex align-items-end">
+                            <table class="table table-bordered table-sm mb-0 d-flex col-10 p-0">
+                                <tbody class="col-12 p-0">
+                                    <tr class="d-flex">
+                                        <td class="col-4">Academic Year</td>
+                                        <td class="col-8">
+                                            {{$academic_year->starting_year}}/{{$academic_year->ending_year}} - {{$academic_year->odd_semester ? "Odd" : "Even"}}
+                                        </td>
+                                    </tr>
+                                    <tr class="d-flex">
+                                        <td class="col-4">Major</td>
+                                        <td class="col-8">{{$major->name}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-2 p-0 text-center">
+                                <a class="btn btn-sm btn-success py-2" href="{{route('staff.csa-forms.create-spreadsheet', ['academic_year_id' => $academic_year->id, 'major_id' => $major->id])}}" role="button">Download Excel Format</a>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered table-hover table-striped m-0">
