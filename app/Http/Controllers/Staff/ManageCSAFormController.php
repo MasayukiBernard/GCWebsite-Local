@@ -165,10 +165,13 @@ class ManageCSAFormController extends Controller
                 );
 
                 $writer = new Xlsx($spreadsheet);
-                $writer->save('..\\storage\\app\\private\\staffs\\temp\\' . time() . '_CSAForms_' . $academic_year->starting_year . '-' . $academic_year->ending_year . '-' . ($academic_year->odd_semester ? 'Odd' : 'Even') . '_' . Str::replaceFirst(' ', '', $major->name) . '.xlsx');
+                $file_name = time() . '_CSAForms_' . $academic_year->starting_year . '-' . $academic_year->ending_year . '-' . ($academic_year->odd_semester ? 'Odd' : 'Even') . '_' . Str::replaceFirst(' ', '', $major->name) . '.xlsx';
+                $writer->save('..\\storage\\app\\private\\staffs\\temp\\' . $file_name);
 
                 $spreadsheet->disconnectWorksheets();
                 unset($spreadsheet);
+
+                return Storage::disk('private')->download('staffs/temp/' . $file_name);
 
                 $sessData = session('last_viewed_csa_forms_list');
                 return redirect('staff/csa-forms/academic-year/'. $sessData['academic_year_id'] . '/major/' . $sessData['major_id']);

@@ -28,13 +28,18 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             // Delete temporary files in defined directories
             // Students' temp files
-            Storage::disk('private')->deleteDirectory('student/temp/pictures');
-            Storage::disk('private')->makeDirectory('student/temp/pictures');
-            Storage::disk('private')->deleteDirectory('student/temp/ids');
-            Storage::disk('private')->makeDirectory('student/temp/ids');
-            Storage::disk('private')->deleteDirectory('student/temp/national_ids');
-            Storage::disk('private')->makeDirectory('student/temp/national_ids');
+            Storage::disk('private')->deleteDirectory('students/temp/pictures');
+            Storage::disk('private')->makeDirectory('students/temp/pictures');
+            Storage::disk('private')->deleteDirectory('students/temp/ids');
+            Storage::disk('private')->makeDirectory('students/temp/ids');
+            Storage::disk('private')->deleteDirectory('students/temp/national_ids');
+            Storage::disk('private')->makeDirectory('students/temp/national_ids');
         })->daily();
+
+        $schedule->call(function(){
+            Storage::disk('private')->deleteDirectory('staffs/temp');
+            Storage::disk('private')->makeDirectory('staffs/temp');
+        })->everyFiveMinutes();
     }
 
     /**
