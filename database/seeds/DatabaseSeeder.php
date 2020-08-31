@@ -12,10 +12,10 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            MajorSeeder::class,
-            PartnerSeeder::class,
-            Academic_YearSeeder::class,
-            Yearly_PartnerSeeder::class,
+            // MajorSeeder::class,
+            // PartnerSeeder::class,
+            // Academic_YearSeeder::class,
+            // Yearly_PartnerSeeder::class,
             UserSeeder::class,
             StaffSeeder::class,
             // StudentSeeder::class,

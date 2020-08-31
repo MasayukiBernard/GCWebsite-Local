@@ -126,7 +126,7 @@ class ManageStudentController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'nims.*' => ['required_with:passwords.*', 'nullable', 'string', 'digits:10', 'unique:students,nim'],
+            'nims.*' => ['required_with:passwords.*', 'nullable', 'string', 'digits:10', 'distinct', 'unique:students,nim'],
             'passwords.*' => ['required_with:nims.*', 'nullable', 'string', 'max:100', 'regex:/\\A[a-zA-Z0-9`~!@#\\$%\\^&\\*\\(\\)_\\-\\+=\\[\\{\\]\\}\\\\\\|;:\\\'",<\\.>\\/\\?]+\\z/']
         ], [], [
             'nims.*' => 'nim',
