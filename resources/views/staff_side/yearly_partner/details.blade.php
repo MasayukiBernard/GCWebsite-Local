@@ -202,6 +202,7 @@
         }
 
         function get_partners(sort_by){
+            $("#yearly_partner_data").empty();
             if(major_id > 0){
                 var sort_type = 'a';
                 if(sort_states[sort_by] != 'n'){
@@ -229,7 +230,6 @@
                     },
                     success: function(response_data){
                         if(response_data['failed'] === false){
-                            $("#yearly_partner_data").empty();
                             var data = response_data['yearly-partners'];
                             $.each(data, function(index, value){
                                 $("#yearly_partner_data").append(
