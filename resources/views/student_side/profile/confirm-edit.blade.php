@@ -70,7 +70,13 @@
         </tr>
         <tr>
             <th scope="row">Nationality</th>
-            <td>{{$validatedData['nationality']}}</td>
+            <td>
+                @if(isset($validatedData['nationality']))
+                    {{$validatedData['nationality']}}
+                @elseif(isset($validatedData['nationality-1']))
+                    {{$validatedData['nationality-1']}}
+                @endif
+            </td>
         </tr>
         <tr>
             <th scope="row">Address</th>

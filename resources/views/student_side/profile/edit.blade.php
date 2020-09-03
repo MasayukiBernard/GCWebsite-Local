@@ -230,10 +230,17 @@
         <tr>
             <th scope="row" class="align-middle">Nationality</th>
             <td>
-                <input type="text" autocomplete="off" name="nationality" maxlength="20" class="form-control @error('nationality') is-invalid @enderror" value="{{old('nationality', $old_user->student->nationality)}}">
+                <div class="custom-control custom-radio d-inline-block mr-3">
+                    <input type="radio" id="indonesian" name="nationality" class="custom-control-input @error('nationality') is-invalid @enderror" onchange="clearOther();" value="0" {{old('nationality') == null ? ($old_user->student->nationality == 'Indonesian' ? "Checked" : "") : (old('nationality') === '0' ? "Checked" : "")}}>
+                    <label class="custom-control-label" for="indonesian">Indonesian</label>
+                </div>
+                <input type="text" id="other_nationality" autocomplete="off" name="nationality-1" maxlength="20" onkeypress="uncheckRB('indonesian');" onchange="uncheckRB('indonesian');" onfocus="uncheckRB('indonesian');" class="form-control mt-2 @error('nationality-1') is-invalid @enderror" placeholder="Other" value="{{old('nationality-1', $old_user->student->nationality === 'Indonesian' ? '' : $old_user->student->nationality)}}">
                 @error('nationality')
                     <div class="alert alert-danger mb-0">{{ $message }}</div>
-                @enderror    
+                @enderror
+                @error('nationality-1')
+                    <div class="alert alert-danger mb-0">{{ $message }}</div>
+                @enderror
             </td>
         </tr>
         <tr>
@@ -262,6 +269,14 @@
     function show_element($id, $causer_id){
         $('#' + $id).removeClass('d-none');
         $('#' + $causer_id).addClass('d-none');
+    }
+
+    function uncheckRB(id){
+        document.getElementById(id).checked = false;
+    }
+
+    function clearOther(){
+        document.getElementById('other_nationality').value = '';
     }
 </script>
 @endpush

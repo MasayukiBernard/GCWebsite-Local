@@ -40,7 +40,8 @@ class StudentProfileEdit extends FormRequest
             'major' => ['required', 'exists:majors,id'],
             'place-birth' => ['required', 'string', 'max:50', 'regex:/^[a-zA-Z0-9]{1}[a-zA-Z0-9\s]{1,73}[a-zA-Z0-9]{1}$/'],
             'date-birth' => ['required', 'string', 'size:10', 'date'],
-            'nationality' => ['required', 'string', 'alpha', 'max:20'],
+            'nationality' => ['nullable', 'required_without:nationality-1', 'integer', 'in:0'],
+            'nationality-1' => ['nullable', 'required_unless:nationality,0', 'string', 'alpha', 'max:20'],
             'address' => ['required', 'string', 'max:200']
         ];
     }
@@ -56,6 +57,7 @@ class StudentProfileEdit extends FormRequest
             'major' => 'enrolled major',
             'place-birth' => 'place of birth',
             'date-birth' => 'date of birth',
+            'nationality-1' => 'other nationality'
         ];
     }
 

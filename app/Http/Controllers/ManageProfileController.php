@@ -148,6 +148,12 @@ class ManageProfileController extends Controller
     public function confirm_studentEdit(StudentProfileEdit $request){
         $validatedData = $request->validated();
 
+        if(isset($validatedData['nationality'])){
+            if($validatedData['nationality'] == 0){
+                $validatedData['nationality'] = 'Indonesian';
+            }
+        }
+
         $request->session()->put('student_validated_profileData', Arr::except($validatedData, ['profile-picture', 'id-card', 'flazz-card']));
 
         $pp = $ic = $fc = null;
@@ -201,7 +207,7 @@ class ManageProfileController extends Controller
         $user->student->major_id = $text_inputs['major'];
         $user->student->place_birth = $text_inputs['place-birth'];
         $user->student->date_birth = date('Y-m-d', (new DateTime($text_inputs['date-birth']))->getTimeStamp());
-        $user->student->nationality = $text_inputs['nationality'];
+        $user->student->nationality = isset($text_inputs['nationality']) ? $text_inputs['nationality'] : $text_inputs['nationality-1'];
         $user->student->address = $text_inputs['address'];
 
         // Moving stored temp image to the actual image folders
