@@ -73,7 +73,7 @@ class ManageYearlyPartnerController extends Controller
     }
 
     public function get_yearlyPartnerDetails($academic_year_id, $major_id, $field, $sort_type){
-        $available_fields = array('name', 'location');
+        $available_fields = array('name', 'location', 'quota');
         $sort_types = array('a' => 'asc', 'd' => 'desc');
 
         if(is_numeric($academic_year_id) && in_array($field, $available_fields) && Arr::exists($sort_types, $sort_type)){
@@ -81,7 +81,14 @@ class ManageYearlyPartnerController extends Controller
                                     ->select('partner_id')
                                     ->where('latest_deleted_at', null)->where('academic_year_id', $academic_year_id)
                                     ->get();
-            $partners = Partner::whereIn('id', Arr::pluck($yearly_partners, 'partner_id'))->where('major_id', $major_id)->orderBy($field, $sort_types[$sort_type])->get();
+    
+            $partners = DB::table('partners')
+                            ->select('partners.id', 'partners.major_id', 'partners.name', 'partners.location', 'yearly_partners.quota')
+                            ->where('partners.latest_deleted_at', null)->where('yearly_partners.latest_deleted_at', null)
+                            ->whereIn('partners.id', Arr::pluck($yearly_partners, 'partner_id'))
+                            ->where('yearly_partners.academic_year_id', $academic_year_id)->where('major_id', $major_id)
+                            ->join('yearly_partners', 'yearly_partners.partner_id', '=', 'partners.id')
+                            ->orderBy($field, $sort_types[$sort_type])->get();
 
             if($partners->first() != null){
                 return response()->json([
@@ -123,10 +130,11 @@ class ManageYearlyPartnerController extends Controller
                     ->select('partner_id')
                     ->where('latest_deleted_at', null)->where('academic_year_id', $request['academic_year'])
                     ->get(), 'partner_id'
-            ))]
+            ))],
+            'quota' => ['required_with:partner', 'integer', 'min:0']
         ]);
-        $request->session()->put('create_yearly_partner', ['academic_year' => $request['academic_year'], 'partner' => $request['partner']]);
-        return view('staff_side/yearly_partner/confirm-create', ['referred_partner' => Partner::find($request['partner']), 'referred_year' => Academic_Year::find($request['academic_year'])]);
+        $request->session()->put('create_yearly_partner', ['academic_year' => $request['academic_year'], 'partner' => $request['partner'], 'quota' => $request['quota']]);
+        return view('staff_side/yearly_partner/confirm-create', ['referred_partner' => Partner::find($request['partner']), 'referred_year' => Academic_Year::find($request['academic_year']), 'quota' => $request['quota']]);
     }
 
     public function create(){
@@ -164,6 +172,7 @@ class ManageYearlyPartnerController extends Controller
                 $yearly_partner = new Yearly_Partner;
                 $yearly_partner->academic_year_id = session('create_yearly_partner')['academic_year'];
                 $yearly_partner->partner_id = session('create_yearly_partner')['partner'];
+                $yearly_partner->quota = session('create_yearly_partner')['quota'];
                 $yearly_partner->latest_updated_at = null;
                 $yearly_partner->save();
             }

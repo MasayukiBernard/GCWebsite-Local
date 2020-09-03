@@ -17,6 +17,7 @@ class Yearly_PartnerSeeder extends Seeder
             DB::table('yearly_partners')->insert([
                 'academic_year_id' => $i,
                 'partner_id' => ++$j,
+                'quota' => (10 - $j)
             ]);
             if($j == 6){
                 $i++;

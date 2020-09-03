@@ -46,6 +46,16 @@
     @error('partner')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
+
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <label class="input-group-text bg-info text-light" for="partner_selection">Partner Quota</label>
+        </div>
+        <input type="number" step="1" min="0" name="quota" class="form-control @error('quota') is-invalid @enderror" value="{{ old('quota') }}" autocomplete="off"><br>
+    </div>
+    @error('min-gpa')
+        <div class="alert alert-danger">{{ $message }}</div>
+    @enderror
 @endsection
 
 @section('confirm-value')

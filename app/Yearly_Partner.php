@@ -27,7 +27,7 @@ class Yearly_Partner extends Model
      const DELETED_AT = 'latest_deleted_at';
 
      // Log changes to stated attributes
-     protected static $logAttributes = ['id', 'academic_year_id', 'partner_id'];
+     protected static $logAttributes = ['id', 'academic_year_id', 'partner_id', 'quota'];
 
      // Customize log name
      protected static $logName = 'yearly_partner_log';

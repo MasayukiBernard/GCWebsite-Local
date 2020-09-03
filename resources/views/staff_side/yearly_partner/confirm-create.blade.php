@@ -32,6 +32,10 @@
                 <td>{{$referred_partner->eng_requirement}}</td>
             </tr>
             <tr>
+                <th scope="row">Quota</th>
+                <td>{{$quota}}</td>
+            </tr>
+            <tr>
                 <th scope="row" colspan="2">Short Details</th>
             </tr>
             <tr>

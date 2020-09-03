@@ -66,10 +66,16 @@
                                             <div class="col-6 py-2 m-1 bg-info rounded-circle" style="cursor: pointer;" id="name_state" onclick="get_partners('name');">&#8597</div>
                                         </div>
                                     </th>
-                                    <th class="col-4 border-right-0" scope="col">Location</th>
+                                    <th class="col-2 border-right-0" scope="col">Location</th>
                                     <th class="col-1 p-0 border-left-0 text-center" scope="col">
                                         <div class="d-flex flex-row-reverse">
                                             <div class="col-6 py-2 my-1 mx-1 bg-info rounded-circle" style="cursor: pointer;" id="location_state" onclick="get_partners('location');">&#8597</div>
+                                        </div>
+                                    </th>
+                                    <th class="col-1 border-right-0" scope="col">Quota</th>
+                                    <th class="col-1 p-0 border-left-0 text-center" scope="col">
+                                        <div class="d-flex flex-row-reverse">
+                                            <div class="col-6 py-2 my-1 mx-1 bg-info rounded-circle" style="cursor: pointer;" id="quota_state" onclick="get_partners('quota');">&#8597</div>
                                         </div>
                                     </th>
                                     <th class="col-1 text-center" scope="col">Action</th>
@@ -161,6 +167,7 @@
         var sort_states ={
             name: 'n',
             location: 'n',
+            quota:'n',
             major: 'n'
         };
 
@@ -169,13 +176,12 @@
             sort_states.name = 'n';
             sort_states.location = 'n';
             sort_states.min_gpa = 'n';
-            sort_states.eng_requirement = 'n';
-            sort_states.short_detail = 'n';
+            sort_states.quota = 'n';
             get_partners('name');
         }
 
         function set_state(column, state){
-            var properties = ['name', 'location'];
+            var properties = ['name', 'location', 'quota'];
             var states = ['a', 'd'];
             if(properties.includes(column) && states.includes(state)){
                 for(var i = 0; i < 5; ++i){
@@ -236,7 +242,8 @@
                                     "<tr class=\"d-flex\">" + 
                                     "<th class=\"col-1 text-center\" scope=row onclick=\"go_to(" + data[index].id + ");\">" + (index+1) + "</th>" +
                                     "<td class=\"col-5\" colspan=\"2\" style=\"cursor: pointer;\" onclick=\"go_to(" + data[index].id + ");\">"   + data[index].name + "</td>" + 
-                                    "<td class=\"col-5\" colspan=\"2\" style=\"cursor: pointer;\" onclick=\"go_to(" + data[index].id + ");\">" + data[index].location + "</td>" +
+                                    "<td class=\"col-3\" colspan=\"2\" style=\"cursor: pointer;\" onclick=\"go_to(" + data[index].id + ");\">" + data[index].location + "</td>" +
+                                    "<td class=\"col-2\" colspan=\"2\" style=\"cursor: pointer;\" onclick=\"go_to(" + data[index].id + ");\">" + data[index].quota + "</td>" +
                                     "<td class=\"col-1 text-center\"><button type=\"button\" class=\"btn btn-danger\"  onclick=\"deleteYearlyPartner(" + data[index].id + ");\">Delete</button></td>" +
                                     "</tr>"
                                 );

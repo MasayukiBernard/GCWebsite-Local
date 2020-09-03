@@ -24,7 +24,8 @@ class CreateYearlyPartnersTable extends Migration
             $table->foreignId('partner_id')
                 ->constrained()
                 ->onDelete('cascade')
-                ->onUpdate('cascade');;
+                ->onUpdate('cascade');
+            $table->integer('quota');
             $table->timestamp('latest_created_at')->nullable();
             $table->timestamp('latest_updated_at')->nullable();
             $table->softDeletes('latest_deleted_at')->nullable();
