@@ -87,7 +87,7 @@ class ManageCSAFormController extends Controller
             
             $nullYS = true;
             foreach($yearly_students as $ys){
-                if($ys->student->major_id != $major_id || !($ys->csa_form->is_submitted)){
+                if($ys->student->major_id != $major_id || ($ys->csa_form == null || !($ys->csa_form->is_submitted))){
                     continue;
                 }
                 if($nullYS == true && $ys->csa_form != null){
