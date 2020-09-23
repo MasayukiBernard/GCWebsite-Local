@@ -1,7 +1,7 @@
 @extends('student_side.csa_template.csa-template7')
 
 @section('entity')
-    Applicant's Declaration &mdash; CSA Application Form Page 6
+    Applicant's Declaration &mdash; CSA Application Form Page 7
 @endsection
 
 @section('form-action')
